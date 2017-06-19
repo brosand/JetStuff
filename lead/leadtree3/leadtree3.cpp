@@ -1,0 +1,118 @@
+//create a lead-lead collision
+
+//run name in Makefile is pbtree
+//now just make an array for all the px, all the py, etc. Many branches that all contain the same variable, the index tells what particle it is
+#include <iostream>
+#include <iomanip>
+#include <stdlib.h>
+#include <cmath>
+#include <TF1.h>
+#include "TTree.h"
+#include "TH1.h"
+#include "TFile.h"
+#include "TMath.h"
+//#include "TRandom.h"
+
+
+using namespace std;
+
+int main(){
+
+	int iEvents, nEvents, iParticles, nParticles, chargetemp;
+	
+	double tao, theta, phi, eta;
+        srand(time(NULL));
+	
+	cout << "Enter the number of events: ";
+        cin >> nEvents;
+
+        cout << "Enter the number of particles per event: ";
+        cin >> nParticles;
+
+	double pt[nParticles], px[nParticles], py[nParticles], pz[nParticles];
+	int charge[nParticles];
+
+	//create a tree and link it
+	TTree tree("tree", "tree with event data and particle data in arrays");
+	tree.Branch("iEvents", &iEvents, "iEvents/I");
+	tree.Branch("nParticles", &nParticles, "nParticles/I");
+	tree.Branch("pt", &pt, "pt[nParticles]/F");
+	tree.Branch("px", &px, "px[nParticles]/F");
+	tree.Branch("py", &py, "py[nParticles]/F");
+	tree.Branch("pz", &pz, "pz[nParticles]/F");
+	tree.Branch("charge", &charge, "charge[nParticles]/I");
+
+        //cout << "Enter the time constant: ";
+        //cin >> tao;
+
+	TF1 *expdec = new TF1("expdec", "exp(-x/300)", 0, 1000000); 
+	//expdec->SetParameter(tao);
+
+	cout << "\tParticle No.\tp_t\t\tp_x\t\tp_y\t\tp_z\t\t" << endl;
+	
+	for(iEvents = 0; iEvents < nEvents; iEvents++){
+	
+		cout << "\nEvent " << iEvents << "\n" << endl;
+
+		//loop for particles
+		for(iParticles = 0; iParticles < nParticles; iParticles++){
+			
+		//cout << "Hello" << endl;
+				
+		        //get a random pt from the exp decay distribution
+		        pt[iParticles] = expdec -> GetRandom();
+		        phi = rand()/double(RAND_MAX)*2.0*M_PI;
+
+		        //from pt and phi what are px and py
+		        px[iParticles] = pt[iParticles]*cos(phi);
+	 		py[iParticles] = pt[iParticles]*sin(phi);
+
+		        //what is eta (psuedorapidity)
+		        eta = ((rand()/double(RAND_MAX))*2.0) - 1;
+			
+			//theta
+			theta = 2.0*atan(exp(-eta));
+
+			//pz
+			pz[iParticles] = pt[iParticles]/(tan(theta));	
+			//charge
+	
+			chargetemp = (rand()/double(RAND_MAX))*3;
+	
+			if((chargetemp >= 0) && (chargetemp < 1)){
+
+				charge[iParticles] = -1;			
+	
+			} else if ((chargetemp >= 1) && (chargetemp < 2)){
+
+				charge[iParticles] = 0;			
+	
+			} else if ((chargetemp >= 2) && (chargetemp < 3)){
+
+				charge[iParticles] = 1;			
+	
+			} 			
+
+
+			cout << "\t\t" << iParticles << "\t" << pt[iParticles] << "\t\t" << px[iParticles] << "\t\t" << py[iParticles] << "\t\t" << pz[iParticles] << "\t\t"<< charge[iParticles] << endl;
+
+		}//loop for particles
+
+	tree.Fill();	
+
+	} 
+
+//print the tree
+tree.Print();
+
+//write the tree to a file
+TFile f("pbfile.root", "recreate");
+tree.Write();
+//f.ls();
+f.Close();
+
+return 0;
+}
+
+
+
