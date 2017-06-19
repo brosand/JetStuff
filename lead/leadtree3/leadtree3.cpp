@@ -11,7 +11,7 @@
 #include "TH1.h"
 #include "TFile.h"
 #include "TMath.h"
-//#include "TRandom.h"
+#include "TRandom.h"
 
 
 using namespace std;
@@ -29,24 +29,27 @@ int main(){
         cout << "Enter the number of particles per event: ";
         cin >> nParticles;
 
-	double pt[nParticles], px[nParticles], py[nParticles], pz[nParticles];
+	double pt[nParticles], px[nParticles], py[nParticles], pz[nParticles], mass[nParticles];
 	int charge[nParticles];
 
 	//create a tree and link it
 	TTree tree("tree", "tree with event data and particle data in arrays");
 	tree.Branch("iEvents", &iEvents, "iEvents/I");
 	tree.Branch("nParticles", &nParticles, "nParticles/I");
-	tree.Branch("pt", &pt, "pt[nParticles]/F");
-	tree.Branch("px", &px, "px[nParticles]/F");
-	tree.Branch("py", &py, "py[nParticles]/F");
-	tree.Branch("pz", &pz, "pz[nParticles]/F");
+	tree.Branch("pt", &pt, "pt[nParticles]/D");
+	tree.Branch("px", &px, "px[nParticles]/D");
+	tree.Branch("py", &py, "py[nParticles]/D");
+	tree.Branch("pz", &pz, "pz[nParticles]/D");
 	tree.Branch("charge", &charge, "charge[nParticles]/I");
+	tree.Branch("mass", &mass, "mass[nParticles]/D");
 
         //cout << "Enter the time constant: ";
         //cin >> tao;
 
-	TF1 *expdec = new TF1("expdec", "exp(-x/300)", 0, 1000000); 
+	//TF1 *expdec = new TF1("expdec", "10.0*exp(-x/0.3)", 0, 200); 
+		
 	//expdec->SetParameter(tao);
+	TRandom * myRand = new TRandom();
 
 	cout << "\tParticle No.\tp_t\t\tp_x\t\tp_y\t\tp_z\t\t" << endl;
 	
@@ -60,7 +63,9 @@ int main(){
 		//cout << "Hello" << endl;
 				
 		        //get a random pt from the exp decay distribution
-		        pt[iParticles] = expdec -> GetRandom();
+		        //pt[iParticles] = expdec -> GetRandom(0.0, 200.0);			
+			pt[iParticles] = myRand->Exp(0.3);
+
 		        phi = rand()/double(RAND_MAX)*2.0*M_PI;
 
 		        //from pt and phi what are px and py
@@ -74,7 +79,9 @@ int main(){
 			theta = 2.0*atan(exp(-eta));
 
 			//pz
-			pz[iParticles] = pt[iParticles]/(tan(theta));	
+			pz[iParticles] = pt[iParticles]/(tan(theta));		
+			//mass
+			mass[iParticles] = 0.139570;	
 			//charge
 	
 			chargetemp = (rand()/double(RAND_MAX))*3;

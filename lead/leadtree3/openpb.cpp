@@ -20,7 +20,7 @@ using namespace std;
 void openpb(){
 	
 	//histogram
-	TH1F *histogram = new TH1F("histogram", "histogram", 1000, 0, 10000);
+	TH1F *histogram = new TH1F("histogram", "histogram", 1000, 0, 10);
 	//file
    	TFile *f = TFile::Open("pbfile.root");
 
@@ -50,16 +50,6 @@ void openpb(){
 		}
 	}
 	
-	/*
-	for(iEvents = 0; iEvents < nEvents; iEvents++){
-
-			for(iParticles = 0; iParticles < nParticles; iParticles++){
-
-				histogram->Fill(*myPt);
-
-			}
-	}*/
-
 	histogram->Draw();
 	canv.SaveAs("pt.pdf");
 
