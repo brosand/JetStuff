@@ -12,15 +12,23 @@
 #include "TH1.h"
 
 #include "TTreeReader.h"
-//#include "TTreeReaderValue.h"
+#include "TTreeReaderValue.h"
 #include <TTreeReaderArray.h>
 
 using namespace std;
 //int main(){
 void openpb(){
 	
-	//histogram
-	TH1F *histogram = new TH1F("histogram", "histogram", 1000, 0, 10);
+	//histogram for number of final particles
+	TH1F *histogramnFP = new TH1F("histogramnFP", "histogramnFP", 40, 0, 200);
+	//histogram for px
+	TH1F *histogrampx = new TH1F("histogrampx", "histogrampx", 40, 0, 1);
+	TH1F *histogrampy = new TH1F("histogrampy", "histogrampy", 40, 0, 1);
+	TH1F *histogrampz = new TH1F("histogrampz", "histogrampz", 40, 0, 1);
+	TH1F *histograme = new TH1F("histograme", "histograme", 40, 0, 200);
+	TH1F *histogramcharge = new TH1F("histogramcharge", "histogramcharge", 5, -2, 2);
+	TH1F *histogrammass = new TH1F("histogrammass", "histogrammass", 100, 0, 1);
+
 	//file
    	TFile *f = TFile::Open("pbfile.root");
 
@@ -29,29 +37,64 @@ void openpb(){
 	return;
 	}
 	
-	//old way
-	//TTree *mytree = (TTree *) f->Get("tree");
-	//mytree->SetMarkerColor(7);
-	//mytree->Draw("pt>>histogram");
-
-	//new way
-	TCanvas canv("canvas", "canvas");
-	canv.SetLogy();
+	TCanvas cnFP("cnFP", "cnFP");
+	TCanvas cpx("cpx", "cpx");
+	cpx.SetLogy();
+	TCanvas cpy("cpy", "cpy");
+	cpy.SetLogy();
+	TCanvas cpz("cpz", "cpz");
+	cpz.SetLogy();
+	TCanvas ccharge("ccharge", "ccharge");
+	TCanvas cenergy("cenergy", "cenergy");
+	cenergy.SetLogy();
+	TCanvas cmass("cmass", "cmass");
 	
-	//tree reader
 	TTreeReader myReader("tree", f);
-	TTreeReaderArray<double> myPt(myReader, "pt");
+	TTreeReaderValue<int> mynFinalParticles(myReader, "nFinalParticles");
+	TTreeReaderArray<double> myPx(myReader, "px");
+	TTreeReaderArray<double> myPy(myReader, "py");
+	TTreeReaderArray<double> myPz(myReader, "pz");
+	TTreeReaderArray<double> myEnergy(myReader, "energy");
+	TTreeReaderArray<int> myCharge(myReader, "charge");
+	TTreeReaderArray<double> myMass(myReader, "mass");
 	
 	while(myReader.Next()){
+		
+		histogramnFP->Fill(*mynFinalParticles);
 
-		for(int i = 0, n = myPt.GetSize(); i < n; i++){
-			histogram->Fill(myPt[i]);
+		for(int i = 0, n = myPx.GetSize(); i < n; i++){
+			histogrampx->Fill(myPx[i]);
+			histogrampy->Fill(myPy[i]);
+			histogrampz->Fill(myPz[i]);
+			histograme->Fill(myEnergy[i]);
+			histogramcharge->Fill(myCharge[i]);
+			histogrammass->Fill(myMass[i]);
 
 		}
 	}
 	
-	histogram->Draw();
-	canv.SaveAs("pt.pdf");
+	cnFP.cd();
+		histogramnFP->Draw();
+	cpx.cd();	
+		histogrampx->Draw();
+	cpy.cd();
+		histogrampy->Draw();
+	cpz.cd();
+		histogrampz->Draw();
+	cenergy.cd();
+		histograme->Draw();
+	ccharge.cd();
+		histogramcharge->Draw();
+	cmass.cd();
+		histogrammass->Draw();
+
+	cnFP.SaveAs("nFinalParticles.pdf");
+	cpx.SaveAs("px.pdf");
+	cpy.SaveAs("py.pdf");
+	cpz.SaveAs("pz.pdf");
+	cenergy.SaveAs("energy.pdf");
+	ccharge.SaveAs("charge.pdf");
+	cmass.SaveAs("mass.pdf");
 
 //return ;
 }

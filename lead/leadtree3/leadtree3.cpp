@@ -18,7 +18,7 @@ using namespace std;
 
 int main(){
 
-	int iEvents, nEvents, iParticles, nParticles, chargetemp;
+	int iEvents, nEvents, iParticles, nFinalParticles, chargetemp;
 	
 	double tao, theta, phi, eta;
         srand(time(NULL));
@@ -27,44 +27,45 @@ int main(){
         cin >> nEvents;
 
         cout << "Enter the number of particles per event: ";
-        cin >> nParticles;
+        cin >> nFinalParticles;
 
-	double pt[nParticles], px[nParticles], py[nParticles], pz[nParticles], mass[nParticles];
-	int charge[nParticles];
+	double pt[nFinalParticles], px[nFinalParticles], py[nFinalParticles], pz[nFinalParticles], energy[nFinalParticles], mass[nFinalParticles];
+	int charge[nFinalParticles];
 
 	//create a tree and link it
 	TTree tree("tree", "tree with event data and particle data in arrays");
 	tree.Branch("iEvents", &iEvents, "iEvents/I");
-	tree.Branch("nParticles", &nParticles, "nParticles/I");
-	tree.Branch("pt", &pt, "pt[nParticles]/D");
-	tree.Branch("px", &px, "px[nParticles]/D");
-	tree.Branch("py", &py, "py[nParticles]/D");
-	tree.Branch("pz", &pz, "pz[nParticles]/D");
-	tree.Branch("charge", &charge, "charge[nParticles]/I");
-	tree.Branch("mass", &mass, "mass[nParticles]/D");
+	tree.Branch("nFinalParticles", &nFinalParticles, "nFinalParticles/I");
+	tree.Branch("pt", &pt, "pt[nFinalParticles]/D");
+	tree.Branch("px", &px, "px[nFinalParticles]/D");
+	tree.Branch("py", &py, "py[nFinalParticles]/D");
+	tree.Branch("pz", &pz, "pz[nFinalParticles]/D");
+	tree.Branch("energy", &energy, "energy[nFinalParticles]/D");
+	tree.Branch("charge", &charge, "charge[nFinalParticles]/I");
+	tree.Branch("mass", &mass, "mass[nFinalParticles]/D");
 
-        //cout << "Enter the time constant: ";
-        //cin >> tao;
+        cout << "Enter the time constant: ";
+        cin >> tao;
 
 	//TF1 *expdec = new TF1("expdec", "10.0*exp(-x/0.3)", 0, 200); 
 		
 	//expdec->SetParameter(tao);
 	TRandom * myRand = new TRandom();
 
-	cout << "\tParticle No.\tp_t\t\tp_x\t\tp_y\t\tp_z\t\t" << endl;
+	cout << "\tParticle No.\tp_t\t\tp_x\t\tp_y\t\tp_z\t\tenergy\t\tcharge\t\tmass" << endl;
 	
 	for(iEvents = 0; iEvents < nEvents; iEvents++){
 	
 		cout << "\nEvent " << iEvents << "\n" << endl;
 
 		//loop for particles
-		for(iParticles = 0; iParticles < nParticles; iParticles++){
+		for(iParticles = 0; iParticles < nFinalParticles; iParticles++){
 			
 		//cout << "Hello" << endl;
 				
 		        //get a random pt from the exp decay distribution
 		        //pt[iParticles] = expdec -> GetRandom(0.0, 200.0);			
-			pt[iParticles] = myRand->Exp(0.3);
+			pt[iParticles] = myRand->Exp(tao);
 
 		        phi = rand()/double(RAND_MAX)*2.0*M_PI;
 
@@ -80,6 +81,9 @@ int main(){
 
 			//pz
 			pz[iParticles] = pt[iParticles]/(tan(theta));		
+			//energy
+			energy[iParticles] = sqrt(pow(pt[iParticles], 2) + pow(pz[iParticles], 2) + pow(mass[iParticles], 2));
+
 			//mass
 			mass[iParticles] = 0.139570;	
 			//charge
@@ -100,8 +104,7 @@ int main(){
 	
 			} 			
 
-
-			cout << "\t\t" << iParticles << "\t" << pt[iParticles] << "\t\t" << px[iParticles] << "\t\t" << py[iParticles] << "\t\t" << pz[iParticles] << "\t\t"<< charge[iParticles] << endl;
+			cout << "\t\t" << iParticles << "\t" << pt[iParticles] << "\t\t" << px[iParticles] << "\t\t" << py[iParticles] << "\t\t" << pz[iParticles] << "\t\t" << energy[iParticles] << "\t\t"<< charge[iParticles] << "\t\t" << mass[iParticles] <<endl;
 
 		}//loop for particles
 
