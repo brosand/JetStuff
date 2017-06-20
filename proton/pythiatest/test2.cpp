@@ -11,6 +11,7 @@
 #include "TH1.h"
 #include "TFile.h"
 #include "TMath.h"
+#include <vector>
 
 using namespace std;
 using namespace Pythia8;
@@ -21,22 +22,28 @@ cout<< "\n\n\n\n****************Hello World!*****************\n\n\n\n" << endl;
 
 Pythia obj;
 
-	//from leadtree3
-	int iEvents, nEvents, iFinalParticles, nFinalParticles;
-	cout << "Enter the number of events: ";
-        cin >> nEvents;
-	double px[nFinalParticles], py[nFinalParticles], pz[nFinalParticles], energy[nFinalParticles];
-	int charge[nFinalParticles];
+//from leadtree3
+int x = 1, iEvents = 0, nEvents, nFinalParticles;
+cout << "Enter the number of events: ";
+cin >> nEvents;
 
-	//create a tree and link it
-	TTree tree("tree", "tree with event data and particle data in arrays");
-	tree.Branch("iEvents", &iEvents, "iEvents/I");
-	tree.Branch("nFinalParticles", &nFinalParticles, "nFinalParticles/I");
-	tree.Branch("px", &px, "px[nFinalParticles]/F");
-	tree.Branch("py", &py, "py[nFinalParticles]/F");
-	tree.Branch("pz", &pz, "pz[nFinalParticles]/F");
-	tree.Branch("energy", &energy, "energy[nFinalParticles]/F");
-	tree.Branch("charge", &charge, "charge[nFinalParticles]/I");
+vector <double> px;
+vector <double> py;
+vector <double> pz;
+vector <double> energy;
+vector <int> charge;
+vector <double> mass;
+
+//create a tree and link it
+TTree tree("tree", "tree with event data and particle data in arrays");
+tree.Branch("iEvents", &iEvents, "iEvents/I");
+tree.Branch("nFinalParticles", &nFinalParticles, "nFinalParticles/I");
+tree.Branch("px", &px);
+tree.Branch("py", &py);
+tree.Branch("pz", &pz);
+tree.Branch("energy", &energy);
+tree.Branch("charge", &charge);
+tree.Branch("mass", &mass);
 
 //tell it what is particle 1 and 2, using the PDG code
 obj.readString("Beams:idA = 2212");
@@ -53,45 +60,41 @@ obj.readString("SoftQCD:all = on");
 obj.init();
 
 //set up my chart
-cout << "event\tParticleNo.\tp_x\tp_y\tp_z\tenergy\tcharge\n";
+cout << "event\tParticleNo.\tp_x\tp_y\tp_z\tenergy\tcharge\tmass\n";
 
-//how many events do you want? Somehow need this to see events
-
-for (iEvents = 0; iEvents < nEvents; ++iEvents){
-//do I need this loop layer for the tree?
+for (int iEvents = 0; iEvents < nEvents; iEvents++){
 	nFinalParticles = 0; //reset this for each event
-	iFinalParticles = 0;
 	obj.next(); //first time called it prints out event list, but later times it is called it does not
-	cout << iEvents <<endl;
-	obj.event.list();
+	cout << iEvents << endl;
+	//obj.event.list();
 	cout << "-------" << endl;
-
-	for (int i = 0; i < obj.event.size(); ++i){ 
+	cout << "event size: " << obj.event.size() << endl;
+	for (int i = 0; i < obj.event.size(); i++){ 
 
 		if (obj.event[i].isFinal()){
 
-			iFinalParticles++;
 			
 		//if its final, add event to tree
 
-			px[iFinalParticles] = obj.event[i].px();
-			py[iFinalParticles] = obj.event[i].py();
-			pz[iFinalParticles] = obj.event[i].pz();
-			energy[iFinalParticles] = obj.event[i].e();
-			charge[iFinalParticles] = obj.event[i].charge();
-
-			//keep a running total of number of final particles
-
-							
+			//do it with vectors
+			px.push_back(obj.event[i].px());
+			py.push_back(obj.event[i].py());
+			pz.push_back(obj.event[i].pz());
+			energy.push_back(obj.event[i].e());
+			charge.push_back(obj.event[i].charge());
+			mass.push_back(obj.event[i].m());
 			
-			cout << iEvents << "\t" << i << "\t" << obj.event[i].px() << "\t" << obj.event[i].py() << "\t" << obj.event[i].pz() << "\t" << obj.event[i].e() << "\t" << obj.event[i].charge()<< endl;
-
+			cout << iEvents << "\t" << i << "\t" << px.at(nFinalParticles) << "\t" << py.at(nFinalParticles) << "\t" << pz.at(nFinalParticles) << "\t" << energy.at(nFinalParticles) << "\t" << charge.at(nFinalParticles) << "\t" << mass.at(nFinalParticles) << endl;
+			
+			nFinalParticles++;
 		}
-
-		nFinalParticles = iFinalParticles;
+		
 	}
+	cout << "Number of Final Particles: " << nFinalParticles << endl;
 
 	tree.Fill();
+
+	
 }
 tree.Print();
 //write the tree to a file
