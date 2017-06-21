@@ -24,23 +24,23 @@ ROOTLIBS =$(shell \root-config --libs)
 # deal with pythia 
 #PYTHIADIR = its your local path to pythia. In my case its in the same directory
 #where this Makefile is placed
-PYTHIADIR   = /home/yu.yale.edu/sc2554/root/pythia/pythia8226
-PYTHIAFLAGS = -I$(PYTHIADIR)/include 
-PYTHIALIBS  =  -L$(PYTHIADIR)/lib/ -lpythia8 
+#PYTHIADIR   = /home/yu.yale.edu/sc2554/root/pythia/pythia8226
+#PYTHIAFLAGS = -I$(PYTHIADIR)/include 
+#PYTHIALIBS  =  -L$(PYTHIADIR)/lib/ -lpythia8 
 #-llhapdfdummy
 
 
 # Include Pythia and Pythia examples config files
--include $(PYTHIADIR)/config.mk
--include $(PYTHIADIR)/examples/config.mk
+#-include $(PYTHIADIR)/config.mk
+#-include $(PYTHIADIR)/examples/config.mk
 
 
 # deal with fastjet
-# FASTJETDIR = your local path to fastjet. 
+#FASTJETDIR = your local path to fastjet. 
 
-#FASTJETDIR  = /home/mushfiq/collider/fastjet-install
-#FASTJETINC :=`$(FASTJETDIR)/bin/fastjet-config --cxxflags --plugins`
-#FASTJETLIB :=`$(FASTJETDIR)/bin/fastjet-config --libs --plugins`
+FASTJETDIR  = /home/yu.yale.edu/br384/fastjet-3.2.2
+FASTJETINC :=`$(FASTJETDIR)/fastjet-config --cxxflags --plugins`
+FASTJETLIB :=`$(FASTJETDIR)/fastjet-config --libs --plugins`
 
 # LHAPDF if you want to replace Pythia's dummy default
 LHAPDFARGS =
@@ -48,6 +48,8 @@ LHAPDFARGS =
 
 # main61.cc in the example folder uses fastjet. Put this in the same folder
 # where the make file is placed. 
+#clean:
+#     rm -f $(obj) 
 
 all:
-	g++ -o pbtree leadtree3.cpp $(PYTHIAFLAGS) $(PYTHIALIBS) $(FASTJETINC) $(FASTJETLIB) $(LHAPDFARGS) $(ROOTFLAGS) $(ROOTLIBS) 
+	g++ -o jetFind TTreeJetId.cpp $(PYTHIAFLAGS) $(PYTHIALIBS) $(FASTJETINC) $(FASTJETLIB) $(LHAPDFARGS) $(ROOTFLAGS) $(ROOTLIBS) -lTreePlayer
