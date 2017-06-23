@@ -36,10 +36,9 @@ int main (){
 
   //Pseudojet vector
   //vector of pseudoJets
-	vector<vector<PseudoJet>> particlesVector;
+	// vector<vector<PseudoJet>> particlesVector;
   //loop through the particles and turn them into pseudojets
 	while(myReader.Next()) {
-		int a = 0;
 //Note For Understanding: myReader.Next() --> iterates through the first level of the reader, or the only level for the value reader, the array reader needs to levels (understanding as of 6/20/17)
 
 		vector<PseudoJet> particles;			
@@ -48,7 +47,6 @@ int main (){
 
 			particles.push_back(PseudoJet(myPx[i], myPy[i], myPz[i], myEnergy[i]));
 		}
-		a++;		
 
  
   // choose a jet definition
@@ -73,7 +71,7 @@ int main (){
 		}
 		
 		nEvents++;
-		particlesVector.push_back(particles);
+		// particlesVector.push_back(particles);
 	} 
 	// return 1;
 }
