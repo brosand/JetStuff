@@ -6,7 +6,7 @@ x1 = tf.constant(5)
 x2 = tf.constant(6)
 
 #result = x1*x2
-result = tf.mul(x1, x2) 
+result = tf.multiply(x1, x2) 
 #use matmul for matrix
 print(result)
 
