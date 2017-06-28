@@ -83,8 +83,10 @@ def train_neural_network(x):
         correct = tf.equal(tf.argmax(prediction,1), tf.argmax(y,1))
 
         accuracy = tf.reduce_mean(tf.cast(correct, 'float'))
-        end = time.time()
-        print('Time elapsed:' + (end - start) + '\n')
+        end = tm.time()
+        print('Time elapsed:')
+        print(end - start)
+        print('\n')
         print('Accuracy:', accuracy.eval({x:mnist.test.images, y:mnist.test.labels}))
 
 
