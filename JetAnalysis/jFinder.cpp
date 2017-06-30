@@ -41,6 +41,7 @@ int main (){
 
 	int	eventN = 0;
 	int nJets = 0;
+	vector<double> y, phi;
 
 
     //create output TTree
@@ -48,6 +49,8 @@ int main (){
 	jetTree.Branch("eventN", &eventN, "eventN/I");
 	jetTree.Branch("nJets", &nJets, "nJets/I");
 	jetTree.Branch("pIndex", &pIndex);
+	jetTree.Branch("phi", &phi);
+	jetTree.Branch("y", &y);
 
   //Pseudojet vector
   //vector of pseudoJets
@@ -86,10 +89,10 @@ int main (){
 		// cout << "82" << endl;
 			}	
 			pIndex.push_back(pTempV);
+			phi.push_back(jets[i].phi());
+			y.push_back(jets[i].rap());
 //pIndex needs to increment outside, need to use pushback on it because pIndex at some i doesn't exist yet
 			// pt.push_back(jets[i].pt());
-			// phi.push_back(jets[i].phi());
-			// y.push_back(jets[i].rap());
 			// area.push_back(jets[i].area());
 
 			// ptP.push_back(jets[i].constituents().pt())
