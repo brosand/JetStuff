@@ -16,7 +16,7 @@ using namespace std;
 int main (){
 	
 	
-
+  // cout << "test1";
   //create a reader to interpret the TTree
 	TFile *f = TFile::Open("ppfile.root");	
 	TFile a("jetFile.root", "recreate");
@@ -55,14 +55,14 @@ int main (){
   //loop through the particles and turn them into pseudojets
 	while(myReader.Next()) {
 	//Note For Understanding: myReader.Next() --> iterates through the first level of the reader, or the only level for the value reader, the array reader needs to levels (understanding as of 6/20/17)
-
+		// cout << "58";
 		vector<PseudoJet> particles;			
 		for (int i = 0; i < *myNFinalParticles; i++)
 		{
 			PseudoJet pj(myPx[i], myPy[i], myPz[i], myEnergy[i]);
 			pj.set_user_index(i);
 			particles.push_back(pj);
-
+		// cout << "65" << endl;
 		}
 
 
@@ -71,16 +71,22 @@ int main (){
 
 		JetDefinition jet_def(antikt_algorithm, R);
 		AreaDefinition area_def(voronoi_area);
-
+		// cout << "74" << endl;
   // run the clustering, extract the jets
 		ClusterSequenceArea cs(particles, jet_def, area_def);
 		vector<PseudoJet> jets = sorted_by_pt(cs.inclusive_jets());
   //add the jet data to the final TTree
-
-		for (unsigned i = 0; i < jets.size(); i++) {
-			
-			pIndex[i].push_back(jets[i].user_index());
-
+		// cout << "79";
+		//loop through a single jet, adding each userindex to the array
+		for (int i = 0; i < jets.size(); i++) {
+			vector<int> pTempV;
+			for (int b = 0; b < jets[i].constituents().size(); b++) {			
+		// cout << "77" << endl;
+				pTempV.push_back(jets[i].user_index());
+		// cout << "82" << endl;
+			}	
+			pIndex.push_back(pTempV);
+//pIndex needs to increment outside, need to use pushback on it because pIndex at some i doesn't exist yet
 			// pt.push_back(jets[i].pt());
 			// phi.push_back(jets[i].phi());
 			// y.push_back(jets[i].rap());
@@ -99,7 +105,7 @@ int main (){
 		nJets = jets.size();
 
 		jetTree.Fill();
-
+		cout << "102";
 		eventN = eventN + 1;
 			//}
 	}
