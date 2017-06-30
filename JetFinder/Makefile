@@ -38,9 +38,9 @@ ROOTLIBS =$(shell \root-config --libs)
 # deal with fastjet
 #FASTJETDIR = your local path to fastjet. 
 
-FASTJETDIR  = /home/yu.yale.edu/br384/fastjet-3.2.2
-FASTJETINC :=`$(FASTJETDIR)/fastjet-config --cxxflags --plugins`
-FASTJETLIB :=`$(FASTJETDIR)/fastjet-config --libs --plugins`
+FASTJETDIR  = /home/yu.yale.edu/br384/fastjet-install
+FASTJETINC :=`$(FASTJETDIR)/bin/fastjet-config --cxxflags --plugins`
+FASTJETLIB :=`$(FASTJETDIR)/bin/fastjet-config --libs --plugins`
 
 # LHAPDF if you want to replace Pythia's dummy default
 LHAPDFARGS =

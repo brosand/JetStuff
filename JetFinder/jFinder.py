@@ -1,65 +1,81 @@
 import ROOT
-import fastjet
-import array
+import os
+ROOT.gInterpreter.AddIncludePath(os.path.join(os.environ["FASTJET_ROOT"], "include"))
+ROOT.gInterpreter.ProcessLine('#include "fastjet/PseudoJet.hh"')
+ROOT.gInterpreter.ProcessLine('#include "fastjet/ClusterSequenceArea.hh"')
+ROOT.gInterpreter.ProcessLine('#include "fastjet/JetDefinition.hh"')
+ROOT.gInterpreter.ProcessLine('#include "fastjet/AreaDefinition.hh"')
+ROOT.gSystem.Load('libfastjet')
+import ROOT.fastjet as fj
+from array import array
 
 def findJet(filename):
     fIn = ROOT.TFile(filename, 'READ')
     tree = fIn.Get('tree')
 
-    #TTreeReader declaration
-    myReader = TTreeReader('tree', f)
-    # myPx = TTreeReaderArray(myReader, "px")
-    # myPy = TTreeReaderArray(myReader, "py")
-    # myPz = TTreeReaderArray(myReader, "pz")
-    # myEnergy = TTreeReaderArray(myReader, "energy")
-    # myEvents = TTreeReaderrValue(myReader, "iEvents")
-    # myNFinalParticles = TTreeReaderValue(myReader, "nFinalParticles")
+  
+    #output vectors for the tree
 
-    #double check that the while and its containers shouldn't be further out
-   
-    #output objects
-        #nEvent Change!
-        #nEvent = tree.iEvents
-    pt = []
-    #y = rapidity
-    y = []
-    phi = []
+    eventN = array('i', [0])
+    nJets = array('i', [0])
+    pIndex = array('i', [0])
 
     #create output TTree
-    jetTree = TTree('jetTree', 'ttree with jet data')
-    tree.branch('eventN', &nEvent, 'eventN/I')
-    tree.branch('nJets', &nJets, 'nJets/I')
-    tree.Branch("pt", &pt);
-    tree.Branch("y", &y);
-    tree.Branch("phi", &phi);
+    jetTree = ROOT.TTree('jetTree', 'ttree with jet data')
+    jetTree.Branch('eventN', eventN, 'eventN/I')
+    jetTree.Branch('nJets', nJets, 'nJets/I')
+    jetTree.Branch('pIndex', pIndex, 'pIndex/I')
+    
 
 #loop through tree and turn particles into pseudojets
-    for event in tree
-        for particle in event
-            particles = []
-            particles.push_back(PseudoJet(particle.px, particle.py, particle.pz, particle.energy))
+    for event in tree:
+    	print('test1')    
+    	uIndex = 0
+        iEvent = 0
+        particles = []
+        for particle in event:
+            for p in zip(particle.px, particle.py, particle.pz, particle.energy):
+                pjet = fj.PseudoJet(p[0], p[1], p[2], p[3])
+                pjet.set_user_index(uIndex)
+                particles.append(pjet)
+            	uIndex+=1
  
-    #choose a jet definition
+    #choose a jet definition and area definition
         R = 0.6
 
-        Jet_def = JetDefinition(antikt_algorithm, R)
+        jet_def = fj.JetDefinition(fj.antikt_algorithm, R)
+        area_def = fj.AreaDefinition(fj.voronoi_area)
     #run the clustering, extract the jets
-        cs = ClusterSequence(particles)
+#, jet_def, area_def
         #is 32 necessary?
-        jets = vector(PseudoJet)
-        jets = sorted_by_pt(cs.inclusive_jets())
+        jets = []
+        cs = fj.ClusterSequenceArea(particles)
+        jets = fj.sorted_by_pt(cs.inclusive_jets())
+
+        nJets.append(len(jets))
+        eventN.append(iEvent)
+        eventN +=1
 
 
     #fill output TTree
-        for i in jets 
-            pt.append(jets[i].pt)
-            phi.append(jets[i].phi)
-            y.append(jets[i].rap)
+        for j in jets:
+        	ptemp = []
+        	for ptl in j: 
+	            pTemp.append(jets[i].user_index())
+	        pIndex.append(ptemp)
+
+    	jetTree.Fill()
 
 
+    jetTree.Print()
+
+    f = ROOT.TFile("jetFile.root", "recreate")
+    jetTree.Write()
+
+    f.Close()
     #quasi-main
-    if __name__ == '__main__':
-    filename = 'ppfile.root'
-    readTree(filename = filename)
+if __name__ == '__main__':
+    # filename = 'ppfile.root'
+    findJet(filename = 'ppfile.root')
 
     ##--> import fastjet prob won't work
