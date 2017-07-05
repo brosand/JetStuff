@@ -3,6 +3,7 @@
 from itertools import izip
 import ROOT
 import array
+import numpy
 
 def readTree(filename1, filename2):
     fIn = ROOT.TFile(filename1, "READ")
@@ -32,7 +33,7 @@ def readTree(filename1, filename2):
     #for event in jetTree:
         print("jEvent.nJets is %d" %jEvent.nJets)
         print("pEvent.nParticles is %d" %pEvent.nFinalParticles)
-        '''
+        
         for j in range(jEvent.nJets): #j tells you which jet you are in
             print("\tJet number %d" %j)
             print("\tjEvent.pIndex[j][0] = %d" % jEvent.pIndex[j][0])
@@ -63,7 +64,7 @@ def readTree(filename1, filename2):
                 print("\t\tsubmax: %d" % submax)
 
             
-            star = arctan((event[0].eta[maxm]-event[0].eta[submax])/(event[0].phi[maxm]-event[0].phi[submax]))
+            star = numpy.arctan((event[0].eta[maxm]-event[0].eta[submax])/(event[0].phi[maxm]-event[0].phi[submax]))
 
             #define the jet axis
             phijet = jetTree.phi[j]
@@ -92,7 +93,7 @@ def readTree(filename1, filename2):
                 #fill histogram for rotate
                 histrotate.Fill(phi, eta)       
     #see others for examples of iterating through
-        '''
+        
     canvascentre.cd()
     histcentre.Draw("lego")
     #https://root.cern.ch/root/html534/guides/users-guide/Histograms.html
