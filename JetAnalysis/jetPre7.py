@@ -1,3 +1,5 @@
+#event iteration now working with izip
+
 #input: a tree with all the particle data, a tree with all the jet data
 #output: a tree where for each event, one branch for event number, one branch for number of jets, one branch is a vector of vectors containing the indices of each particle within a jet. This way with these indices we can go back to the tree and get information about these jets
 from itertools import izip
@@ -19,13 +21,6 @@ def readTree(filename1, filename2):
     canvascentre = ROOT.TCanvas("canvascentre", "canvascentre")
     canvasrotate = ROOT.TCanvas("canvasrotate", "canvasrotate")
 
-    '''
-
-    for i, (a, b) in enumerate(tuple_list):
-        new_b = some_process(b)
-        tuple_list[i] = (a, new_b)
-
-    '''
     iEvent = 0;
     for pEvent, jEvent in  izip(tree, jetTree): #zip
         print("Event %d:" % iEvent)
@@ -62,7 +57,7 @@ def readTree(filename1, filename2):
 		        submax = jEvent.pIndex[j][k]
 
                 print("\t\tsubmax: %d" % submax)
-
+    '''
             
             star = numpy.arctan((event[0].eta[maxm]-event[0].eta[submax])/(event[0].phi[maxm]-event[0].phi[submax]))
 
@@ -102,7 +97,7 @@ def readTree(filename1, filename2):
     canvasrotate.cd()
     histrotate.Draw("lego")
     canvasrotate.SaveAs("rotate.pdf")
-
+    '''
 
 if __name__ == "__main__":
     filename1 = "ppfile.root"
