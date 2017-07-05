@@ -18,48 +18,51 @@ def readTree(filename1, filename2):
     canvascentre = ROOT.TCanvas("canvascentre", "canvascentre")
     canvasrotate = ROOT.TCanvas("canvasrotate", "canvasrotate")
 
-	'''
+    '''
 
-	for i, (a, b) in enumerate(tuple_list):
-	    new_b = some_process(b)
-	    tuple_list[i] = (a, new_b)
+    for i, (a, b) in enumerate(tuple_list):
+        new_b = some_process(b)
+        tuple_list[i] = (a, new_b)
 
-	'''
-
-    for event, jevent in zip(tree, jetTree): #zip
-        print("New Event")
+    '''
+    iEvent = 0;
+    for pEvent, jEvent in  zip(tree, jetTree): #zip
+        print("Event %d:" % iEvent)
+        iEvent+=1
     #for event in jetTree:
-        print(event[1].nJets)
-        for j in range(event[1].nJets): #j tells you which jet you are in 
+        print("jEvent.nJets is %d" %jEvent.nJets)
+        print("pEvent.nParticles is %d" %pEvent.nFinalParticles)
+        '''
+        for j in range(jEvent.nJets): #j tells you which jet you are in
             print("\tJet number %d" %j)
-            
-            maxm = event[1].pIndex[j][0]
+            print("\tjEvent.pIndex[j][0] = %d" % jEvent.pIndex[j][0])
+            maxm = jEvent.pIndex[j][0]
 
-            for k, index in enumerate(event[1].pIndex[j]):
+            for k, index in enumerate(jEvent.pIndex[j]):
 		#index will give the particle index, eg [7, 21, 32], k gives 0, 1, 2
-
+                print("\t\t\tenergy[%d] = %f" % (jEvent.pIndex[j][k], pEvent.energy[jEvent.pIndex[j][k]]))
                 #events[0].energy[event[1].pIndex[j][k]] #how to tap into event number on other tree
                 #tree.event.energy[event.pIndex[j][k]] #how to tap into event number on other tree
                  
                 #finding the particle in the jet with the highest energy
-                if event[0].energy[event[1].pIndex[j][k]] > event[0].energy[maxm]:
-                    maxm = event[1].pIndex[j][k]
+                if pEvent.energy[jEvent.pIndex[j][k]] > pEvent.energy[maxm]:
+                    maxm = jEvent.pIndex[j][k]
 
             print("\t\tmax: %d" % maxm)
 
-            if(len(event[1].pIndex[j])>1):
-		for k, index in enumerate(event[1].pIndex[j]): #finding the particle in the jet with the second highest energy
-		    if (maxm == event[1].pIndex[j][0]):
-		        submax = event[1].pIndex[j][1]
+            if(len(jEvent.pIndex[j])>1):
+		for k, index in enumerate(jEvent.pIndex[j]): #finding the particle in the jet with the second highest energy
+		    if (maxm == jEvent.pIndex[j][0]):
+		        submax = jEvent.pIndex[j][1]
 		    else:
-		        submax = event[1].pIndex[j][0]
+		        submax = jEvent.pIndex[j][0]
 
-		    if (event[0].energy[submax] < event[0].energy[event[1].pIndex[j][k]] < event[0].energy[maxm]):
-		        submax = event[1].pIndex[j][k]
+		    if ((pEvent.energy[submax] < pEvent.energy[jEvent.pIndex[j][k]]) and (pEvent.energy[jEvent.pIndex[j][k]] < pEvent.energy[maxm])):
+		        submax = jEvent.pIndex[j][k]
 
                 print("\t\tsubmax: %d" % submax)
 
-            '''
+            
             star = arctan((event[0].eta[maxm]-event[0].eta[submax])/(event[0].phi[maxm]-event[0].phi[submax]))
 
             #define the jet axis
@@ -91,11 +94,12 @@ def readTree(filename1, filename2):
     #see others for examples of iterating through
         '''
     canvascentre.cd()
-    histcentre.Draw()
+    histcentre.Draw("lego")
+    #https://root.cern.ch/root/html534/guides/users-guide/Histograms.html
     canvascentre.SaveAs("centre.pdf")
 
     canvasrotate.cd()
-    histrotate.Draw()
+    histrotate.Draw("lego")
     canvasrotate.SaveAs("rotate.pdf")
 
 
