@@ -36,8 +36,8 @@ def readTree(filename1, filename2):
     nb = 0
     for iEvent in range(nEvents):
         #ientry = LoadTree(iEvent)
-        nb = jetTree.GetEntry(iEvent)
-        nbytes +=nb
+        #nb = jetTree.GetEntry(iEvent)
+        #nbytes +=nb
         tree.GetEntry(iEvent)
 
 #what I don't get here is how are nb and nbytes actually linking to the tree?
@@ -46,7 +46,7 @@ def readTree(filename1, filename2):
         jEvent = jetTree.GetEntry(iEvent) #syntax
         print("jEvent: %d" % jEvent)
 
-        print("jEvent.nJets is %d" %jEvent.nJets)
+        print("jetTree.nJets is %d" %jetTree.nJets)
         '''
         for j in range(jEvent.nJets): #j tells you which jet you are in
             print("\tJet number %d" %j)
