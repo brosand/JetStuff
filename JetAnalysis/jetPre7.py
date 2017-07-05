@@ -58,10 +58,6 @@ def readTree(filename1, filename2):
                     if ((pEvent.energy[submax] < pEvent.energy[jEvent.pIndex[j][k]]) and (pEvent.energy[jEvent.pIndex[j][k]] < pEvent.energy[maxm])):
                         submax = jEvent.pIndex[j][k]
                 print("\t\tsubmax: %d" % submax)
-<<<<<<< HEAD
-    '''
-            
-=======
 
         for k, index in enumerate(jEvent.pIndex[j]):
             #centre the jet axis
@@ -72,9 +68,9 @@ def readTree(filename1, filename2):
             #############
 
         if(len(jEvent.pIndex[j])>1):
->>>>>>> 467becf0dbb839710322f0cc45be90fee3c3ffad
-            star = numpy.arctan((jEvent.eta[maxm]-jEvent.eta[submax])/(jEvent.phi[maxm]-jEvent.phi[submax]))
 
+            star = numpy.arctan((jEvent.eta[maxm]-jEvent.eta[submax])/(jEvent.phi[maxm]-jEvent.phi[submax]))
+    '''
         #     #define the jet axis
             phijet = jetTree.phi[j]
         # etajet = jetTree.eta[j]
