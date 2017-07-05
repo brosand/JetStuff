@@ -59,16 +59,16 @@ def readTree(filename1, filename2):
                 print("\t\tsubmax: %d" % submax)
     '''
             
-            star = numpy.arctan((event[0].eta[maxm]-event[0].eta[submax])/(event[0].phi[maxm]-event[0].phi[submax]))
+            star = numpy.arctan((jEvent.eta[maxm]-jEvent.eta[submax])/(jEvent.phi[maxm]-jEvent.phi[submax]))
 
             #define the jet axis
             phijet = jetTree.phi[j]
             etajet = jetTree.y[j]
 
-            for k, index in enumerate(event[1].pIndex[j]):
-                ptot = math.sqrt(math.pow(event[0].px[index], 2) + math.pow(event[1].px[index], 2) + math.pow(event[0].px[index]))
-                phi = math.acos(event[0].px[index]/(math.sqrt(math.pow(event[0].px[index], 2)+math.pow(event[0].py[index], 2))))
-                eta = event[0].pz[index]/ptot
+            for k, index in enumerate(pEvent.pIndex[j]):
+                ptot = math.sqrt(math.pow(jEvent.px[index], 2) + math.pow(pEvent.px[index], 2) + math.pow(jEvent.px[index]))
+                phi = math.acos(jEvent.px[index]/(math.sqrt(math.pow(jEvent.px[index], 2)+math.pow(jEvent.py[index], 2))))
+                eta = jEvent.pz[index]/ptot
 
                 #centre the jet axis
                 phi = phi-phijet
