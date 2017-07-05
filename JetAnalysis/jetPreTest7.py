@@ -33,36 +33,39 @@ def readTree(filename1, filename2):
     #for event in jetTree:
         print("jEvent.nJets is %d" %jEvent.nJets)
         print("pEvent.nParticles is %d" %pEvent.nFinalParticles)
+        print("\t\t\tenergy[%d] = %f" % (jEvent.pIndex[2][2], pEvent.energy[jEvent.pIndex[2][2]]))
+
+
         
-        for j in range(jEvent.nJets): #j tells you which jet you are in
-            print("\tJet number %d" %j)
-            print("\tjEvent.pIndex[j][0] = %d" % jEvent.pIndex[j][0])
+       #  for j in range(jEvent.nJets): #j tells you which jet you are in
+       #      print("\tJet number %d" %j)
+       #      print("\tjEvent.pIndex[j][0] = %d" % jEvent.pIndex[j][0])
             
-            #max placeholder for finding highest-energy particle in a jet
-            maxm = jEvent.pIndex[j][0]
-            #loop through and find max energy
-            for k, index in enumerate(jEvent.pIndex[j]):
-       #index will give the particle index, eg [7, 21, 32], k gives 0, 1, 2
-                print("\t\t\tenergy[%d] = %f" % (jEvent.pIndex[j][k], pEvent.energy[jEvent.pIndex[j][k]]))
-                #events[0].energy[event[1].pIndex[j][k]] #how to tap into event number on other tree
-                #tree.event.energy[event.pIndex[j][k]] #how to tap into event number on other tree
+       #      #max placeholder for finding highest-energy particle in a jet
+       #      maxm = jEvent.pIndex[j][0]
+       #      #loop through and find max energy
+       #      for k, index in enumerate(jEvent.pIndex[j]):
+       # #index will give the particle index, eg [7, 21, 32], k gives 0, 1, 2
+       #          print("\t\t\tenergy[%d] = %f" % (jEvent.pIndex[j][k], pEvent.energy[jEvent.pIndex[j][k]]))
+       #          #events[0].energy[event[1].pIndex[j][k]] #how to tap into event number on other tree
+       #          #tree.event.energy[event.pIndex[j][k]] #how to tap into event number on other tree
                  
-                #finding the particle in the jet with the highest energy
-                if pEvent.energy[jEvent.pIndex[j][k]] > pEvent.energy[maxm]:
-                    maxm = jEvent.pIndex[j][k]
+       #          #finding the particle in the jet with the highest energy
+       #          if pEvent.energy[jEvent.pIndex[j][k]] > pEvent.energy[maxm]:
+       #              maxm = jEvent.pIndex[j][k]
 
-            print("\t\tmax: %d" % maxm)
+       #      print("\t\tmax: %d" % maxm)
 
-            if(len(jEvent.pIndex[j])>1):
-                if (maxm == jEvent.pIndex[j][0]):
-                   submax = jEvent.pIndex[j][1]
-                else:
-                   submax = jEvent.pIndex[j][0]
-                for k, index in enumerate(jEvent.pIndex[j]): #finding the particle in the jet with the second highest energy
+       #      if(len(jEvent.pIndex[j])>1):
+       #          if (maxm == jEvent.pIndex[j][0]):
+       #             submax = jEvent.pIndex[j][1]
+       #          else:
+       #             submax = jEvent.pIndex[j][0]
+       #          for k, index in enumerate(jEvent.pIndex[j]): #finding the particle in the jet with the second highest energy
 
-                    if ((pEvent.energy[submax] < pEvent.energy[jEvent.pIndex[j][k]]) and (pEvent.energy[jEvent.pIndex[j][k]] < pEvent.energy[maxm])):
-                        submax = jEvent.pIndex[j][k]
-                print("\t\tsubmax: %d" % submax)
+       #              if ((pEvent.energy[submax] < pEvent.energy[jEvent.pIndex[j][k]]) and (pEvent.energy[jEvent.pIndex[j][k]] < pEvent.energy[maxm])):
+       #                  submax = jEvent.pIndex[j][k]
+       #          print("\t\tsubmax: %d" % submax)
 
         # for k, index in enumerate(jEvent.pIndex[j]):
         #     ptot = math.sqrt(math.pow(pEvent.px[index], 2) + math.pow(pEvent.px[index], 2) + math.pow(pEvent.px[index], 2))
