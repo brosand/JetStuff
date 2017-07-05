@@ -1,0 +1,8 @@
+print(j)
+            
+            maxm = max(event.pIndex[j])
+            print("\tmaxm: %d" % maxm)
+
+            if(len(event.pIndex[j])>1):
+                submax = sorted(event.pIndex[j])[-2]
+                print("\tsubmax: %d" % submax)

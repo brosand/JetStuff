@@ -14,10 +14,11 @@
 #include "TFile.h"
 #include "TTreeReader.h"
 #include <TTreeReaderArray.h>
-/*#include <vector>
+#include <vector>
 #ifdef __MAKECINT__
+#pragma link C++ class std::vector<int> +;
 #pragma link C++ class std::vector < std::vector<int> >+;   
-#endif */
+#endif 
 
 
 using namespace fastjet;
@@ -29,7 +30,7 @@ int main (){
   // cout << "test1";
   //create a reader to interpret the TTree
 	TFile *f = TFile::Open("ppfile.root");	
-	
+	TFile a("jetFile.root", "recreate");
 	if (f == 0) {
 		cout << "Error. Could not open file." << endl;
 		return 1;
@@ -40,7 +41,7 @@ int main (){
 	TTreeReaderArray<double> myPy(myReader, "py");
 	TTreeReaderArray<double> myPz(myReader, "pz");
 	TTreeReaderArray<double> myEnergy(myReader, "energy");
-	TTreeReaderArray<double> numParticles(myReader, "nFinalParticles");
+	TTreeReaderArray<int> numParticles(myReader, "nFinalParticles"); //??
 	TTreeReaderValue<int> myEvents(myReader, "iEvents");
 	TTreeReaderValue<int> myNFinalParticles(myReader, "nFinalParticles");
 
@@ -65,11 +66,12 @@ int main (){
   //vector of pseudoJets
 	// vector<vector<PseudoJet>> particlesVector;
   //loop through the particles and turn them into pseudojets
+        int iEvent = 0;
 	while(myReader.Next()) {
 	//Note For Understanding: myReader.Next() --> iterates through the first level of the reader, or the only level for the value reader, the array reader needs to levels (understanding as of 6/20/17)
-		// cout << "58";
+
 		vector<PseudoJet> particles;			
-		for (int i = 0; i < *myNFinalParticles; i++)
+		for (int i = 0; i < *myNFinalParticles; i++) //why pointer?
 		{
 			PseudoJet pj(myPx[i], myPy[i], myPz[i], myEnergy[i]);
 			pj.set_user_index(i);
@@ -88,21 +90,30 @@ int main (){
 // run the clustering, extract the jets
 		ClusterSequenceArea cs(particles, jet_def, area_def);
 		vector<PseudoJet> jets = sorted_by_pt(cs.inclusive_jets());
-  
+		
+		cout << "Event number: " << iEvent << endl;
+		iEvent++;
 //add the jet data to the final TTree
 		// cout << "79";
 
-		//loop through a single jet, adding each userindex to the array
+		//for each jet, loop through a single jet, adding each userindex to the array
+		//jets.size is the number of jets
+		cout << "jets.size is " << jets.size() << endl;
+
+		//jets[i].constituents().size() is the number of particles in that jet
 		for (int i = 0; i < jets.size(); i++) {
 			vector<int> pTempV;
-			for (int b = 0; b < jets[i].constituents().size(); b++){			
+			cout << "\tjets[" << i << "].constituents().size() is " << jets[i].constituents().size() << endl;
+			for (int b = 0; b < jets[i].constituents().size(); b++){
+				//constituents=jets[i].constituents();			
+				cout << "\t\tjets[" << i << "]user_index: " << jets[i].constituents()[b].user_index() << endl;
 
-				pTempV.push_back(jets[i].user_index());
-				cout << pTempV[b] << endl;
+				pTempV.push_back(jets[i].constituents()[b].user_index()); //Michael imp
+				//cout << pTempV[b] << endl;
 
 			}
 
-			cout << "break" << endl;	
+			//cout << "break" << endl;	
 
 			pIndex.push_back(pTempV);
 			//cout << pIndex[i] << endl;
@@ -131,14 +142,9 @@ int main (){
 			//}
 	}
 
-	//cout << "index 4 2: " << pIndex.at(4,2) << endl;
-	//cout << "index 3 5: " << pIndex.at(3,5) << endl;
-	cout << "index 7 1: " << pIndex[7][1] << endl;
-	cout << "index 12 11: " << pIndex[12][11] << endl;
-
 	jetTree.Print();
 //write the tree to a file
-	TFile a("jetFile.root", "recreate");
+
 	jetTree.Write();
 
 //f.ls();
