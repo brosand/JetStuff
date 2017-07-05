@@ -1,10 +1,11 @@
-<<<<<<< HEAD
+#attempt this: https://root.cern.ch/how/how-read-tree
+
+
 #input: a tree with all the particle data, a tree with all the jet data
 #output: a tree where for each event, one branch for event number, one branch for number of jets, one branch is a vector of vectors containing the indices of each particle within a jet. This way with these indices we can go back to the tree and get information about these jets
-from itertools import izip
+
 import ROOT
 import array
-import numpy
 
 def readTree(filename1, filename2):
     fIn = ROOT.TFile(filename1, "READ")
@@ -28,13 +29,26 @@ def readTree(filename1, filename2):
 
     '''
     iEvent = 0;
-    for pEvent, jEvent in  izip(tree, jetTree): #zip
+    nEvents = jetTree.GetEntries()
+    print("%d" % nEntries)
+
+
+
+    for iEvent in range(nEvents):
+        ientry = LoadTree()
+
+    #for (jEvent) in  (jetTree): #zip
+        #for pEvent in tree:
         print("Event %d:" % iEvent)
-        iEvent+=1
+        jEvent = jetTree.GetEntry(iEvent) #syntax
+        print("jEvent: )
+
+
+
+        #iEvent+=1
     #for event in jetTree:
         print("jEvent.nJets is %d" %jEvent.nJets)
-        print("pEvent.nParticles is %d" %pEvent.nFinalParticles)
-        
+        '''
         for j in range(jEvent.nJets): #j tells you which jet you are in
             print("\tJet number %d" %j)
             print("\tjEvent.pIndex[j][0] = %d" % jEvent.pIndex[j][0])
@@ -65,7 +79,7 @@ def readTree(filename1, filename2):
                 print("\t\tsubmax: %d" % submax)
 
             
-            star = numpy.arctan((event[0].eta[maxm]-event[0].eta[submax])/(event[0].phi[maxm]-event[0].phi[submax]))
+            star = arctan((event[0].eta[maxm]-event[0].eta[submax])/(event[0].phi[maxm]-event[0].phi[submax]))
 
             #define the jet axis
             phijet = jetTree.phi[j]
@@ -94,7 +108,7 @@ def readTree(filename1, filename2):
                 #fill histogram for rotate
                 histrotate.Fill(phi, eta)       
     #see others for examples of iterating through
-        
+        '''
     canvascentre.cd()
     histcentre.Draw("lego")
     #https://root.cern.ch/root/html534/guides/users-guide/Histograms.html
@@ -112,5 +126,3 @@ if __name__ == "__main__":
     readTree(filename1 = filename1, filename2 = filename2)
     
 
-=======
->>>>>>> fbaa42f3b4832d8a54d8fc8ab11299929b5a821f
