@@ -1,3 +1,5 @@
+#try this: https://root.cern.ch/root/roottalk/roottalk00/1705.html
+
 #input: a tree with all the particle data, a tree with all the jet data
 #output: a tree where for each event, one branch for event number, one branch for number of jets, one branch is a vector of vectors containing the indices of each particle within a jet. This way with these indices we can go back to the tree and get information about these jets
 
@@ -26,21 +28,24 @@ def readTree(filename1, filename2):
 
     '''
     iEvent = 0;
-    x = jetTree.GetEntries()
-    print("%d" % x)
+    nEvents = jetTree.GetEntries()
+    print("%d" % nEvents)
 
-    for iEvent in range(x):
+#need a starting point
+    nbytes = jetTree
+    nb = 0
+    for iEvent in range(nEvents):
+        #ientry = LoadTree(iEvent)
+        nb = jetTree.GetEntry(iEvent)
+        nbytes +=nb
+        tree.GetEntry(iEvent)
 
-    #for (jEvent) in  (jetTree): #zip
-        #for pEvent in tree:
+#what I don't get here is how are nb and nbytes actually linking to the tree?
+
         print("Event %d:" % iEvent)
         jEvent = jetTree.GetEntry(iEvent) #syntax
-        print("jEvent: )
+        print("jEvent: %d" % jEvent)
 
-
-
-        #iEvent+=1
-    #for event in jetTree:
         print("jEvent.nJets is %d" %jEvent.nJets)
         '''
         for j in range(jEvent.nJets): #j tells you which jet you are in

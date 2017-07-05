@@ -1,3 +1,6 @@
+#attempt this: https://root.cern.ch/how/how-read-tree
+
+
 #input: a tree with all the particle data, a tree with all the jet data
 #output: a tree where for each event, one branch for event number, one branch for number of jets, one branch is a vector of vectors containing the indices of each particle within a jet. This way with these indices we can go back to the tree and get information about these jets
 
@@ -26,10 +29,13 @@ def readTree(filename1, filename2):
 
     '''
     iEvent = 0;
-    x = jetTree.GetEntries()
-    print("%d" % x)
+    nEvents = jetTree.GetEntries()
+    print("%d" % nEntries)
 
-    for iEvent in range(x):
+
+
+    for iEvent in range(nEvents):
+        ientry = LoadTree()
 
     #for (jEvent) in  (jetTree): #zip
         #for pEvent in tree:

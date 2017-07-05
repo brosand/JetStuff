@@ -41,7 +41,6 @@ int main (){
 	TTreeReaderArray<double> myPy(myReader, "py");
 	TTreeReaderArray<double> myPz(myReader, "pz");
 	TTreeReaderArray<double> myEnergy(myReader, "energy");
-	TTreeReaderArray<int> numParticles(myReader, "nFinalParticles"); //??
 	TTreeReaderValue<int> myEvents(myReader, "iEvents");
 	TTreeReaderValue<int> myNFinalParticles(myReader, "nFinalParticles");
 
