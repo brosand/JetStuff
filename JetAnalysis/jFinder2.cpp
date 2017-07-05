@@ -41,6 +41,7 @@ int main (){
 	TTreeReaderArray<double> myPy(myReader, "py");
 	TTreeReaderArray<double> myPz(myReader, "pz");
 	TTreeReaderArray<double> myEnergy(myReader, "energy");
+	TTreeReaderArray<int> numParticles(myReader, "nFinalParticles"); //??
 	TTreeReaderValue<int> myEvents(myReader, "iEvents");
 	TTreeReaderValue<int> myNFinalParticles(myReader, "nFinalParticles");
 
@@ -50,7 +51,7 @@ int main (){
 
 	int eventN = 0;
 	int nJets = 0;
-	vector<double> y, phi;
+	vector<double> eta, phi;
 
 
     //create output TTree
@@ -59,7 +60,7 @@ int main (){
 	jetTree.Branch("nJets", &nJets, "nJets/I");
 	jetTree.Branch("pIndex", &pIndex);
 	jetTree.Branch("phi", &phi);
-	jetTree.Branch("y", &y);
+	jetTree.Branch("eta", &eta);
 
   //Pseudojet vector
   //vector of pseudoJets
@@ -117,7 +118,7 @@ int main (){
 			pIndex.push_back(pTempV);
 			//cout << pIndex[i] << endl;
 			phi.push_back(jets[i].phi());
-			y.push_back(jets[i].rap());
+			eta.push_back(jets[i].rap());
 
 //pIndex needs to increment outside, need to use pushback on it because pIndex at some i doesn't exist yet
 			// pt.push_back(jets[i].pt());

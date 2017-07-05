@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #input: a tree with all the particle data, a tree with all the jet data
 #output: a tree where for each event, one branch for event number, one branch for number of jets, one branch is a vector of vectors containing the indices of each particle within a jet. This way with these indices we can go back to the tree and get information about these jets
 from itertools import izip
@@ -65,16 +64,16 @@ def readTree(filename1, filename2):
                 print("\t\tsubmax: %d" % submax)
 
             
-            star = numpy.arctan((event[0].eta[maxm]-event[0].eta[submax])/(event[0].phi[maxm]-event[0].phi[submax]))
+            star = numpy.arctan((pEvent.eta[maxm]-pEvent.eta[submax])/(pEvent.phi[maxm]-pEvent.phi[submax]))
 
             #define the jet axis
             phijet = jetTree.phi[j]
             etajet = jetTree.y[j]
 
-            for k, index in enumerate(event[1].pIndex[j]):
-                ptot = math.sqrt(math.pow(event[0].px[index], 2) + math.pow(event[1].px[index], 2) + math.pow(event[0].px[index]))
-                phi = math.acos(event[0].px[index]/(math.sqrt(math.pow(event[0].px[index], 2)+math.pow(event[0].py[index], 2))))
-                eta = event[0].pz[index]/ptot
+            for k, index in enumerate(jEvent.pIndex[j]):
+                ptot = math.sqrt(math.pow(pEvent.px[index], 2) + math.pow(pEvent.px[index], 2) + math.pow(pEvent.px[index]))
+                phi = math.acos(pEvent.px[index]/(math.sqrt(math.pow(pEvent.px[index], 2)+math.pow(pEvent.py[index], 2))))
+                eta = pEvent.pz[index]/ptot
 
                 #centre the jet axis
                 phi = phi-phijet
@@ -112,5 +111,3 @@ if __name__ == "__main__":
     readTree(filename1 = filename1, filename2 = filename2)
     
 
-=======
->>>>>>> fbaa42f3b4832d8a54d8fc8ab11299929b5a821f
