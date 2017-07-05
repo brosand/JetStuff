@@ -32,7 +32,7 @@ def readTree(filename1, filename2):
         iEvent+=1
     #for event in jetTree:
         print("jEvent.nJets is %d" %jEvent.nJets)
-        print("pEvent.nParticles is %d" %pEvent.nFinalParticles)
+        print("pEvent.nFinalParticles is %d" %pEvent.nFinalParticles)
         
         for j in range(jEvent.nJets): #j tells you which jet you are in
             print("\tJet number %d" %j)
@@ -64,11 +64,19 @@ def readTree(filename1, filename2):
                         submax = jEvent.pIndex[j][k]
                 print("\t\tsubmax: %d" % submax)
 
-            
-        # star = numpy.arctan((jEvent.eta[maxm]-jEvent.eta[submax])/(jEvent.phi[maxm]-jEvent.phi[submax]))
+        for k, index in enumerate(jEvent.pIndex[j]):
+            #centre the jet axis
+            phi = phi-phijet
+            eta = eta-etajet
+        #fill histogram for centre
+            histcentre.Fill(phi, eta)
+            #############
+
+        if(len(jEvent.pIndex[j])>1):
+            star = numpy.arctan((jEvent.eta[maxm]-jEvent.eta[submax])/(jEvent.phi[maxm]-jEvent.phi[submax]))
 
         #     #define the jet axis
-        # phijet = jetTree.phi[j]
+            phijet = jetTree.phi[j]
         # etajet = jetTree.eta[j]
 
         # for k, index in enumerate(jEvent.pIndex[j]):
