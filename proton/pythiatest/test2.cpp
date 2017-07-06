@@ -27,6 +27,7 @@ int x = 1, iEvents = 0, nEvents, nFinalParticles;
 cout << "Enter the number of events: ";
 cin >> nEvents;
 
+
 vector <double> px;
 vector <double> py;
 vector <double> pz;
@@ -38,6 +39,7 @@ vector <double> mass;
 TTree tree("tree", "tree with event data and particle data in arrays");
 tree.Branch("iEvents", &iEvents, "iEvents/I");
 tree.Branch("nFinalParticles", &nFinalParticles, "nFinalParticles/I");
+
 tree.Branch("px", &px);
 tree.Branch("py", &py);
 tree.Branch("pz", &pz);
@@ -73,7 +75,6 @@ for (int iEvents = 0; iEvents < nEvents; iEvents++){
 
 		if (obj.event[i].isFinal()){
 
-			
 		//if its final, add event to tree
 
 			//do it with vectors
@@ -93,6 +94,12 @@ for (int iEvents = 0; iEvents < nEvents; iEvents++){
 	cout << "Number of Final Particles: " << nFinalParticles << endl;
 
 	tree.Fill();
+	px.clear();
+	py.clear();
+	pz.clear();
+	energy.clear();
+	charge.clear();
+	mass.clear();
 
 	
 }
