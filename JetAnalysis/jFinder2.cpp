@@ -69,7 +69,8 @@ int main (){
         // int iEvent = 0;
 	while(myReader.Next()) {
 	//Note For Understanding: myReader.Next() --> iterates through the first level of the reader, or the only level for the value reader, the array reader needs to levels (understanding as of 6/20/17)
-
+		cout << "num particles in this jet is " << *myNFinalParticles << endl;
+		cout << "test";
 		vector<PseudoJet> particles;			
 		for (int i = 0; i < *myNFinalParticles; i++) //why pointer?
 		{
@@ -117,6 +118,8 @@ int main (){
 			//cout << "break" << endl;	
 
 			pIndex.push_back(pTempV);
+			pTempV.clear();
+			pTempV.resize(0);
 			// cout << pTempV[0] << endl;
 			// cout << pIndex[0][0] << endl;
 			phi.push_back(jets[i].phi());
@@ -144,6 +147,10 @@ int main (){
 		pIndex.clear();
 		eta.clear();
 		phi.clear();
+		pIndex.resize(0);
+		eta.resize(0);
+		phi.resize(0);
+
 			//}
 	}
 

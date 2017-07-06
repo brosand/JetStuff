@@ -14,8 +14,8 @@ def readTree(filename1, filename2):
     jetTree = fIn2.Get("jetTree")
     jetTree.Print()
 
-    histcentre = ROOT.TH2F("histcentre", "histcentre", 100, -50, 50, 100, -50, 50) #bin bound bound bin bound bound
-    histrotate = ROOT.TH2F("histrotate", "histrotate", 100, -50, 50, 100, -50, 50) #bin bound bound bin bound bound
+    histcentre = ROOT.TH2F("histcentre", "histcentre", 20, -5, 5, 20, -5, 5) #bin bound bound bin bound bound
+    histrotate = ROOT.TH2F("histrotate", "histrotate", 20, -5, 5, 20, -5, 5) #bin bound bound bin bound bound
     canvascentre = ROOT.TCanvas("canvascentre", "canvascentre")
     canvasrotate = ROOT.TCanvas("canvasrotate", "canvasrotate")
 
@@ -39,8 +39,8 @@ def readTree(filename1, filename2):
             print("\tjEvent.pIndex[j][0] = %d" % jEvent.pIndex[j][0])
             
             #max placeholder for finding highest-energy particle in a jet
-            maxm = jEvent.pIndex[j][0]
             #loop through and find max energy
+            maxm = jEvent.pIndex[j][0]
             for k, index in enumerate(jEvent.pIndex[j]):
        #index will give the particle index, eg [7, 21, 32], k gives 0, 1, 2
                 print("\t\t\tenergy[%d] = %f" % (jEvent.pIndex[j][k], pEvent.energy[jEvent.pIndex[j][k]]))
@@ -50,9 +50,12 @@ def readTree(filename1, filename2):
                 #finding the particle in the jet with the highest energy
                 if pEvent.energy[jEvent.pIndex[j][k]] > pEvent.energy[maxm]:
                     maxm = jEvent.pIndex[j][k]
-
             print("\t\tmax: %d" % maxm)
-
+            phi_maxm = math.acos(pEvent.px[maxm]/(math.sqrt(math.pow(pEvent.px[maxm], 2)+math.pow(pEvent.py[maxm], 2))))
+            eta_maxm = pEvent.pz[maxm]/(math.sqrt(math.pow(pEvent.px[maxm], 2) + math.pow(pEvent.py[maxm], 2) + math.pow(pEvent.pz[maxm], 2)))
+            submax = 0
+            # phi_submax = 0
+            # eta_submax = 0
             if(len(jEvent.pIndex[j])>1):
                 if (maxm == jEvent.pIndex[j][0]):
                    submax = jEvent.pIndex[j][1]
@@ -63,40 +66,60 @@ def readTree(filename1, filename2):
                     if ((pEvent.energy[submax] < pEvent.energy[jEvent.pIndex[j][k]]) and (pEvent.energy[jEvent.pIndex[j][k]] < pEvent.energy[maxm])):
                         submax = jEvent.pIndex[j][k]
                 print("\t\tsubmax: %d" % submax)
+                
+                phi_submax = math.acos(pEvent.px[submax]/(math.sqrt(math.pow(pEvent.px[submax], 2)+math.pow(pEvent.py[submax], 2))))
+                eta_submax = pEvent.pz[submax]/(math.sqrt(math.pow(pEvent.px[submax], 2) + math.pow(pEvent.py[submax], 2) + math.pow(pEvent.pz[submax], 2)))
 
-        # for k, index in enumerate(jEvent.pIndex[j]):
-        #     ptot = math.sqrt(math.pow(pEvent.px[index], 2) + math.pow(pEvent.px[index], 2) + math.pow(pEvent.px[index], 2))
-        #     phi = math.acos(pEvent.px[index]/(math.sqrt(math.pow(pEvent.px[index], 2)+math.pow(pEvent.py[index], 2))))
-        #     eta = pEvent.pz[index]/ptot
+            for k, index in enumerate(jEvent.pIndex[j]):
+                pTot = math.sqrt(math.pow(pEvent.px[index], 2) + math.pow(pEvent.py[index], 2) + math.pow(pEvent.pz[index], 2))
+                phi = math.acos(pEvent.px[index]/(math.sqrt(math.pow(pEvent.px[index], 2)+math.pow(pEvent.py[index], 2))))
+                eta = pEvent.pz[index]/pTot
 
-        #         #centre the jet axis
-        #     phijet = jetTree.phi[j]
-        #     etajet = jetTree.eta[j]
-        #     phi = phi-phijet
-        #     eta = eta-etajet
+        #center the jet axis
+                phijet = jEvent.phi[j]
+                etajet = jEvent.eta[j]
+          #translation 1: centering 
+                phi = phi-phijet
+                eta = eta-etajet
+
+                phi_maxm = phi_maxm-phijet
+                eta_maxm = eta_maxm-etajet
+
+                phi_submax = phi_submax-phijet
+                eta_submax = eta_submax-etajet
+
 
                 #fill histogram for centre
-
-            histcentre.Fill(phi, eta)
+                histcentre.Fill(phi, eta)
             #########
-        if(len(jetTree.pIndex[j])>1):
+            #rotate
+                if(len(jEvent.pIndex[j])>1):
 
-            star = numpy.arctan((jetTree.eta[maxm]-jetTree.eta[submax])/(jetTree.phi[maxm]-jetTree.phi[submax]))
- 
-            for k, index in enumerate(jetTree.pIndex[j]):
-                ptot = math.sqrt(math.pow(tree.px[index], 2) + math.pow(tree.px[index], 2) + math.pow(tree.px[index], 2))
-                phi = math.acos(tree.px[index]/(math.sqrt(math.pow(tree.px[index], 2)+math.pow(tree.py[index], 2))))
-                eta = tree.pz[index]/ptot
+                    star = math.atan2((phi_maxm-phi_submax),(eta_maxm-eta_submax))
 
-                #rotate
                            #check which arctan
-                alpha = math.atan(eta/phi) #fill in numbers
-                r = math.sqrt(math.pow(phi, 2) + math.pow(eta, 2))
-                phi = r * math.cos(alpha-star)
-                eta = r * math.sin(alpha-star)
-                
+                    alpha = math.atan2(eta,phi) #fill in numbers
+                    r = math.sqrt(math.pow(phi, 2) + math.pow(eta, 2))
+                    phi = r * math.cos(alpha-star)
+                    eta = r * math.sin(alpha-star)
+
+                    alpha_maxm = math.atan2(eta_maxm,phi_maxm) #fill in numbers
+                    r_maxm = math.sqrt(math.pow(phi_maxm, 2) + math.pow(eta_maxm, 2))
+                    phi_maxm = r_maxm * math.cos(alpha_maxm-star)
+                    eta_maxm = r_maxm * math.sin(alpha_maxm-star) 
+
+                    alpha_submax = math.atan2(eta_submax,phi_submax) #fill in numbers
+                    r_submax = math.sqrt(math.pow(phi_submax, 2) + math.pow(eta_submax, 2))
+                    phi_submax = r_submax * math.cos(alpha_submax-star)
+                    eta_submax = r_submax * math.sin(alpha_submax-star)                   
+                    #Translation pt 2
+
+
                 # fill histogram for rotate
-                histrotate.Fill(phi, eta)       
+                    histrotate.Fill(phi, eta)
+
+                    phi = phi - phi_maxm
+                    eta = eta - eta_maxm
 
     #see others for examples of iterating through
         
@@ -106,7 +129,7 @@ def readTree(filename1, filename2):
     canvascentre.SaveAs("centre.pdf")
 
     canvasrotate.cd()
-    histrotate.Draw("lego")
+    histrotate.Draw("surf1")
     canvasrotate.SaveAs("rotate.pdf")
 
     

@@ -24,15 +24,15 @@ ROOTLIBS =$(shell \root-config --libs)
 # deal with pythia 
 #PYTHIADIR = its your local path to pythia. In my case its in the same directory
 #where this Makefile is placed
-#PYTHIADIR   = /home/yu.yale.edu/sc2554/root/pythia/pythia8226
-#PYTHIAFLAGS = -I$(PYTHIADIR)/include 
-#PYTHIALIBS  =  -L$(PYTHIADIR)/lib/ -lpythia8 
-#-llhapdfdummy
+PYTHIADIR   = /home/yu.yale.edu/sc2554/root/pythia/pythia8226
+PYTHIAFLAGS = -I$(PYTHIADIR)/include 
+PYTHIALIBS  =  -L$(PYTHIADIR)/lib/ -lpythia8
+# -llhapdfdummy
 
 
 # Include Pythia and Pythia examples config files
-#-include $(PYTHIADIR)/config.mk
-#-include $(PYTHIADIR)/examples/config.mk
+-include $(PYTHIADIR)/config.mk
+-include $(PYTHIADIR)/examples/config.mk
 
 
 # deal with fastjet
@@ -48,8 +48,16 @@ LHAPDFARGS =
 
 # main61.cc in the example folder uses fastjet. Put this in the same folder
 # where the make file is placed. 
-#clean:
-#     rm -f $(obj) 
+clean:
+	 rm -f $(obj) 
+pp:
+
+	g++ -o test2 test2.cpp $(PYTHIAFLAGS) $(PYTHIALIBS) $(FASTJETINC) $(FASTJETLIB) $(LHAPDFARGS) $(ROOTFLAGS) $(ROOTLIBS) -lTreePlayer loader_C.so
 
 all:
 	g++ -o jetFind jFinder2.cpp $(PYTHIAFLAGS) $(PYTHIALIBS) $(FASTJETINC) $(FASTJETLIB) $(LHAPDFARGS) $(ROOTFLAGS) $(ROOTLIBS) -lTreePlayer loader_C.so
+
+
+
+
+
