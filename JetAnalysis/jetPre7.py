@@ -64,47 +64,47 @@ def readTree(filename1, filename2):
                         submax = jEvent.pIndex[j][k]
                 print("\t\tsubmax: %d" % submax)
 
-        # for k, index in enumerate(jEvent.pIndex[j]):
-        #     ptot = math.sqrt(math.pow(pEvent.px[index], 2) + math.pow(pEvent.px[index], 2) + math.pow(pEvent.px[index], 2))
-        #     phi = math.acos(pEvent.px[index]/(math.sqrt(math.pow(pEvent.px[index], 2)+math.pow(pEvent.py[index], 2))))
-        #     eta = pEvent.pz[index]/ptot
+        for k, index in enumerate(jEvent.pIndex[j]):
+            ptot = math.sqrt(math.pow(pEvent.px[index], 2) + math.pow(pEvent.px[index], 2) + math.pow(pEvent.px[index], 2))
+            phi = math.acos(pEvent.px[index]/(math.sqrt(math.pow(pEvent.px[index], 2)+math.pow(pEvent.py[index], 2))))
+            eta = pEvent.pz[index]/ptot
 
-        #         #centre the jet axis
-        #     phi = phi-phijet
-        #     eta = eta-etajet
+                #centre the jet axis
+            phijet = jetTree.phi[j]
+            etajet = jetTree.eta[j]
+            phi = phi-phijet
+            eta = eta-etajet
 
-        #         #fill histogram for centre
+                #fill histogram for centre
 
-        #     histcentre.Fill(phi, eta)
-            #############
-        # star = numpy.arctan((jEvent.eta[maxm]-jEvent.eta[submax])/(jEvent.phi[maxm]-jEvent.phi[submax]))
+            histcentre.Fill(phi, eta)
+            ############
+        star = numpy.arctan((jEvent.eta[maxm]-jEvent.eta[submax])/(jEvent.phi[maxm]-jEvent.phi[submax]))
 
-        #     #define the jet axis
-        # phijet = jetTree.phi[j]
-        # etajet = jetTree.eta[j]
+            #define the jet axis
 
-        # for k, index in enumerate(jEvent.pIndex[j]):
-        #     ptot = math.sqrt(math.pow(pEvent.px[index], 2) + math.pow(pEvent.px[index], 2) + math.pow(pEvent.px[index], 2))
-        #     phi = math.acos(pEvent.px[index]/(math.sqrt(math.pow(pEvent.px[index], 2)+math.pow(pEvent.py[index], 2))))
-        #     eta = pEvent.pz[index]/ptot
+        for k, index in enumerate(jEvent.pIndex[j]):
+            ptot = math.sqrt(math.pow(pEvent.px[index], 2) + math.pow(pEvent.px[index], 2) + math.pow(pEvent.px[index], 2))
+            phi = math.acos(pEvent.px[index]/(math.sqrt(math.pow(pEvent.px[index], 2)+math.pow(pEvent.py[index], 2))))
+            eta = pEvent.pz[index]/ptot
 
-        #         #centre the jet axis
-        #     phi = phi-phijet
-        #     eta = eta-etajet
+                #centre the jet axis
+            phi = phi-phijet
+            eta = eta-etajet
 
-        #         #fill histogram for centre
+                #fill histogram for centre
 
-        #     histcentre.Fill(phi, eta)
+            histcentre.Fill(phi, eta)
 
-        #         #rotate
-        #                    #check which arctan
-        #     alpha = math.atan(eta/phi) #fill in numbers
-        #     r = math.sqrt(math.pow(phi, 2) + math.pow(eta, 2))
-        #     phi = r * math.cos(alpha-star)
-        #     eta = r * math.sin(alpha-star)
+                #rotate
+                           #check which arctan
+            alpha = math.atan(eta/phi) #fill in numbers
+            r = math.sqrt(math.pow(phi, 2) + math.pow(eta, 2))
+            phi = r * math.cos(alpha-star)
+            eta = r * math.sin(alpha-star)
                 
                 # fill histogram for rotate
-            # histrotate.Fill(phi, eta)       
+            histrotate.Fill(phi, eta)       
     #see others for examples of iterating through
         
     canvascentre.cd()

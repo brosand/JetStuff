@@ -42,7 +42,7 @@ int main (){
 	TTreeReaderArray<double> myPz(myReader, "pz");
 	TTreeReaderArray<double> myEnergy(myReader, "energy");
 	TTreeReaderArray<int> numParticles(myReader, "nFinalParticles"); //??
-	TTreeReaderValue<int> myEvents(myReader, "iEvents");
+	// TTreeReaderValue<int> myEvents(myReader, "iEvents");
 	TTreeReaderValue<int> myNFinalParticles(myReader, "nFinalParticles");
 
 	// vector<int> pTempV;
@@ -66,7 +66,7 @@ int main (){
   //vector of pseudoJets
 	// vector<vector<PseudoJet>> particlesVector;
   //loop through the particles and turn them into pseudojets
-        int iEvent = 0;
+        // int iEvent = 0;
 	while(myReader.Next()) {
 	//Note For Understanding: myReader.Next() --> iterates through the first level of the reader, or the only level for the value reader, the array reader needs to levels (understanding as of 6/20/17)
 
@@ -91,8 +91,8 @@ int main (){
 		ClusterSequenceArea cs(particles, jet_def, area_def);
 		vector<PseudoJet> jets = sorted_by_pt(cs.inclusive_jets());
 		
-		cout << "Event number: " << iEvent << endl;
-		iEvent++;
+		// cout << "Event number: " << iEvent << endl;
+		// iEvent++;
 //add the jet data to the final TTree
 		// cout << "79";
 
@@ -103,20 +103,22 @@ int main (){
 		//jets[i].constituents().size() is the number of particles in that jet
 		for (int i = 0; i < jets.size(); i++) {
 			vector<int> pTempV;
-			cout << "\tjets[" << i << "].constituents().size() is " << jets[i].constituents().size() << endl;
+			// cout << "\tjets[" << i << "].constituents().size() is " << jets[i].constituents().size() << endl;
 			for (int b = 0; b < jets[i].constituents().size(); b++){
 				//constituents=jets[i].constituents();			
-				cout << "\t\tjets[" << i << "]user_index: " << jets[i].constituents()[b].user_index() << endl;
-
+				// cout << "\t\tjets[" << i << "]user_index: " << jets[i].constituents()[b].user_index() << endl;
+				// a = pIndex[i].push_back(0);
 				pTempV.push_back(jets[i].constituents()[b].user_index()); //Michael imp
 				//cout << pTempV[b] << endl;
+				// cout << "test" << endl;
 
 			}
 
 			//cout << "break" << endl;	
 
 			pIndex.push_back(pTempV);
-			//cout << pIndex[i] << endl;
+			// cout << pTempV[0] << endl;
+			// cout << pIndex[0][0] << endl;
 			phi.push_back(jets[i].phi());
 			eta.push_back(jets[i].rap());
 
@@ -139,13 +141,16 @@ int main (){
 		jetTree.Fill();
 		//cout << "102";
 		eventN = eventN + 1;
+		pIndex.clear();
+		eta.clear();
+		phi.clear();
 			//}
 	}
 
+	jetTree.Write();
 	jetTree.Print();
 //write the tree to a file
 
-	jetTree.Write();
 
 //f.ls();
 	a.Close();

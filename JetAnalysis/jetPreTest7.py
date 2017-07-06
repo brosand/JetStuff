@@ -1,6 +1,6 @@
 #input: a tree with all the particle data, a tree with all the jet data
 #output: a tree where for each event, one branch for event number, one branch for number of jets, one branch is a vector of vectors containing the indices of each particle within a jet. This way with these indices we can go back to the tree and get information about these jets
-from itertools import izip
+from itertools import izip_longest
 import ROOT
 import array
 import numpy
@@ -27,14 +27,14 @@ def readTree(filename1, filename2):
 
     '''
     iEvent = 0;
-    for pEvent, jEvent in  izip(tree, jetTree): #zip
+    for pEvent, jEvent in  izip_longest(tree, jetTree): #zip
         print("Event %d:" % iEvent)
         iEvent+=1
     #for event in jetTree:
         print("jEvent.nJets is %d" %jEvent.nJets)
         print("pEvent.nParticles is %d" %pEvent.nFinalParticles)
-        print("\t\t\tenergy[%d] = %f" % (jEvent.pIndex[2][2], pEvent.energy[jEvent.pIndex[2][2]]))
-
+        print("phi test %d" % jEvent.phi[0])
+        print("\t\t\tenergy[%d] = %f" % (jEvent.pIndex[0][0], pEvent.energy[3]))
 
         
        #  for j in range(jEvent.nJets): #j tells you which jet you are in
