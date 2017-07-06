@@ -14,10 +14,12 @@ def readTree(filename1, filename2):
     jetTree = fIn2.Get("jetTree")
     jetTree.Print()
 
-    histcentre = ROOT.TH2F("histcentre", "histcentre", 20, -5, 5, 20, -5, 5) #bin bound bound bin bound bound
-    histrotate = ROOT.TH2F("histrotate", "histrotate", 20, -5, 5, 20, -5, 5) #bin bound bound bin bound bound
+    histcentre = ROOT.TH2F("histcentre", "histcentre", 20, -2, 2, 20, -2, 2) #bin bound bound bin bound bound
+    histrotate = ROOT.TH2F("histrotate", "histrotate", 20, -2, 2, 20, -2, 2) #bin bound bound bin bound bound
+    histTranslate = ROOT.TH2F("histTranslate", "histTranslate", 50, -1, 1, 50, -1, 1) #bin bound bound bin bound bound
     canvascentre = ROOT.TCanvas("canvascentre", "canvascentre")
     canvasrotate = ROOT.TCanvas("canvasrotate", "canvasrotate")
+    canvasTranslate = ROOT.TCanvas("canvasTranslate", "canvasTranslate")
 
     '''
 
@@ -117,9 +119,13 @@ def readTree(filename1, filename2):
 
                 # fill histogram for rotate
                     histrotate.Fill(phi, eta)
-
+                    #next step of translation
                     phi = phi - phi_maxm
                     eta = eta - eta_maxm
+
+                    histTranslate.Fill(phi,eta)
+
+                    
 
     #see others for examples of iterating through
         
@@ -129,8 +135,12 @@ def readTree(filename1, filename2):
     canvascentre.SaveAs("centre.pdf")
 
     canvasrotate.cd()
-    histrotate.Draw("surf1")
+    histrotate.Draw("lego")
     canvasrotate.SaveAs("rotate.pdf")
+
+    canvasTranslate.cd()
+    histTranslate.Draw("lego")
+    canvasTranslate.SaveAs("translate.pdf")
 
     
 
