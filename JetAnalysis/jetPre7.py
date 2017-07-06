@@ -70,46 +70,28 @@ def readTree(filename1, filename2):
             phi = phi-phijet
             eta = eta-etajet
 
-<<<<<<< HEAD
                 #fill histogram for centre
 
             histcentre.Fill(phi, eta)
-            ############
-        star = numpy.arctan((jEvent.eta[maxm]-jEvent.eta[submax])/(jEvent.phi[maxm]-jEvent.phi[submax]))
-=======
-        if(len(jEvent.pIndex[j])>1):
+            #########
+        if(len(jetTree.pIndex[j])>1):
 
-            star = numpy.arctan((jEvent.eta[maxm]-jEvent.eta[submax])/(jEvent.phi[maxm]-jEvent.phi[submax]))
-    '''
-        #     #define the jet axis
-            phijet = jetTree.phi[j]
-        # etajet = jetTree.eta[j]
->>>>>>> 007c69a5befc031607e5be18fc5f9e70b9f934bf
-
-            #define the jet axis
-
-        for k, index in enumerate(jEvent.pIndex[j]):
-            ptot = math.sqrt(math.pow(pEvent.px[index], 2) + math.pow(pEvent.px[index], 2) + math.pow(pEvent.px[index], 2))
-            phi = math.acos(pEvent.px[index]/(math.sqrt(math.pow(pEvent.px[index], 2)+math.pow(pEvent.py[index], 2))))
-            eta = pEvent.pz[index]/ptot
-
-                #centre the jet axis
-            phi = phi-phijet
-            eta = eta-etajet
-
-                #fill histogram for centre
-
-            histcentre.Fill(phi, eta)
+            star = numpy.arctan((jetTree.eta[maxm]-jetTree.eta[submax])/(jetTree.phi[maxm]-jetTree.phi[submax]))
+ 
+            for k, index in enumerate(jetTree.pIndex[j]):
+                ptot = math.sqrt(math.pow(tree.px[index], 2) + math.pow(tree.px[index], 2) + math.pow(tree.px[index], 2))
+                phi = math.acos(tree.px[index]/(math.sqrt(math.pow(tree.px[index], 2)+math.pow(tree.py[index], 2))))
+                eta = tree.pz[index]/ptot
 
                 #rotate
                            #check which arctan
-            alpha = math.atan(eta/phi) #fill in numbers
-            r = math.sqrt(math.pow(phi, 2) + math.pow(eta, 2))
-            phi = r * math.cos(alpha-star)
-            eta = r * math.sin(alpha-star)
+                alpha = math.atan(eta/phi) #fill in numbers
+                r = math.sqrt(math.pow(phi, 2) + math.pow(eta, 2))
+                phi = r * math.cos(alpha-star)
+                eta = r * math.sin(alpha-star)
                 
                 # fill histogram for rotate
-            histrotate.Fill(phi, eta)       
+                histrotate.Fill(phi, eta)       
     #see others for examples of iterating through
         
     canvascentre.cd()
@@ -120,7 +102,7 @@ def readTree(filename1, filename2):
     canvasrotate.cd()
     histrotate.Draw("lego")
     canvasrotate.SaveAs("rotate.pdf")
-    '''
+    
 
 if __name__ == "__main__":
     filename1 = "ppfile.root"
