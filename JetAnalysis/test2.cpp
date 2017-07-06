@@ -75,7 +75,6 @@ for (int iEvents = 0; iEvents < nEvents; iEvents++){
 
 		if (obj.event[i].isFinal()){
 
-			
 		//if its final, add event to tree
 
 			//do it with vectors
@@ -95,6 +94,12 @@ for (int iEvents = 0; iEvents < nEvents; iEvents++){
 	cout << "Number of Final Particles: " << nFinalParticles << endl;
 
 	tree.Fill();
+	px.clear();
+	py.clear();
+	pz.clear();
+	energy.clear();
+	charge.clear();
+	mass.clear();
 
 	
 }
