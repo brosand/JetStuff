@@ -14,9 +14,23 @@ def readTree(filename1, filename2):
     jetTree = fIn2.Get("jetTree")
     jetTree.Print()
 
+    histbefore = ROOT.TH2F("histbefore", "histbefore", 20, -2, 2, 20, -2, 2) #bin bound bound bin bound bound
+    histbefore.GetXaxis().SetTitle("phi");
+    histbefore.GetYaxis().SetTitle("eta");
+    histbefore.GetZaxis().SetTitle("idk");
     histcentre = ROOT.TH2F("histcentre", "histcentre", 20, -2, 2, 20, -2, 2) #bin bound bound bin bound bound
+    histcentre.GetXaxis().SetTitle("phi");
+    histcentre.GetYaxis().SetTitle("eta");
+    histcentre.GetZaxis().SetTitle("idk");
     histrotate = ROOT.TH2F("histrotate", "histrotate", 20, -2, 2, 20, -2, 2) #bin bound bound bin bound bound
+    histrotate.GetXaxis().SetTitle("phi");
+    histrotate.GetYaxis().SetTitle("eta");
+    histrotate.GetZaxis().SetTitle("idk");
     histTranslate = ROOT.TH2F("histTranslate", "histTranslate", 50, -1, 1, 50, -1, 1) #bin bound bound bin bound bound
+    histTranslate.GetXaxis().SetTitle("phi");
+    histTranslate.GetYaxis().SetTitle("eta");
+    histTranslate.GetZaxis().SetTitle("idk");
+    canvasbefore = ROOT.TCanvas("canvasbefore", "canvasbefore")
     canvascentre = ROOT.TCanvas("canvascentre", "canvascentre")
     canvasrotate = ROOT.TCanvas("canvasrotate", "canvasrotate")
     canvasTranslate = ROOT.TCanvas("canvasTranslate", "canvasTranslate")
@@ -54,7 +68,7 @@ def readTree(filename1, filename2):
                     maxm = jEvent.pIndex[j][k]
             print("\t\tmax: %d" % maxm)
             phi_maxm = math.acos(pEvent.px[maxm]/(math.sqrt(math.pow(pEvent.px[maxm], 2)+math.pow(pEvent.py[maxm], 2))))
-            eta_maxm = pEvent.pz[maxm]/(math.sqrt(math.pow(pEvent.px[maxm], 2) + math.pow(pEvent.py[maxm], 2) + math.pow(pEvent.pz[maxm], 2)))
+            eta_maxm = math.atanh(pEvent.pz[maxm]/(math.sqrt(math.pow(pEvent.px[maxm], 2) + math.pow(pEvent.py[maxm], 2) + math.pow(pEvent.pz[maxm], 2))))
             submax = 0
             # phi_submax = 0
             # eta_submax = 0
@@ -70,12 +84,18 @@ def readTree(filename1, filename2):
                 print("\t\tsubmax: %d" % submax)
                 
                 phi_submax = math.acos(pEvent.px[submax]/(math.sqrt(math.pow(pEvent.px[submax], 2)+math.pow(pEvent.py[submax], 2))))
-                eta_submax = pEvent.pz[submax]/(math.sqrt(math.pow(pEvent.px[submax], 2) + math.pow(pEvent.py[submax], 2) + math.pow(pEvent.pz[submax], 2)))
+                eta_submax = math.atanh(pEvent.pz[submax]/(math.sqrt(math.pow(pEvent.px[submax], 2) + math.pow(pEvent.py[submax], 2) + math.pow(pEvent.pz[submax], 2))))
 
-            for k, index in enumerate(jEvent.pIndex[j]):
+            for index in (jEvent.pIndex[j]):
                 pTot = math.sqrt(math.pow(pEvent.px[index], 2) + math.pow(pEvent.py[index], 2) + math.pow(pEvent.pz[index], 2))
-                phi = math.acos(pEvent.px[index]/(math.sqrt(math.pow(pEvent.px[index], 2)+math.pow(pEvent.py[index], 2))))
-                eta = pEvent.pz[index]/pTot
+                if(pEvent.py[index]<0):
+                    phi = (-1)*math.acos(pEvent.px[index]/(math.sqrt(math.pow(pEvent.px[index], 2)+math.pow(pEvent.py[index], 2))))
+                else:
+                    phi = math.acos(pEvent.px[index]/(math.sqrt(math.pow(pEvent.px[index], 2)+math.pow(pEvent.py[index], 2))))
+                eta = math.atanh(pEvent.pz[index]/pTot)
+
+                #before anything
+                histbefore.Fill(phi, eta)
 
         #center the jet axis
                 phijet = jEvent.phi[j]
@@ -123,12 +143,16 @@ def readTree(filename1, filename2):
                     phi = phi - phi_maxm
                     eta = eta - eta_maxm
 
+
                     histTranslate.Fill(phi,eta)
 
                     
 
     #see others for examples of iterating through
-        
+    canvasbefore.cd()
+    histbefore.Draw("lego")
+    canvasbefore.SaveAs("before.pdf")
+
     canvascentre.cd()
     histcentre.Draw("lego")
     #https://root.cern.ch/root/html534/guides/users-guide/Histograms.html
