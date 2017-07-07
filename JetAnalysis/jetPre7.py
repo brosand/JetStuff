@@ -145,6 +145,14 @@ def readTree(filename1, filename2):
 
 
                     histTranslate.Fill(phi,eta)
+                   
+                    #reflect
+                    sumetapos = 0
+                    sumetaneg = 0
+                    if(eta >=0):
+                        sumetapos += pEvent.energy[index]
+                    else:
+                        sumetaneg += pEvent.energy[index]
 
                     
 
