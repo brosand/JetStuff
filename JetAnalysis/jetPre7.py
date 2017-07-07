@@ -18,7 +18,7 @@ def readTree(filename1, filename2):
     jetTree = fIn2.Get("jetTree")
     jetTree.Print()
 
-    histBefore = ROOT.TH2F("histBefore", "histBefore", 20, -2, 2, 20, -2, 2) #bin bound bound bin bound bound
+    histBefore = ROOT.TH2F("histBefore", "histBefore", 20, -4, 4, 40, -4, 4) #bin bound bound bin bound bound
     histBefore.GetXaxis().SetTitle("phi");
     histBefore.GetYaxis().SetTitle("eta");
     histBefore.GetZaxis().SetTitle("counts weighted by energy");
@@ -33,17 +33,17 @@ def readTree(filename1, filename2):
     histRotate.GetYaxis().SetTitle("eta");
     histRotate.GetZaxis().SetTitle("counts weighted by energy");
 
-    histTranslate = ROOT.TH2F("histTranslate", "histTranslate", 20, -1, 1, 20, -1, 1) #bin bound bound bin bound bound
+    histTranslate = ROOT.TH2F("histTranslate", "histTranslate", 20, -2, 2, 20, -2, 2) #bin bound bound bin bound bound
     histTranslate.GetXaxis().SetTitle("phi");
     histTranslate.GetYaxis().SetTitle("eta");
     histTranslate.GetZaxis().SetTitle("counts weighted by energy");
 
-    histReflect = ROOT.TH2F("histReflect", "histReflect", 20, -1, 1, 20, -1, 1) #bin bound bound bin bound bound
+    histReflect = ROOT.TH2F("histReflect", "histReflect", 20, -5, 5, 20, -5, 5) #bin bound bound bin bound bound
     histReflect.GetXaxis().SetTitle("phi");
     histReflect.GetYaxis().SetTitle("eta");
     histReflect.GetZaxis().SetTitle("counts weighted by energy");
 
-    histJetTemp = ROOT.TH2F("histJetTemp", "histJetTemp", DIMENSION_JET_IMAGE, -5, 5, DIMENSION_JET_IMAGE, -5, 5) # numBins bound bound bin bound bound
+    histJetTemp = ROOT.TH2F("histJetTemp", "histJetTemp", DIMENSION_JET_IMAGE, -10, 10, DIMENSION_JET_IMAGE, -10, 10) # numBins bound bound bin bound bound
     histJetTemp.GetXaxis().SetTitle("phi");
     histJetTemp.GetYaxis().SetTitle("eta");
     histJetTemp.GetZaxis().SetTitle("counts weighted by energy");
@@ -67,6 +67,8 @@ def readTree(filename1, filename2):
 
 #LOOP: through each event in tree
     for pEvent, jEvent in  izip(tree, jetTree): #zip
+        # if (iEvent == 1):
+        #     break
         print("Event %d:" % iEvent)
     #for event in jetTree:
         print("jEvent.nJets is %d" %jEvent.nJets)
@@ -146,7 +148,7 @@ def readTree(filename1, filename2):
             #rotate
                 if(len(jEvent.pIndex[j])>1):
 
-                    star = math.atan2((phi_maxm-phi_submax),(eta_maxm-eta_submax))
+                    star = math.atan2((eta_maxm-eta_submax), (phi_maxm-phi_submax))
 
                            #check which arctan
                     alpha = math.atan2(eta,phi) #fill in numbers
@@ -154,23 +156,26 @@ def readTree(filename1, filename2):
                     phi = r * math.cos(alpha-star)
                     eta = r * math.sin(alpha-star)
 
-                    alpha_maxm = math.atan2(eta_maxm,phi_maxm) #fill in numbers
-                    r_maxm = math.sqrt(math.pow(phi_maxm, 2) + math.pow(eta_maxm, 2))
-                    phi_maxm = r_maxm * math.cos(alpha_maxm-star)
-                    eta_maxm = r_maxm * math.sin(alpha_maxm-star) 
-
-                    alpha_submax = math.atan2(eta_submax,phi_submax) #fill in numbers
-                    r_submax = math.sqrt(math.pow(phi_submax, 2) + math.pow(eta_submax, 2))
-                    phi_submax = r_submax * math.cos(alpha_submax-star)
-                    eta_submax = r_submax * math.sin(alpha_submax-star)                   
                     #Translation pt 2
 
 
                 # fill histogram for rotate
-                    histRotate.Fill(phi, eta)
+                    histRotate.Fill(phi, eta, pEvent.energy[index])
+
+                    alpha_maxR = math.atan2(eta_maxm,phi_maxm) #fill in numbers
+                    r_maxR = math.sqrt(math.pow(phi_maxm, 2) + math.pow(eta_maxm, 2))
+                    phi_maxR = r_maxR * math.cos(alpha_maxR-star)
+                    eta_maxR = r_maxR * math.sin(alpha_maxR-star) 
+
+                    # alpha_submax = math.atan2(eta_submax,phi_submax) #fill in numbers
+                    # r_submax = math.sqrt(math.pow(phi_submax, 2) + math.pow(eta_submax, 2))
+                    # phi_submax = r_submax * math.cos(alpha_submax-star)
+                    # eta_submax = r_submax * math.sin(alpha_submax-star)                   
                     #next step of translation
-                    phi = phi - phi_maxm
-                    eta = eta - eta_maxm
+                    phi = phi - phi_maxR
+                    eta = eta - eta_maxR
+
+                   
 
 
                     histTranslate.Fill(phi,eta, pEvent.energy[index])
@@ -187,28 +192,33 @@ def readTree(filename1, filename2):
 
                     #do the reflection
                     #put greater energy in positive eta(quadrants 1&2)
-            for i, a in enumerate(etaTempV):
-                if(sumEtaPos < sumEtaNeg):
-                    a = -1*a
-            #fill the histogram for reflection
-                histReflect.Fill(phiTempV[i], a, energyTempV[i])
-            #fill a temporary histogram with data from one jet
-                histJetTemp.Fill(phiTempV[i],etaTempV[i], energyTempV[i])
-            # if(jEvent.pIndex[i]  
+            if(len(jEvent.pIndex[j])>1):
+                for i, a in enumerate(etaTempV):
+                    if(sumEtaPos < sumEtaNeg):
+                        a = -1*a
+                #fill the histogram for reflection
+                    histReflect.Fill(phiTempV[i], a, energyTempV[i])
+                #fill a temporary histogram with data from one jet
+                    histJetTemp.Fill(phiTempV[i], a, energyTempV[i])
+                #if(jEvent.pIndex[i]  
 
             #write the temporary histogram to a text file
             
-            output.write(COLLISION_TYPE)
-            for q in range(DIMENSION_JET_IMAGE):
-                for n in range(DIMENSION_JET_IMAGE):
-                    output.write(" %d " % histJetTemp.GetBinContent(q, n))
-            output.write(" %d %d \n" % (j, iEvent))
+                output.write(COLLISION_TYPE)
+                for q in range(DIMENSION_JET_IMAGE):
+                    for r in range(DIMENSION_JET_IMAGE):
+                        output.write(" %d  " % histJetTemp.GetBinContent(q, r))
+                output.write(" %d %d \n" % (j, iEvent))
+                print(histJetTemp[0])
+                print(histJetTemp.GetBinContent(1,1))
+                print(histJetTemp.GetBinContent(2,2))
 
 
-            etaTempV = []
-            phiTempV = []
-            energyTempV = []
-            histJetTemp.Reset()
+
+                etaTempV = []
+                phiTempV = []
+                energyTempV = []
+                histJetTemp.Reset()
 
         iEvent+=1
 
