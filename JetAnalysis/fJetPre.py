@@ -6,8 +6,9 @@ import array
 import numpy
 import math
 
-DIMENSION_JET_IMAGE = 3
+DIMENSION_JET_IMAGE = 10
 COLLISION_TYPE = "pp"
+HIST_BOUND = .6
 
 def printOutput(output, j, iEvent, histogram):
     output.write(COLLISION_TYPE)
@@ -15,11 +16,11 @@ def printOutput(output, j, iEvent, histogram):
         for r in range(DIMENSION_JET_IMAGE):
             output.write(" %f  " % histogram.GetBinContent(q + 1, r + 1))
     output.write(" %d %d \n" % (j, iEvent))
-    print(histogram[0])
-    print('histogram at 1,1')
-    print(histogram.GetBinContent(1,1))
-    print('histogram at 2,2')
-    print(histogram.GetBinContent(2,2))
+    # print(histogram[0])
+    # print('histogram at 1,1')
+    # print(histogram.GetBinContent(1,1))
+    # print('histogram at 2,2')
+    # print(histogram.GetBinContent(2,2))
 
 
 
@@ -40,16 +41,15 @@ def getEta(pEvent, index):
 def fCentre(jEvent, j, phi, eta):
 
 
+    # print('phi before centre: %f' % phi)
     phijet = jEvent.phi[j]
     etajet = jEvent.eta[j]
+    # print('phijet: %f' % phijet)
 #translation 1: centering 
     phi = phi-phijet
     eta = eta-etajet
-    # phi_maxm = phi_maxm-phijet
-    # eta_maxm = eta_maxm-etajet
+    # print('phi after centre: %f' % phi)
 
-    # phi_submax = phi_submax-phijet
-    # eta_submax = eta_submax-etajet
     return phi, eta
 
 def findMaxSubmax(jEvent, pEvent, j):
@@ -65,11 +65,11 @@ def findMaxSubmax(jEvent, pEvent, j):
         if pEvent.energy[jEvent.pIndex[j][k]] > pEvent.energy[maxm]:
             maxm = jEvent.pIndex[j][k]
     print("\t\tmax: %d" % maxm)
-    phi_maxm = math.acos(pEvent.px[maxm]/(math.sqrt(math.pow(pEvent.px[maxm], 2)+math.pow(pEvent.py[maxm], 2))))
-    eta_maxm = math.atanh(pEvent.pz[maxm]/(math.sqrt(math.pow(pEvent.px[maxm], 2) + math.pow(pEvent.py[maxm], 2) + math.pow(pEvent.pz[maxm], 2))))
+    phi_maxm = getPhi(pEvent, index)
+    eta_maxm = getEta(pEvent, index)
     submax = 0
-    # phi_submax = 0
-    # eta_submax = 0
+    phi_submax = 0
+    eta_submax = 0
     if(len(jEvent.pIndex[j])>1):
         if (maxm == jEvent.pIndex[j][0]):
            submax = jEvent.pIndex[j][1]
@@ -84,11 +84,12 @@ def findMaxSubmax(jEvent, pEvent, j):
         phi_submax = math.acos(pEvent.px[submax]/(math.sqrt(math.pow(pEvent.px[submax], 2)+math.pow(pEvent.py[submax], 2))))
         eta_submax = math.atanh(pEvent.pz[submax]/(math.sqrt(math.pow(pEvent.px[submax], 2) + math.pow(pEvent.py[submax], 2) + math.pow(pEvent.pz[submax], 2))))
 
-    return phi_maxm, eta_maxm, phi_submax, eta_maxm
+    return phi_maxm, eta_maxm, phi_submax, eta_submax
 
 def fRotate(jEvent, j, phi, eta, phi_maxm, eta_maxm, phi_submax, eta_submax):
     if(len(jEvent.pIndex[j])>1):
-
+        # print("phi before rotate: %f" % phi)
+        # print("phi_maxm to be rotated around: %f" % phi_maxm)
         star = math.atan2((eta_maxm-eta_submax), (phi_maxm-phi_submax))
 
         alpha = math.atan2(eta,phi) #fill in numbers
@@ -96,15 +97,27 @@ def fRotate(jEvent, j, phi, eta, phi_maxm, eta_maxm, phi_submax, eta_submax):
         phi = r * math.cos(alpha-star)
         eta = r * math.sin(alpha-star)
 
+        # print('phi after rotate %f' % phi)
+
+
+
     return phi, eta
 
 def fTranslate(phi, eta, phi_maxm, eta_maxm):
+    # print("phi_maxm = %f" % phi_maxm)
+    # print("eta_maxm = %f" % eta_maxm)
+
+    # print("phi before translate = %f" % phi)
+    # print("eta before translate = %f" % eta)
+
     phi = phi - phi_maxm
     eta = eta - eta_maxm
+    # print("phi after translate = %f" % phi)
+    # print("eta after translate = %f\n" % eta)
 
     return phi, eta
 
-def fReflect_Fill_Print(output, iEvent, jEvent, j, phiTempV, etaTempV, energyTempV, sumEtaPos, sumEtaNeg):
+def fReflect_Fill_Print(output, iEvent, jEvent, j, phiTempV, etaTempV, energyTempV, sumEtaPos, sumEtaNeg, histReflect, histJetTemp):
     if(len(jEvent.pIndex[j])>1):
         for i, a in enumerate(etaTempV):
             if(sumEtaPos < sumEtaNeg):
@@ -113,6 +126,7 @@ def fReflect_Fill_Print(output, iEvent, jEvent, j, phiTempV, etaTempV, energyTem
             histReflect.Fill(phiTempV[i], a, energyTempV[i])
         #fill a temporary histogram with data from one jet
             histJetTemp.Fill(phiTempV[i], a, energyTempV[i])
+
         printOutput(output, j, iEvent, histJetTemp)
         etaTempV = []
         phiTempV = []
@@ -134,32 +148,32 @@ def readTree(filename1, filename2):
     jetTree = fIn2.Get("jetTree")
     jetTree.Print()
 
-    histBefore = ROOT.TH2F("histBefore", "histBefore", DIMENSION_JET_IMAGE, -4, 4, DIMENSION_JET_IMAGE, -4, 4) #bin bound bound bin bound bound
+    histBefore = ROOT.TH2F("histBefore", "histBefore", DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND, DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND) #bin bound bound bin bound bound
     histBefore.GetXaxis().SetTitle("phi");
     histBefore.GetYaxis().SetTitle("eta");
     histBefore.GetZaxis().SetTitle("counts weighted by energy");
 
-    histCentre = ROOT.TH2F("histCentre", "histCentre", DIMENSION_JET_IMAGE, -1, 1, DIMENSION_JET_IMAGE, -1, 1) #bin bound bound bin bound bound
+    histCentre = ROOT.TH2F("histCentre", "histCentre", DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND, DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND) #bin bound bound bin bound bound
     histCentre.GetXaxis().SetTitle("phi");
     histCentre.GetYaxis().SetTitle("eta");
     histCentre.GetZaxis().SetTitle("counts weighted by energy");
 
-    histRotate = ROOT.TH2F("histRotate", "histRotate", DIMENSION_JET_IMAGE, -1, 1, DIMENSION_JET_IMAGE, -1, 1) #bin bound bound bin bound bound
+    histRotate = ROOT.TH2F("histRotate", "histRotate", DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND, DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND) #bin bound bound bin bound bound
     histRotate.GetXaxis().SetTitle("phi");
     histRotate.GetYaxis().SetTitle("eta");
     histRotate.GetZaxis().SetTitle("counts weighted by energy");
 
-    histTranslate = ROOT.TH2F("histTranslate", "histTranslate", DIMENSION_JET_IMAGE, -1, 1, DIMENSION_JET_IMAGE, -1, 1) #bin bound bound bin bound bound
+    histTranslate = ROOT.TH2F("histTranslate", "histTranslate", DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND, DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND) #bin bound bound bin bound bound
     histTranslate.GetXaxis().SetTitle("phi");
     histTranslate.GetYaxis().SetTitle("eta");
     histTranslate.GetZaxis().SetTitle("counts weighted by energy");
 
-    histReflect = ROOT.TH2F("histReflect", "histReflect", DIMENSION_JET_IMAGE, -1, 1, DIMENSION_JET_IMAGE, -1, 1) #bin bound bound bin bound bound
+    histReflect = ROOT.TH2F("histReflect", "histReflect", DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND, DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND) #bin bound bound bin bound bound
     histReflect.GetXaxis().SetTitle("phi");
     histReflect.GetYaxis().SetTitle("eta");
     histReflect.GetZaxis().SetTitle("counts weighted by energy");
 
-    histJetTemp = ROOT.TH2F("histJetTemp", "histJetTemp", DIMENSION_JET_IMAGE, -1, 1, DIMENSION_JET_IMAGE, -1, 1) # numBins bound bound bin bound bound
+    histJetTemp = ROOT.TH2F("histJetTemp", "histJetTemp", DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND, DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND) # numBins bound bound bin bound bound
     histJetTemp.GetXaxis().SetTitle("phi");
     histJetTemp.GetYaxis().SetTitle("eta");
     histJetTemp.GetZaxis().SetTitle("counts weighted by energy");
@@ -170,13 +184,6 @@ def readTree(filename1, filename2):
     canvasTranslate = ROOT.TCanvas("canvasTranslate", "canvasTranslate")
     canvasReflect = ROOT.TCanvas("canvasReflect", "canvasReflect")
 
-    '''
-
-    for i, (a, b) in enumerate(tuple_list):
-        new_b = some_process(b)
-        tuple_list[i] = (a, new_b)
-
-    '''
     open('outputC.txt', 'w').close()
     iEvent = 0;
     outputC = open("outputC.txt" , "w" )
@@ -196,52 +203,16 @@ def readTree(filename1, filename2):
 #LOOP: through each event in tree
     for pEvent, jEvent in  izip(tree, jetTree): #zip
 
-        if (iEvent == 1):
-            break
         print("Event %d:" % iEvent)
     #for event in jetTree:
         print("jEvent.nJets is %d" %jEvent.nJets)
         print("pEvent.nParticles is %d" %pEvent.nFinalParticles)
 #LOOP: through each jet in event    
-        for j in range(1): #j tells you which jet you are in
+        for j in range(jEvent.nJets): #j tells you which jet you are in
              
             print("\tJet number %d" %j)
             print("\tjEvent.pIndex[j][0] = %d" % jEvent.pIndex[j][0])
             
-            #max placeholder for finding highest-energy particle in a jet
-            #loop through and find max energy
-            # maxm = jEvent.pIndex[j][0]
-#LOOP: through each particle in jet
-       #      for k, index in enumerate(jEvent.pIndex[j]):
-       # #index will give the particle index, eg [7, 21, 32], k gives 0, 1, 2
-       #          print("\t\t\tenergy[%d] = %f" % (jEvent.pIndex[j][k], pEvent.energy[jEvent.pIndex[j][k]]))
-       #          #events[0].energy[event[1].pIndex[j][k]] #how to tap into event number on other tree
-       #          #tree.event.energy[event.pIndex[j][k]] #how to tap into event number on other tree
-                 
-       #          #finding the particle in the jet with the highest energy
-       #          if pEvent.energy[jEvent.pIndex[j][k]] > pEvent.energy[maxm]:
-       #              maxm = jEvent.pIndex[j][k]
-       #      print("\t\tmax: %d" % maxm)
-       #      phi_maxm = math.acos(pEvent.px[maxm]/(math.sqrt(math.pow(pEvent.px[maxm], 2)+math.pow(pEvent.py[maxm], 2))))
-       #      eta_maxm = math.atanh(pEvent.pz[maxm]/(math.sqrt(math.pow(pEvent.px[maxm], 2) + math.pow(pEvent.py[maxm], 2) + math.pow(pEvent.pz[maxm], 2))))
-       #      submax = 0
-       #      # phi_submax = 0
-       #      # eta_submax = 0
-       #      if(len(jEvent.pIndex[j])>1):
-       #          if (maxm == jEvent.pIndex[j][0]):
-       #             submax = jEvent.pIndex[j][1]
-       #          else:
-       #             submax = jEvent.pIndex[j][0]
-       #          for k, index in enumerate(jEvent.pIndex[j]): #finding the particle in the jet with the second highest energy
-
-       #              if ((pEvent.energy[submax] < pEvent.energy[jEvent.pIndex[j][k]]) and (pEvent.energy[jEvent.pIndex[j][k]] < pEvent.energy[maxm])):
-       #                  submax = jEvent.pIndex[j][k]
-       #          print("\t\tsubmax: %d" % submax)
-                
-       #          phi_submax = math.acos(pEvent.px[submax]/(math.sqrt(math.pow(pEvent.px[submax], 2)+math.pow(pEvent.py[submax], 2))))
-       #          eta_submax = math.atanh(pEvent.pz[submax]/(math.sqrt(math.pow(pEvent.px[submax], 2) + math.pow(pEvent.py[submax], 2) + math.pow(pEvent.pz[submax], 2))))
-    
-    
             phiTempV = []
             etaTempV = []
             energyTempV = []
@@ -249,9 +220,16 @@ def readTree(filename1, filename2):
             sumEtaNeg = 0
 
             phi_maxm, eta_maxm, phi_submax, eta_submax = findMaxSubmax(jEvent, pEvent, j)
+            # print('max phi before centre: %f' % phi_maxm)
+            # print('for max:')
             phi_maxm, eta_maxm = fCentre(jEvent, j, phi_maxm, eta_maxm)
+            # print('for submax:')
             phi_submax, eta_submax = fCentre(jEvent, j, phi_submax, eta_submax)
-            phi_maxm, eta_maxm = fRotate(jEvent, j, phi_maxm, eta_maxm, phi_maxm, eta_maxm, phi_submax, eta_submax)
+            # print('now the rest is about the max: \n')
+            # print('phi_max before rotate: %f' % phi_maxm)
+            phi_maxR, eta_maxR = fRotate(jEvent, j, phi_maxm, eta_maxm, phi_maxm, eta_maxm, phi_submax, eta_submax)
+            # print('phi_max after rotate: %f' % phi_maxR)
+            # print('\n')
 
             for index in (jEvent.pIndex[j]):
                 phi, eta = getPhi(pEvent, index), getEta(pEvent, index)
@@ -264,7 +242,7 @@ def readTree(filename1, filename2):
                 phi, eta = fRotate(jEvent, j, phi, eta, phi_maxm, eta_maxm, phi_submax, eta_submax)
                 histRotate.Fill(phi, eta, pEvent.energy[index])
 
-                phi, eta = fTranslate(phi, eta, phi_maxm, eta_maxm)
+                phi, eta = fTranslate(phi, eta, phi_maxR, eta_maxR)
                 histTranslate.Fill(phi , eta, pEvent.energy[index])
 
                 if(eta > 0):
@@ -275,92 +253,13 @@ def readTree(filename1, filename2):
                 etaTempV.append(eta)
                 phiTempV.append(phi)
                 energyTempV.append(pEvent.energy[index])
-            etaTempv = fReflect(output, iEvent, jEvent, j, phiTempV, etaTempV, energyTempV, sumEtaPos, sumEtaNeg)
-                
-               
 
-
-
-        #         before anything
-
-        # center the jet axis
-        #         phijet = jEvent.phi[j]
-        #         etajet = jEvent.eta[j]
-        #   #translation 1: centering 
-        #         phi = phi-phijet
-        #         eta = eta-etajet
-
-        #         phi_maxm = phi_maxm-phijet
-        #         eta_maxm = eta_maxm-etajet
-
-        #         phi_submax = phi_submax-phijet
-        #         eta_submax = eta_submax-etajet
-
-                
-        #         fill histogram for centre
-        #     ########
-        #     rotate
-        #         if(len(jEvent.pIndex[j])>1):
-
-        #             star = math.atan2((eta_maxm-eta_submax), (phi_maxm-phi_submax))
-
-        #                    #check which arctan
-        #             alpha = math.atan2(eta,phi) #fill in numbers
-        #             r = math.sqrt(math.pow(phi, 2) + math.pow(eta, 2))
-        #             phi = r * math.cos(alpha-star)
-        #             eta = r * math.sin(alpha-star)
-
-        #             #Translation pt 2
-
-
-        #         # fill histogram for rotate
-        #             histRotate.Fill(phi, eta, pEvent.energy[index])
-
-        #             alpha_maxR = math.atan2(eta_maxm,phi_maxm) #fill in numbers
-        #             r_maxR = math.sqrt(math.pow(phi_maxm, 2) + math.pow(eta_maxm, 2))
-        #             phi_maxR = r_maxR * math.cos(alpha_maxR-star)
-        #             eta_maxR = r_maxR * math.sin(alpha_maxR-star) 
-
-        #             alpha_submax = math.atan2(eta_submax,phi_submax) #fill in numbers
-        #             r_submax = math.sqrt(math.pow(phi_submax, 2) + math.pow(eta_submax, 2))
-        #             phi_submax = r_submax * math.cos(alpha_submax-star)
-        #             eta_submax = r_submax * math.sin(alpha_submax-star)                   
-        #             next step of translation
-        #             print ('phi: %f phi-maxm: %f ' % (phi, phi_maxm))
-        #             print ('eta: %f eta-maxm: %f ' % (eta, eta_maxm))
-
-                     # phi = phi - phi_maxR
-                     # eta = eta - eta_maxR
-
-                   
-
-
-                   
-                    #reflect
-
-
-                    #do the reflection
-                    #put greater energy in positive eta(quadrants 1&2)
-                #if(jEvent.pIndex[i]  
-
-            #write the temporary histogram to a text file
-                printOutput(outputC, j, iEvent, histCentre)
-                printOutput(outputR, j, iEvent, histRotate)
-                printOutput(outputT, j, iEvent, histTranslate)
-                printOutput(outputF, j, iEvent, histJetTemp)
+            fReflect_Fill_Print(outputF, iEvent, jEvent, j, phiTempV, etaTempV, energyTempV, sumEtaPos, sumEtaNeg, histReflect, histJetTemp)
             
-                # output.write(COLLISION_TYPE)
-                # for q in range(DIMENSION_JET_IMAGE):
-                #     for r in range(DIMENSION_JET_IMAGE):
-                #         output.write(" %d  " % histJetTemp.GetBinContent(q, r))
-                # output.write(" %d %d \n" % (j, iEvent))
-                # print(histJetTemp[0])
-                # print(histJetTemp.GetBinContent(1,1))
-                # print(histJetTemp.GetBinContent(2,2))
-
-
-
-
+            printOutput(outputC, j, iEvent, histCentre)
+            printOutput(outputR, j, iEvent, histRotate)
+            printOutput(outputT, j, iEvent, histTranslate)
+                
         iEvent+=1
 
 
