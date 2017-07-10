@@ -6,23 +6,58 @@ import array
 import numpy
 import math
 
-DIMENSION_JET_IMAGE = 3
-COLLISION_TYPE = "pp"
+def findMaxSubmax(jEvent, pEvent):
+    maxm = jEvent.pIndex[j][0]
+    phiTempV = []
+    etaTempV = []
+    energyTempV = []
+    sumEtaPos = 0
+    sumEtaNeg = 0
 
-def printOutput(output, j, iEvent, histogram):
-    output.write(COLLISION_TYPE)
-    for q in range(DIMENSION_JET_IMAGE):
-        for r in range(DIMENSION_JET_IMAGE):
-            output.write(" %f  " % histogram.GetBinContent(q + 1, r + 1))
-    output.write(" %d %d \n" % (j, iEvent))
-    print(histogram[0])
-    print('histogram at 1,1')
-    print(histogram.GetBinContent(1,1))
-    print('histogram at 2,2')
-    print(histogram.GetBinContent(2,2))
+    for k, index in enumerate(jEvent.pIndex[j]):
+       #index will give the particle index, eg [7, 21, 32], k gives 0, 1, 2
+            # print("\t\t\tenergy[%d] = %f" % (jEvent.pIndex[j][k], pEvent.energy[jEvent.pIndex[j][k]]))
+                #events[0].energy[event[1].pIndex[j][k]] #how to tap into event number on other tree
+                #tree.event.energy[event.pIndex[j][k]] #how to tap into event number on other tree
+                 
+                #finding the particle in the jet with the highest energy
+            if pEvent.energy[jEvent.pIndex[j][k]] > pEvent.energy[maxm]:
+                maxm = jEvent.pIndex[j][k]
+            print("\t\tmax: %d" % maxm)
+            phi_maxm = math.acos(pEvent.px[maxm]/(math.sqrt(math.pow(pEvent.px[maxm], 2)+math.pow(pEvent.py[maxm], 2))))
+            eta_maxm = math.atanh(pEvent.pz[maxm]/(math.sqrt(math.pow(pEvent.px[maxm], 2) + math.pow(pEvent.py[maxm], 2) + math.pow(pEvent.pz[maxm], 2))))
+            submax = 0
+            # phi_submax = 0
+            # eta_submax = 0
+            if(len(jEvent.pIndex[j])>1):
+                if (maxm == jEvent.pIndex[j][0]):
+                   submax = jEvent.pIndex[j][1]
+                else:
+                   submax = jEvent.pIndex[j][0]
+                for k, index in enumerate(jEvent.pIndex[j]): #finding the particle in the jet with the second highest energy
+
+                    if ((pEvent.energy[submax] < pEvent.energy[jEvent.pIndex[j][k]]) and (pEvent.energy[jEvent.pIndex[j][k]] < pEvent.energy[maxm])):
+                        submax = jEvent.pIndex[j][k]
+                                    submax = 0
+            # phi_submax = 0
+            # eta_submax = 0
+            if(len(jEvent.pIndex[j])>1):
+                if (maxm == jEvent.pIndex[j][0]):
+                   submax = jEvent.pIndex[j][1]
+                else:
+                   submax = jEvent.pIndex[j][0]
+                for k, index in enumerate(jEvent.pIndex[j]): #finding the particle in the jet with the second highest energy
+
+                    if ((pEvent.energy[submax] < pEvent.energy[jEvent.pIndex[j][k]]) and (pEvent.energy[jEvent.pIndex[j][k]] < pEvent.energy[maxm])):
+                        submax = jEvent.pIndex[j][k]
+
+                return [maxm, submax]
+
 
 def readTree(filename1, filename2):
 
+    DIMENSION_JET_IMAGE = 3
+    COLLISION_TYPE = "pp"
 
     fIn = ROOT.TFile(filename1, "READ")
     tree = fIn.Get("tree")
@@ -32,32 +67,32 @@ def readTree(filename1, filename2):
     jetTree = fIn2.Get("jetTree")
     jetTree.Print()
 
-    histBefore = ROOT.TH2F("histBefore", "histBefore", DIMENSION_JET_IMAGE, -4, 4, DIMENSION_JET_IMAGE, -4, 4) #bin bound bound bin bound bound
+    histBefore = ROOT.TH2F("histBefore", "histBefore", 20, -4, 4, 40, -4, 4) #bin bound bound bin bound bound
     histBefore.GetXaxis().SetTitle("phi");
     histBefore.GetYaxis().SetTitle("eta");
     histBefore.GetZaxis().SetTitle("counts weighted by energy");
 
-    histCentre = ROOT.TH2F("histCentre", "histCentre", DIMENSION_JET_IMAGE, -1, 1, DIMENSION_JET_IMAGE, -1, 1) #bin bound bound bin bound bound
+    histCentre = ROOT.TH2F("histCentre", "histCentre", 20, -2, 2, 20, -2, 2) #bin bound bound bin bound bound
     histCentre.GetXaxis().SetTitle("phi");
     histCentre.GetYaxis().SetTitle("eta");
     histCentre.GetZaxis().SetTitle("counts weighted by energy");
 
-    histRotate = ROOT.TH2F("histRotate", "histRotate", DIMENSION_JET_IMAGE, -1, 1, DIMENSION_JET_IMAGE, -1, 1) #bin bound bound bin bound bound
+    histRotate = ROOT.TH2F("histRotate", "histRotate", 20, -2, 2, 20, -2, 2) #bin bound bound bin bound bound
     histRotate.GetXaxis().SetTitle("phi");
     histRotate.GetYaxis().SetTitle("eta");
     histRotate.GetZaxis().SetTitle("counts weighted by energy");
 
-    histTranslate = ROOT.TH2F("histTranslate", "histTranslate", DIMENSION_JET_IMAGE, -1, 1, DIMENSION_JET_IMAGE, -1, 1) #bin bound bound bin bound bound
+    histTranslate = ROOT.TH2F("histTranslate", "histTranslate", 20, -2, 2, 20, -2, 2) #bin bound bound bin bound bound
     histTranslate.GetXaxis().SetTitle("phi");
     histTranslate.GetYaxis().SetTitle("eta");
     histTranslate.GetZaxis().SetTitle("counts weighted by energy");
 
-    histReflect = ROOT.TH2F("histReflect", "histReflect", DIMENSION_JET_IMAGE, -1, 1, DIMENSION_JET_IMAGE, -1, 1) #bin bound bound bin bound bound
+    histReflect = ROOT.TH2F("histReflect", "histReflect", 20, -5, 5, 20, -5, 5) #bin bound bound bin bound bound
     histReflect.GetXaxis().SetTitle("phi");
     histReflect.GetYaxis().SetTitle("eta");
     histReflect.GetZaxis().SetTitle("counts weighted by energy");
 
-    histJetTemp = ROOT.TH2F("histJetTemp", "histJetTemp", DIMENSION_JET_IMAGE, -1, 1, DIMENSION_JET_IMAGE, -1, 1) # numBins bound bound bin bound bound
+    histJetTemp = ROOT.TH2F("histJetTemp", "histJetTemp", DIMENSION_JET_IMAGE, -10, 10, DIMENSION_JET_IMAGE, -10, 10) # numBins bound bound bin bound bound
     histJetTemp.GetXaxis().SetTitle("phi");
     histJetTemp.GetYaxis().SetTitle("eta");
     histJetTemp.GetZaxis().SetTitle("counts weighted by energy");
@@ -81,52 +116,24 @@ def readTree(filename1, filename2):
 
 #LOOP: through each event in tree
     for pEvent, jEvent in  izip(tree, jetTree): #zip
-
-        if (iEvent == 1):
-            break
+        # if (iEvent == 1):
+        #     break
         print("Event %d:" % iEvent)
     #for event in jetTree:
         print("jEvent.nJets is %d" %jEvent.nJets)
         print("pEvent.nParticles is %d" %pEvent.nFinalParticles)
 #LOOP: through each jet in event    
-        for j in range(1): #j tells you which jet you are in
+        for j in range(jEvent.nJets): #j tells you which jet you are in
              
             print("\tJet number %d" %j)
             print("\tjEvent.pIndex[j][0] = %d" % jEvent.pIndex[j][0])
             
             #max placeholder for finding highest-energy particle in a jet
             #loop through and find max energy
-            maxm = jEvent.pIndex[j][0]
-            phiTempV = []
-            etaTempV = []
-            energyTempV = []
-            sumEtaPos = 0
-            sumEtaNeg = 0
-#LOOP: through each particle in jet
-            for k, index in enumerate(jEvent.pIndex[j]):
-       #index will give the particle index, eg [7, 21, 32], k gives 0, 1, 2
-                print("\t\t\tenergy[%d] = %f" % (jEvent.pIndex[j][k], pEvent.energy[jEvent.pIndex[j][k]]))
-                #events[0].energy[event[1].pIndex[j][k]] #how to tap into event number on other tree
-                #tree.event.energy[event.pIndex[j][k]] #how to tap into event number on other tree
-                 
-                #finding the particle in the jet with the highest energy
-                if pEvent.energy[jEvent.pIndex[j][k]] > pEvent.energy[maxm]:
-                    maxm = jEvent.pIndex[j][k]
-            print("\t\tmax: %d" % maxm)
+            #LOOP: through each particle in jet
+            [maxm, submax] = findMaxSubmax(jEvent, pEvent)
             phi_maxm = math.acos(pEvent.px[maxm]/(math.sqrt(math.pow(pEvent.px[maxm], 2)+math.pow(pEvent.py[maxm], 2))))
             eta_maxm = math.atanh(pEvent.pz[maxm]/(math.sqrt(math.pow(pEvent.px[maxm], 2) + math.pow(pEvent.py[maxm], 2) + math.pow(pEvent.pz[maxm], 2))))
-            submax = 0
-            # phi_submax = 0
-            # eta_submax = 0
-            if(len(jEvent.pIndex[j])>1):
-                if (maxm == jEvent.pIndex[j][0]):
-                   submax = jEvent.pIndex[j][1]
-                else:
-                   submax = jEvent.pIndex[j][0]
-                for k, index in enumerate(jEvent.pIndex[j]): #finding the particle in the jet with the second highest energy
-
-                    if ((pEvent.energy[submax] < pEvent.energy[jEvent.pIndex[j][k]]) and (pEvent.energy[jEvent.pIndex[j][k]] < pEvent.energy[maxm])):
-                        submax = jEvent.pIndex[j][k]
                 print("\t\tsubmax: %d" % submax)
                 
                 phi_submax = math.acos(pEvent.px[submax]/(math.sqrt(math.pow(pEvent.px[submax], 2)+math.pow(pEvent.py[submax], 2))))
@@ -144,6 +151,8 @@ def readTree(filename1, filename2):
                 histBefore.Fill(phi, eta, pEvent.energy[index])
 
         #center the jet axis
+
+
                 phijet = jEvent.phi[j]
                 etajet = jEvent.eta[j]
           #translation 1: centering 
@@ -218,19 +227,15 @@ def readTree(filename1, filename2):
                 #if(jEvent.pIndex[i]  
 
             #write the temporary histogram to a text file
-                printOutput(output1, j, iEvent, histCentre)
-                printOutput(output2, j, iEvent, histRotate)
-                printOutput(output3, j, iEvent, histTranslate)
-                printOutput(output4, j, iEvent, histJetTemp)
             
-                # output.write(COLLISION_TYPE)
-                # for q in range(DIMENSION_JET_IMAGE):
-                #     for r in range(DIMENSION_JET_IMAGE):
-                #         output.write(" %d  " % histJetTemp.GetBinContent(q, r))
-                # output.write(" %d %d \n" % (j, iEvent))
-                # print(histJetTemp[0])
-                # print(histJetTemp.GetBinContent(1,1))
-                # print(histJetTemp.GetBinContent(2,2))
+                output.write(COLLISION_TYPE)
+                for q in range(DIMENSION_JET_IMAGE):
+                    for r in range(DIMENSION_JET_IMAGE):
+                        output.write(" %d  " % histJetTemp.GetBinContent(q, r))
+                output.write(" %d %d \n" % (j, iEvent))
+                print(histJetTemp[0])
+                print(histJetTemp.GetBinContent(1,1))
+                print(histJetTemp.GetBinContent(2,2))
 
 
 
