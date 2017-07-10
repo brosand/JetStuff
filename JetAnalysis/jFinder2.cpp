@@ -24,6 +24,8 @@
 using namespace fastjet;
 using namespace std;
 
+JET_ENERGY_LOWER_LIMIT=20;
+
 int main (){
 	
 	
@@ -101,7 +103,7 @@ int main (){
 		//jets.size is the number of jets
 		for (int a = 0; a < jets.size(); a++) {
 			cout << jets[a].pt() << endl;
-			if (jets[a].pt() < 20) {
+			if (jets[a].pt() < JET_ENERGY_LOWER_LIMIT) {
 				jets.erase(jets.begin()+a);
 				a--;
 			}
