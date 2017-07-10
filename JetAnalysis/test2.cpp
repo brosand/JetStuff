@@ -58,7 +58,9 @@ obj.readString("Beams:eCM = 2760");
 obj.readString("Beams:frameType = 1");
 
 //
-obj.readString("SoftQCD:all = on");
+obj.readString("HardQCD:all = on");
+obj.readString("PhaseSpace:pTHatMin = 20.");
+
 obj.init();
 
 //set up my chart
@@ -105,7 +107,7 @@ for (int iEvents = 0; iEvents < nEvents; iEvents++){
 }
 tree.Print();
 //write the tree to a file
-TFile f("ppfile.root", "recreate");
+TFile f("ppfileHard.root", "recreate");
 tree.Write();
 //f.ls();
 f.Close();

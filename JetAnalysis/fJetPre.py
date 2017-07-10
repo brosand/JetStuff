@@ -189,15 +189,12 @@ def readTree(filename1, filename2):
     outputC = open("outputC.txt" , "w" )
 
     open('outputR.txt', 'w').close()
-    iEvent = 0;
     outputR = open("outputR.txt" , "w" )
 
     open('outputT.txt', 'w').close()
-    iEvent = 0;
     outputT = open("outputT.txt" , "w" )
 
     open('outputF.txt', 'w').close()
-    iEvent = 0;
     outputF = open("outputF.txt" , "w" )
 
 #LOOP: through each event in tree

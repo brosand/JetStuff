@@ -29,7 +29,7 @@ int main(){
         cout << "Enter the number of particles per event: ";
         cin >> nParticles;
 
-	double pt[nParticles], px[nParticles], py[nParticles], pz[nParticles], mass[nParticles];
+	double pt[nParticles], px[nParticles], py[nParticles], pz[nParticles], mass[nParticles], energy[nParticles];
 	int charge[nParticles];
 
 	//create a tree and link it
@@ -42,6 +42,7 @@ int main(){
 	tree.Branch("pz", &pz, "pz[nParticles]/D");
 	tree.Branch("charge", &charge, "charge[nParticles]/I");
 	tree.Branch("mass", &mass, "mass[nParticles]/D");
+	tree.Branch("energy", &energy, "energy[nParticles]/I");
 
         //cout << "Enter the time constant: ";
         //cin >> tao;
@@ -81,9 +82,12 @@ int main(){
 			//pz
 			pz[iParticles] = pt[iParticles]/(tan(theta));		
 			//mass
-			mass[iParticles] = 0.139570;	
-			//charge
-	
+			mass[iParticles] = 0.139570; //pion
+
+			//energy
+			energy[iParticles] = sqrt(pow(pt[iParticles], 2)+pow(pt[iParticles], 2)+pow(pt[iParticles], 2));	
+
+			//charge	
 			chargetemp = (rand()/double(RAND_MAX))*3;
 	
 			if((chargetemp >= 0) && (chargetemp < 1)){
