@@ -6,7 +6,7 @@ import array
 import numpy
 import math
 
-DIMENSION_JET_IMAGE = 10
+DIMENSION_JET_IMAGE = 5
 COLLISION_TYPE = "pp"
 HIST_BOUND = .6
 
@@ -65,8 +65,8 @@ def findMaxSubmax(jEvent, pEvent, j):
         if pEvent.energy[jEvent.pIndex[j][k]] > pEvent.energy[maxm]:
             maxm = jEvent.pIndex[j][k]
     print("\t\tmax: %d" % maxm)
-    phi_maxm = getPhi(pEvent, index)
-    eta_maxm = getEta(pEvent, index)
+    phi_maxm = getPhi(pEvent, maxm)
+    eta_maxm = getEta(pEvent, maxm)
     submax = 0
     phi_submax = 0
     eta_submax = 0
@@ -81,8 +81,8 @@ def findMaxSubmax(jEvent, pEvent, j):
                 submax = jEvent.pIndex[j][k]
         print("\t\tsubmax: %d" % submax)
         
-        phi_submax = math.acos(pEvent.px[submax]/(math.sqrt(math.pow(pEvent.px[submax], 2)+math.pow(pEvent.py[submax], 2))))
-        eta_submax = math.atanh(pEvent.pz[submax]/(math.sqrt(math.pow(pEvent.px[submax], 2) + math.pow(pEvent.py[submax], 2) + math.pow(pEvent.pz[submax], 2))))
+        phi_submax = getPhi(pEvent, submax)
+        eta_submax = getEta(pEvent, submax)
 
     return phi_maxm, eta_maxm, phi_submax, eta_submax
 
@@ -119,6 +119,7 @@ def fTranslate(phi, eta, phi_maxm, eta_maxm):
 
 def fReflect_Fill_Print(output, iEvent, jEvent, j, phiTempV, etaTempV, energyTempV, sumEtaPos, sumEtaNeg, histReflect, histJetTemp):
     if(len(jEvent.pIndex[j])>1):
+ # if(len(jEvent.pIndex[j])>1):
         for i, a in enumerate(etaTempV):
             if(sumEtaPos < sumEtaNeg):
                 a = -1*a
@@ -127,13 +128,20 @@ def fReflect_Fill_Print(output, iEvent, jEvent, j, phiTempV, etaTempV, energyTem
         #fill a temporary histogram with data from one jet
             histJetTemp.Fill(phiTempV[i], a, energyTempV[i])
 
-        printOutput(output, j, iEvent, histJetTemp)
-        etaTempV = []
-        phiTempV = []
-        energyTempV = []
-        histJetTemp.Reset()
+    printOutput(output, j, iEvent, histJetTemp)
+
 
     return etaTempV
+
+def fNormalize(jEvent, phiTempV, etaTempV, energyTempV, eTot, histNormalize):
+    print 'note 1'
+    for i, a in enumerate(etaTempV):
+        print 'note2'
+        histNormalize.Fill(phiTempV[i], a, (energyTempV[i]/eTot))
+        # if(eTot > 0):
+        #     print 'NOTE'
+        # else:
+            # print 'wut'
     
 
 
@@ -178,11 +186,18 @@ def readTree(filename1, filename2):
     histJetTemp.GetYaxis().SetTitle("eta");
     histJetTemp.GetZaxis().SetTitle("counts weighted by energy");
 
+    histNormalize = ROOT.TH2F("histNormalize", "histNormalize", DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND, DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND) # numBins bound bound bin bound bound
+    histNormalize.GetXaxis().SetTitle("phi");
+    histNormalize.GetYaxis().SetTitle("eta");
+    histNormalize.GetZaxis().SetTitle("counts weighted by energy");
+
     canvasBefore = ROOT.TCanvas("canvasBefore", "canvasBefore")
     canvasCentre = ROOT.TCanvas("canvasCentre", "canvasCentre")
     canvasRotate = ROOT.TCanvas("canvasRotate", "canvasRotate")
     canvasTranslate = ROOT.TCanvas("canvasTranslate", "canvasTranslate")
     canvasReflect = ROOT.TCanvas("canvasReflect", "canvasReflect")
+    canvasNormalize = ROOT.TCanvas("canvasNormalize", "canvasNormalize")
+
 
     open('outputC.txt', 'w').close()
     iEvent = 0;
@@ -196,6 +211,11 @@ def readTree(filename1, filename2):
 
     open('outputF.txt', 'w').close()
     outputF = open("outputF.txt" , "w" )
+
+    open('outputN.txt', 'w').close()
+    outputN = open("outputN.txt" , "w" )
+
+
 
 #LOOP: through each event in tree
     for pEvent, jEvent in  izip(tree, jetTree): #zip
@@ -215,6 +235,7 @@ def readTree(filename1, filename2):
             energyTempV = []
             sumEtaPos = 0
             sumEtaNeg = 0
+            sumEtaZero = 0
 
             phi_maxm, eta_maxm, phi_submax, eta_submax = findMaxSubmax(jEvent, pEvent, j)
             # print('max phi before centre: %f' % phi_maxm)
@@ -242,20 +263,40 @@ def readTree(filename1, filename2):
                 phi, eta = fTranslate(phi, eta, phi_maxR, eta_maxR)
                 histTranslate.Fill(phi , eta, pEvent.energy[index])
 
+
                 if(eta > 0):
                     sumEtaPos += pEvent.energy[index]
                 elif(eta < 0):
                     sumEtaNeg += pEvent.energy[index]
+                else:
+                    sumEtaZero += pEvent.energy[index]
                 
                 etaTempV.append(eta)
                 phiTempV.append(phi)
                 energyTempV.append(pEvent.energy[index])
+            print ('sum eta pos: %f' % sumEtaPos)
+            print ('sum eta Neg: %f' % sumEtaNeg)
+            print ('sum eta Zero: %f' % sumEtaZero)
+            print ('sum eta pn: %f' % (sumEtaPos + sumEtaNeg))
 
-            fReflect_Fill_Print(outputF, iEvent, jEvent, j, phiTempV, etaTempV, energyTempV, sumEtaPos, sumEtaNeg, histReflect, histJetTemp)
+
+            etaTempV = fReflect_Fill_Print(outputF, iEvent, jEvent, j, phiTempV, etaTempV, energyTempV, sumEtaPos, sumEtaNeg, histReflect, histJetTemp)
+            print ('sum eta pn: %f' % (sumEtaPos + sumEtaNeg))
+
+            eTot = sumEtaPos + sumEtaNeg + sumEtaZero
+            fNormalize(jEvent, phiTempV, etaTempV, energyTempV, eTot, histNormalize)
+
+            etaTempV = []
+            phiTempV = []
+            energyTempV = []
+            histJetTemp.Reset()
+
             
             printOutput(outputC, j, iEvent, histCentre)
             printOutput(outputR, j, iEvent, histRotate)
             printOutput(outputT, j, iEvent, histTranslate)
+            printOutput(outputN, j, iEvent, histNormalize)
+
                 
         iEvent+=1
 
@@ -282,7 +323,10 @@ def readTree(filename1, filename2):
     histReflect.Draw("lego")
     canvasReflect.SaveAs("reflect.pdf")
     
-
+    canvasNormalize.cd()
+    histNormalize.Draw("lego")
+    canvasNormalize.SaveAs("normalize.pdf")
+    
 if __name__ == "__main__":
     filename1 = "ppfile.root"
     filename2 = "jetFile.root"

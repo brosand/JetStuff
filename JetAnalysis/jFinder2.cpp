@@ -24,6 +24,8 @@
 using namespace fastjet;
 using namespace std;
 
+JET_ENERGY_LOWER_LIMIT=20;
+
 int main (){
 	
 	
@@ -99,6 +101,13 @@ int main (){
 
 		//for each jet, loop through a single jet, adding each userindex to the array
 		//jets.size is the number of jets
+		for (int a = 0; a < jets.size(); a++) {
+			cout << jets[a].pt() << endl;
+			if (jets[a].pt() < JET_ENERGY_LOWER_LIMIT) {
+				jets.erase(jets.begin()+a);
+				a--;
+			}
+		}
 		cout << "jets.size is " << jets.size() << endl;
 
 		//jets[i].constituents().size() is the number of particles in that jet
@@ -140,8 +149,8 @@ int main (){
 			// 	cout << "    constituent " << j << "s pt: " << constituents[j].pt()      << endl;
 		}
 		nJets = jets.size();
-
 		jetTree.Fill();
+
 		//cout << "102";
 		eventN = eventN + 1;
 		pIndex.clear();
