@@ -5,10 +5,12 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn import metrics as m
 from ROOT import gROOT, TCanvas, TH2D
 
+input1 = raw_input("Enter the first txt file")
+input1 = raw_input("Enter the second txt file")
 
-# Open first dataset and read into arrays X,Y, Z
+# Open first dataset and read into arrays X,Y,Z
 
-dataset = pandas.read_csv("outputN.txt",sep= " ",header=None)
+dataset = pandas.read_csv(input1,sep= " ",header=None)
 array = dataset.values
 X = array[ : , 1:10]  # WARNING this only reads in 9 numbers
 
@@ -20,7 +22,7 @@ print(X)
 
 # Open second dataset and add information onto end of arrays X,Y, Z
 
-dataset2 = pandas.read_csv("outputZeroDecoy.txt",sep=" ",header=None)
+dataset2 = pandas.read_csv(input2,sep=" ",header=None)
 array = dataset2.values
 
 X = np.concatenate((X,array[ : , 1:10])) # WARNING this only reads in 9 numbers
