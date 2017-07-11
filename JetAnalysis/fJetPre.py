@@ -6,13 +6,14 @@ import array
 import numpy
 import math
 
+DIMENSION_JET_IMAGE = 3
 COLLISION_TYPE = "pp"
 HIST_BOUND = .6
 
-def printOutput(output, j, iEvent, histogram, dimension):
+def printOutput(output, j, iEvent, histogram):
     output.write(COLLISION_TYPE)
-    for q in range(dimension):
-        for r in range(dimension):
+    for q in range(DIMENSION_JET_IMAGE):
+        for r in range(DIMENSION_JET_IMAGE):
             output.write(" %f" % histogram.GetBinContent(q + 1, r + 1))
     output.write(" %d %d \n" % (j, iEvent))
     # print(histogram[0])
@@ -127,7 +128,7 @@ def fReflect_Fill_Print(output, iEvent, jEvent, j, phiTempV, etaTempV, energyTem
         #fill a temporary histogram with data from one jet
             histJetTemp.Fill(phiTempV[i], a, energyTempV[i])
 
-    printOutput(output, j, iEvent, histJetTemp, dimension)
+    printOutput(output, j, iEvent, histJetTemp)
 
 
     return etaTempV
@@ -143,7 +144,7 @@ def fNormalize(jEvent, phiTempV, etaTempV, energyTempV, eTot, histNormalize):
 
 
 
-def readTree(filename1, filename2, fileOut, dimension):
+def readTree(filename1, filename2, fileOut):
 
     fIn = ROOT.TFile(filename1, "READ")
     tree = fIn.Get("tree")
@@ -153,37 +154,37 @@ def readTree(filename1, filename2, fileOut, dimension):
     jetTree = fIn2.Get("jetTree")
     jetTree.Print()
 
-    histBefore = ROOT.TH2F("histBefore", "histBefore", dimension, -HIST_BOUND, HIST_BOUND, dimension, -HIST_BOUND, HIST_BOUND) #bin bound bound bin bound bound
+    histBefore = ROOT.TH2F("histBefore", "histBefore", DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND, DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND) #bin bound bound bin bound bound
     histBefore.GetXaxis().SetTitle("phi");
     histBefore.GetYaxis().SetTitle("eta");
     histBefore.GetZaxis().SetTitle("counts weighted by energy");
 
-    histCentre = ROOT.TH2F("histCentre", "histCentre", dimension, -HIST_BOUND, HIST_BOUND, dimension, -HIST_BOUND, HIST_BOUND) #bin bound bound bin bound bound
+    histCentre = ROOT.TH2F("histCentre", "histCentre", DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND, DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND) #bin bound bound bin bound bound
     histCentre.GetXaxis().SetTitle("phi");
     histCentre.GetYaxis().SetTitle("eta");
     histCentre.GetZaxis().SetTitle("counts weighted by energy");
 
-    histRotate = ROOT.TH2F("histRotate", "histRotate", dimension, -HIST_BOUND, HIST_BOUND, dimension, -HIST_BOUND, HIST_BOUND) #bin bound bound bin bound bound
+    histRotate = ROOT.TH2F("histRotate", "histRotate", DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND, DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND) #bin bound bound bin bound bound
     histRotate.GetXaxis().SetTitle("phi");
     histRotate.GetYaxis().SetTitle("eta");
     histRotate.GetZaxis().SetTitle("counts weighted by energy");
 
-    histTranslate = ROOT.TH2F("histTranslate", "histTranslate", dimension, -HIST_BOUND, HIST_BOUND, dimension, -HIST_BOUND, HIST_BOUND) #bin bound bound bin bound bound
+    histTranslate = ROOT.TH2F("histTranslate", "histTranslate", DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND, DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND) #bin bound bound bin bound bound
     histTranslate.GetXaxis().SetTitle("phi");
     histTranslate.GetYaxis().SetTitle("eta");
     histTranslate.GetZaxis().SetTitle("counts weighted by energy");
 
-    histReflect = ROOT.TH2F("histReflect", "histReflect", dimension, -HIST_BOUND, HIST_BOUND, dimension, -HIST_BOUND, HIST_BOUND) #bin bound bound bin bound bound
+    histReflect = ROOT.TH2F("histReflect", "histReflect", DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND, DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND) #bin bound bound bin bound bound
     histReflect.GetXaxis().SetTitle("phi");
     histReflect.GetYaxis().SetTitle("eta");
     histReflect.GetZaxis().SetTitle("counts weighted by energy");
 
-    histJetTemp = ROOT.TH2F("histJetTemp", "histJetTemp", dimension, -HIST_BOUND, HIST_BOUND, dimension, -HIST_BOUND, HIST_BOUND) # numBins bound bound bin bound bound
+    histJetTemp = ROOT.TH2F("histJetTemp", "histJetTemp", DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND, DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND) # numBins bound bound bin bound bound
     histJetTemp.GetXaxis().SetTitle("phi");
     histJetTemp.GetYaxis().SetTitle("eta");
     histJetTemp.GetZaxis().SetTitle("counts weighted by energy");
 
-    histNormalize = ROOT.TH2F("histNormalize", "histNormalize", dimension, -HIST_BOUND, HIST_BOUND, dimension, -HIST_BOUND, HIST_BOUND) # numBins bound bound bin bound bound
+    histNormalize = ROOT.TH2F("histNormalize", "histNormalize", DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND, DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND) # numBins bound bound bin bound bound
     histNormalize.GetXaxis().SetTitle("phi");
     histNormalize.GetYaxis().SetTitle("eta");
     histNormalize.GetZaxis().SetTitle("counts weighted by energy");
@@ -289,9 +290,9 @@ def readTree(filename1, filename2, fileOut, dimension):
             histJetTemp.Reset()
 
             
-            # printOutput(outputC, j, iEvent, histCentre)
-            # printOutput(outputR, j, iEvent, histRotate)
-            # printOutput(outputT, j, iEvent, histTranslate)
+            printOutput(outputC, j, iEvent, histCentre)
+            printOutput(outputR, j, iEvent, histRotate)
+            printOutput(outputT, j, iEvent, histTranslate)
             printOutput(outputN, j, iEvent, histNormalize)
 
                 
@@ -329,12 +330,9 @@ if __name__ == "__main__":
     filename1 = raw_input("Please provide filename 1 (a .root file from original tree): ")
     filename2 = raw_input("Please provide filename 2 (a .root file after original tree goes through jet finder): ")
     fileOut = raw_input("Please provide an output filename (a .txt file)")
-
-    dimension = raw_input("Enter the side-length of the jet images")
-
     #filename1 = "ppfileHard.root"
     #filename2 = "jetFile.root"
 
-    readTree(filename1 = filename1, filename2 = filename2, fileOut = fileOut, dimension = dimension)
+    readTree(filename1 = filename1, filename2 = filename2, fileOut = fileOut)
 
 

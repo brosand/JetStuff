@@ -1,4 +1,47 @@
-# Executable
-leadFake
-ppPythia
-jetFinder
+# Ignore folders
+bak/
+test/
+log/
+.deps/
+# Used by pytest
+.cache/
+.eggs/
+
+# Ignore filetypes
+*.root
+*.jpg
+*.jpeg
+*.txt
+*.pdf
+*.m4
+*.log
+*.out
+*.err
+*.o
+*.so
+*.d
+G__*.h
+G__*.cxx
+*.lo
+*_Dict.*
+*.dirstamp
+*.png
+*.bak
+*.pyc
+*.swp
+.DS_Store
+
+# Ignore all files in folder (except for exceptions below)
+*/build/*
+
+# Keep this files in the repo
+# For build/
+!*/build/Makefile.am
+!*/build/configure.ac
+!*/build/autogen.sh
+!*/build/m4/
+!*/build/m4/.keepInGit
+
+# Ignore notes files
+notes.txt
+notes.md
