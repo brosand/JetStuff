@@ -14,7 +14,7 @@ def printOutput(output, j, iEvent, histogram):
     output.write(COLLISION_TYPE)
     for q in range(DIMENSION_JET_IMAGE):
         for r in range(DIMENSION_JET_IMAGE):
-            output.write(" %f  " % histogram.GetBinContent(q + 1, r + 1))
+            output.write(" %f" % histogram.GetBinContent(q + 1, r + 1))
     output.write(" %d %d \n" % (j, iEvent))
     # print(histogram[0])
     # print('histogram at 1,1')

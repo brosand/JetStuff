@@ -11,7 +11,7 @@ def printOutput(output, j, iEvent):
     output.write(COLLISION_TYPE)
     for q in range(DIMENSION_JET_IMAGE):
         for r in range(DIMENSION_JET_IMAGE):
-            output.write(" %f  " % DECOY)
+            output.write(" %f" % DECOY)
     output.write(" %d %d \n" % (j, iEvent))
 
 if __name__ == "__main__":

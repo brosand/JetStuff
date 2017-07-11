@@ -27,12 +27,17 @@ using namespace std;
 int JET_ENERGY_LOWER_LIMIT=20;
 
 int main (){
-	
-	
+	string oPath, iPath;
+
+cout << "Input file path: ";
+cin >> iPath;
+
+cout << "Input output file path:";
+cin >> oPath;
   // cout << "test1";
   //create a reader to interpret the TTree
-	TFile *f = TFile::Open("ppfileHard.root");	
-	TFile a("jetFile.root", "recreate");
+	TFile *f = TFile::Open(iPath.c_str());	
+	TFile a(oPath.c_str(), "recreate");
 	if (f == 0) {
 		cout << "Error. Could not open file." << endl;
 		return 1;
