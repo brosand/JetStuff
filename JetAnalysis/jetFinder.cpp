@@ -24,7 +24,7 @@
 using namespace fastjet;
 using namespace std;
 
-int JET_ENERGY_LOWER_LIMIT=0;
+int JET_ENERGY_LOWER_LIMIT=20;
 
 int main (){
     string oPath, iPath;
