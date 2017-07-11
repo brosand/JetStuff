@@ -29,15 +29,16 @@ int JET_ENERGY_LOWER_LIMIT=20;
 int main (){
 	string oPath, iPath;
 
-cout << "Input file path: ";
-cin >> iPath;
+	cout << "Input file path: ";
+	cin >> iPath;
 
-cout << "Input output file path:";
-cin >> oPath;
+	cout << "Input output file path:";
+	cin >> oPath;
   // cout << "test1";
   //create a reader to interpret the TTree
-	TFile *f = TFile::Open(iPath.c_str());	
-	TFile a(oPath.c_str(), "recreate");
+	TFile *f = TFile::Open(iPath.c_str());
+	cout << "hi" <<iPath.c_str();	
+	TFile a("pbJet.root", "recreate");
 	if (f == 0) {
 		cout << "Error. Could not open file." << endl;
 		return 1;
@@ -94,7 +95,7 @@ cin >> oPath;
 		JetDefinition jet_def(antikt_algorithm, R);
 		AreaDefinition area_def(voronoi_area);
 		// cout << "74" << endl;
-  
+
 // run the clustering, extract the jets
 		ClusterSequenceArea cs(particles, jet_def, area_def);
 		vector<PseudoJet> jets = sorted_by_pt(cs.inclusive_jets());

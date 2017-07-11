@@ -327,8 +327,8 @@ def readTree(filename1, filename2):
     
 if __name__ == "__main__":
 
-    filename1 = raw_input("Please provide filename 1 (a .root file from original tree)")
-    filename2 = raw_input("Please provide filename 2 (a .root file after original tree goes through jet finder)")
+    filename1 = raw_input("Please provide filename 1 (a .root file from original tree): ")
+    filename2 = raw_input("Please provide filename 2 (a .root file after original tree goes through jet finder): ")
     #filename1 = "ppfileHard.root"
     #filename2 = "jetFile.root"
 
