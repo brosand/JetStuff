@@ -27,7 +27,7 @@ int main(){
         cin >> nEvents;
 
         cout << "Enter the number of particles per event: ";
-        cin >> nFinalParticles;
+        cin >> nFinalParticles; //should be 600-700
 
 	double pt[nFinalParticles], px[nFinalParticles], py[nFinalParticles], pz[nFinalParticles], mass[nFinalParticles], energy[nFinalParticles];
 	int charge[nFinalParticles];

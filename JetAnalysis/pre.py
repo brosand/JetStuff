@@ -6,24 +6,12 @@ import array
 import numpy
 import math
 
-<<<<<<< HEAD
-COLLISION_TYPE = "pp"
 HIST_BOUND = .6
 
-def printOutput(output, j, iEvent, histogram, dimension):
-    output.write(COLLISION_TYPE)
+def printOutput(output, j, iEvent, histogram, dimension, collisionType):
+    output.write(collisionType)
     for q in range(dimension):
         for r in range(dimension):
-=======
-DIMENSION_JET_IMAGE = 3
-# COLLISION_TYPE = "pp"
-HIST_BOUND = .6
-
-def printOutput(output, j, iEvent, histogram, collisionType):
-    output.write(collisionType)
-    for q in range(DIMENSION_JET_IMAGE):
-        for r in range(DIMENSION_JET_IMAGE):
->>>>>>> 4bd56d7edc09ecefaadffc3d7b1814d5225458cf
             output.write(" %f" % histogram.GetBinContent(q + 1, r + 1))
     output.write(" %d %d \n" % (j, iEvent))
     # print(histogram[0])
@@ -138,12 +126,7 @@ def fReflect_Fill_Print(output, iEvent, jEvent, j, phiTempV, etaTempV, energyTem
         #fill a temporary histogram with data from one jet
             histJetTemp.Fill(phiTempV[i], a, energyTempV[i])
 
-<<<<<<< HEAD
-    printOutput(output, j, iEvent, histJetTemp, dimension)
-=======
-    printOutput(output, j, iEvent, histJetTemp, collisionType)
->>>>>>> 4bd56d7edc09ecefaadffc3d7b1814d5225458cf
-
+    printOutput(output, j, iEvent, histJetTemp, dimension, collisionType)
 
     return etaTempV
 
@@ -154,15 +137,8 @@ def fNormalize(jEvent, phiTempV, etaTempV, energyTempV, eTot, histNormalize):
         #     print 'NOTE'
         # else:
             # print 'wut'
-    
 
-
-
-<<<<<<< HEAD
-def readTree(filename1, filename2, fileOut, dimension):
-=======
-def readTree(filename1, filename2, fileOut, collisionType):
->>>>>>> 4bd56d7edc09ecefaadffc3d7b1814d5225458cf
+def readTree(filename1, filename2, fileOut, dimension, collisionType):
 
     fIn = ROOT.TFile(filename1, "READ")
     tree = fIn.Get("tree")
@@ -347,22 +323,14 @@ if __name__ == "__main__":
 
     filename1 = raw_input("Please provide filename 1 (a .root file from original tree): ")
     filename2 = raw_input("Please provide filename 2 (a .root file after original tree goes through jet finder): ")
-<<<<<<< HEAD
-    fileOut = raw_input("Please provide an output filename (a .txt file)")
+
+    fileOut = raw_input("Please provide an output filename (a .txt file):")
 
     dimension = raw_input("Enter the side-length of the jet images")
 
     #filename1 = "ppfileHard.root"
     #filename2 = "jetFile.root"
 
-    readTree(filename1 = filename1, filename2 = filename2, fileOut = fileOut, dimension = dimension)
-=======
-    fileOut = raw_input("Please provide an output filename (a .txt file): ")
-    collisionType = raw_input("Please provide collision type (i.e: pp, pb): ")
-    #filename1 = "ppfileHard.root"
-    #filename2 = "jetFile.root"
-
-    readTree(filename1 = filename1, filename2 = filename2, fileOut = fileOut, collisionType = collisionType)
->>>>>>> 4bd56d7edc09ecefaadffc3d7b1814d5225458cf
+    readTree(filename1 = filename1, filename2 = filename2, fileOut = fileOut, dimension = dimension, collisionType = collisionType)
 
 
