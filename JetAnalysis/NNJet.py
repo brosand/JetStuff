@@ -13,6 +13,7 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.pipeline import Pipeline
 
 N_NODES = 8
+
 # define baseline model
 #creates a simple fully connected network with one hidden layer that contains 8 neurons.
 #The hidden layer uses a rectifier activation function which is a good practice. Because we used a one-hot encoding for our  dataset, the output layer must create 2 output values, one for each class. The output value with the largest value will be taken as the class predicted by the model.
@@ -23,28 +24,41 @@ N_NODES = 8
 # Note that we use a "softmax" activation function in the output layer. This is to ensure the output values are in the range of 0 and 1 and may be used as predicted probabilities.
 
 # Finally, the network uses the efficient Adam gradient descent optimization algorithm with a logarithmic loss function, which is called "categorical_crossentropy" in Keras.
+<<<<<<< HEAD
+
+#make neural net
+=======
 input1 = raw_input("Enter the first txt file: ")
 input2 = raw_input("Enter the second txt file: ")
 
+>>>>>>> 4bd56d7edc09ecefaadffc3d7b1814d5225458cf
 def baseline_model():
     # create model
     model = Sequential()
-    model.add(Dense(N_NODES, input_dim=8, activation='relu'))
-    model.add(Dense(2, activation='softmax'))
+    model.add(Dense(N_NODES, input_dim=9, activation='relu'))
+    model.add(Dense(2, activation='softmax')) #these are the two possible outputs
+
     # Compile model
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
     return model
 
 
 
-# fix random seed for reproducibility
+
+# fix random seed for reproducibility, later can be time
 seed = 7
 np.random.seed(seed)
 
 # Open first dataset and read into arrays X,Y, Z
+<<<<<<< HEAD
+dataset = pandas.read_csv("outputN.txt",sep=" ",header=None)
+=======
 dataset = pandas.read_csv(input1,sep=" ",header=None)
+>>>>>>> 4bd56d7edc09ecefaadffc3d7b1814d5225458cf
 array = dataset.values
-X = array[ : , 1:9] # WARNING this only reads in 8 numbers
+
+
+X = array[ : , 1:10] # WARNING this only reads in 9 numbers
 Y = array[ : , 0]
 Z = array[ : , 10:12]
 
@@ -54,7 +68,11 @@ Z = array[ : , 10:12]
 
 # Open second dataset and add information onto end of arrays X,Y, Z
 
+<<<<<<< HEAD
+dataset2 = pandas.read_csv("outputZeroDecoy.txt",sep=" ",header=None)
+=======
 dataset2 = pandas.read_csv(input2, sep=" ",header=None)
+>>>>>>> 4bd56d7edc09ecefaadffc3d7b1814d5225458cf
 array = dataset2.values
 X = np.concatenate((X,array[ : , 1:9]))
 Y = np.concatenate((Y,array[ : , 0]))
@@ -62,6 +80,7 @@ Z = np.concatenate((Z,array[ : , 10:12]))
 
 # print(Y)
 # print(X)
+
 # encode class values as integers since NN can't work with strings (I think)
 encoder = LabelEncoder()
 encoder.fit(Y)

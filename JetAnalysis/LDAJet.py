@@ -5,7 +5,8 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn import metrics as m
 from sklearn.utils import shuffle
 from ROOT import gROOT, TCanvas, TH2D
-
+import math
+import pre
 
 input1 = raw_input("Enter the first txt file: ")
 input2 = raw_input("Enter the second txt file: ")
@@ -13,9 +14,9 @@ input2 = raw_input("Enter the second txt file: ")
 # Open first dataset and read into arrays X,Y, Z
 dataset = pandas.read_csv(input1,sep=" ",header=None)
 array = dataset.values
-X = array[ : , 1:10]  
+X = array[ : , 1:(math.exp(pre.dimension, 2) + 1)]  
 Y = array[ : , 0]
-Z = array[ : , 10:12]
+Z = array[ : , (math.exp(pre.dimension, 2) + 1):(math.exp(pre.dimension, 2) + 3)]
 
 #print(X)
 #print(Y)

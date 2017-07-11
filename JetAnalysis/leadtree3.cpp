@@ -27,7 +27,7 @@ int main(){
         cin >> nEvents;
 
         cout << "Enter the number of particles per event: ";
-        cin >> nFinalParticles; //should be 600-700
+        cin >> nFinalParticles;
 
 	double pt[nFinalParticles], px[nFinalParticles], py[nFinalParticles], pz[nFinalParticles], mass[nFinalParticles], energy[nFinalParticles];
 	int charge[nFinalParticles];
@@ -117,7 +117,7 @@ int main(){
 tree.Print();
 
 //write the tree to a file
-TFile f("lead.root", "recreate");
+TFile f("pbfile.root", "recreate");
 tree.Write();
 //f.ls();
 f.Close();

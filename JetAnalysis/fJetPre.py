@@ -6,12 +6,14 @@ import array
 import numpy
 import math
 
+DIMENSION_JET_IMAGE = 3
+COLLISION_TYPE = "pp"
 HIST_BOUND = .6
 
-def printOutput(output, j, iEvent, histogram, dimension, collisionType):
-    output.write(collisionType)
-    for q in range(dimension):
-        for r in range(dimension):
+def printOutput(output, j, iEvent, histogram):
+    output.write(COLLISION_TYPE)
+    for q in range(DIMENSION_JET_IMAGE):
+        for r in range(DIMENSION_JET_IMAGE):
             output.write(" %f" % histogram.GetBinContent(q + 1, r + 1))
     output.write(" %d %d \n" % (j, iEvent))
     # print(histogram[0])
@@ -77,8 +79,8 @@ def findMaxSubmax(jEvent, pEvent, j):
 
             if ((pEvent.energy[submax] < pEvent.energy[jEvent.pIndex[j][k]]) and (pEvent.energy[jEvent.pIndex[j][k]] < pEvent.energy[maxm])):
                 submax = jEvent.pIndex[j][k]
-        # print("\t\tsubmax: %d" % submax)
-        # 
+        print("\t\tsubmax: %d" % submax)
+        
         phi_submax = getPhi(pEvent, submax)
         eta_submax = getEta(pEvent, submax)
 
@@ -115,7 +117,7 @@ def fTranslate(phi, eta, phi_maxm, eta_maxm):
 
     return phi, eta
 
-def fReflect_Fill_Print(output, iEvent, jEvent, j, phiTempV, etaTempV, energyTempV, sumEtaPos, sumEtaNeg, histReflect, histJetTemp, collisionType):
+def fReflect_Fill_Print(output, iEvent, jEvent, j, phiTempV, etaTempV, energyTempV, sumEtaPos, sumEtaNeg, histReflect, histJetTemp):
     if(len(jEvent.pIndex[j])>1):
  # if(len(jEvent.pIndex[j])>1):
         for i, a in enumerate(etaTempV):
@@ -126,7 +128,8 @@ def fReflect_Fill_Print(output, iEvent, jEvent, j, phiTempV, etaTempV, energyTem
         #fill a temporary histogram with data from one jet
             histJetTemp.Fill(phiTempV[i], a, energyTempV[i])
 
-    printOutput(output, j, iEvent, histJetTemp, dimension, collisionType)
+    printOutput(output, j, iEvent, histJetTemp)
+
 
     return etaTempV
 
@@ -137,8 +140,11 @@ def fNormalize(jEvent, phiTempV, etaTempV, energyTempV, eTot, histNormalize):
         #     print 'NOTE'
         # else:
             # print 'wut'
+    
 
-def readTree(filename1, filename2, fileOut, dimension, collisionType):
+
+
+def readTree(filename1, filename2, fileOut):
 
     fIn = ROOT.TFile(filename1, "READ")
     tree = fIn.Get("tree")
@@ -148,37 +154,37 @@ def readTree(filename1, filename2, fileOut, dimension, collisionType):
     jetTree = fIn2.Get("jetTree")
     jetTree.Print()
 
-    histBefore = ROOT.TH2F("histBefore", "histBefore", dimension, -HIST_BOUND, HIST_BOUND, dimension, -HIST_BOUND, HIST_BOUND) #bin bound bound bin bound bound
+    histBefore = ROOT.TH2F("histBefore", "histBefore", DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND, DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND) #bin bound bound bin bound bound
     histBefore.GetXaxis().SetTitle("phi");
     histBefore.GetYaxis().SetTitle("eta");
     histBefore.GetZaxis().SetTitle("counts weighted by energy");
 
-    histCentre = ROOT.TH2F("histCentre", "histCentre", dimension, -HIST_BOUND, HIST_BOUND, dimension, -HIST_BOUND, HIST_BOUND) #bin bound bound bin bound bound
+    histCentre = ROOT.TH2F("histCentre", "histCentre", DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND, DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND) #bin bound bound bin bound bound
     histCentre.GetXaxis().SetTitle("phi");
     histCentre.GetYaxis().SetTitle("eta");
     histCentre.GetZaxis().SetTitle("counts weighted by energy");
 
-    histRotate = ROOT.TH2F("histRotate", "histRotate", dimension, -HIST_BOUND, HIST_BOUND, dimension, -HIST_BOUND, HIST_BOUND) #bin bound bound bin bound bound
+    histRotate = ROOT.TH2F("histRotate", "histRotate", DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND, DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND) #bin bound bound bin bound bound
     histRotate.GetXaxis().SetTitle("phi");
     histRotate.GetYaxis().SetTitle("eta");
     histRotate.GetZaxis().SetTitle("counts weighted by energy");
 
-    histTranslate = ROOT.TH2F("histTranslate", "histTranslate", dimension, -HIST_BOUND, HIST_BOUND, dimension, -HIST_BOUND, HIST_BOUND) #bin bound bound bin bound bound
+    histTranslate = ROOT.TH2F("histTranslate", "histTranslate", DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND, DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND) #bin bound bound bin bound bound
     histTranslate.GetXaxis().SetTitle("phi");
     histTranslate.GetYaxis().SetTitle("eta");
     histTranslate.GetZaxis().SetTitle("counts weighted by energy");
 
-    histReflect = ROOT.TH2F("histReflect", "histReflect", dimension, -HIST_BOUND, HIST_BOUND, dimension, -HIST_BOUND, HIST_BOUND) #bin bound bound bin bound bound
+    histReflect = ROOT.TH2F("histReflect", "histReflect", DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND, DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND) #bin bound bound bin bound bound
     histReflect.GetXaxis().SetTitle("phi");
     histReflect.GetYaxis().SetTitle("eta");
     histReflect.GetZaxis().SetTitle("counts weighted by energy");
 
-    histJetTemp = ROOT.TH2F("histJetTemp", "histJetTemp", dimension, -HIST_BOUND, HIST_BOUND, dimension, -HIST_BOUND, HIST_BOUND) # numBins bound bound bin bound bound
+    histJetTemp = ROOT.TH2F("histJetTemp", "histJetTemp", DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND, DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND) # numBins bound bound bin bound bound
     histJetTemp.GetXaxis().SetTitle("phi");
     histJetTemp.GetYaxis().SetTitle("eta");
     histJetTemp.GetZaxis().SetTitle("counts weighted by energy");
 
-    histNormalize = ROOT.TH2F("histNormalize", "histNormalize", dimension, -HIST_BOUND, HIST_BOUND, dimension, -HIST_BOUND, HIST_BOUND) # numBins bound bound bin bound bound
+    histNormalize = ROOT.TH2F("histNormalize", "histNormalize", DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND, DIMENSION_JET_IMAGE, -HIST_BOUND, HIST_BOUND) # numBins bound bound bin bound bound
     histNormalize.GetXaxis().SetTitle("phi");
     histNormalize.GetYaxis().SetTitle("eta");
     histNormalize.GetZaxis().SetTitle("counts weighted by energy");
@@ -190,19 +196,19 @@ def readTree(filename1, filename2, fileOut, dimension, collisionType):
     canvasReflect = ROOT.TCanvas("canvasReflect", "canvasReflect")
     canvasNormalize = ROOT.TCanvas("canvasNormalize", "canvasNormalize")
 
+
+    open('outputC.txt', 'w').close()
     iEvent = 0;
+    outputC = open("outputC.txt" , "w" )
 
-    # open('outputC.txt', 'w').close()
-    # outputC = open("outputC.txt" , "w" )
+    open('outputR.txt', 'w').close()
+    outputR = open("outputR.txt" , "w" )
 
-    # open('outputR.txt', 'w').close()
-    # outputR = open("outputR.txt" , "w" )
+    open('outputT.txt', 'w').close()
+    outputT = open("outputT.txt" , "w" )
 
-    # open('outputT.txt', 'w').close()
-    # outputT = open("outputT.txt" , "w" )
-
-    # open('outputF.txt', 'w').close()
-    # outputF = open("outputF.txt" , "w" )
+    open('outputF.txt', 'w').close()
+    outputF = open("outputF.txt" , "w" )
 
     open(fileOut, 'w').close()
     outputN = open(fileOut , "w" )
@@ -272,7 +278,7 @@ def readTree(filename1, filename2, fileOut, dimension, collisionType):
             # print ('sum eta pn: %f' % (sumEtaPos + sumEtaNeg))
 
 
-            etaTempV = fReflect_Fill_Print(outputN, iEvent, jEvent, j, phiTempV, etaTempV, energyTempV, sumEtaPos, sumEtaNeg, histReflect, histJetTemp, collisionType)
+            etaTempV = fReflect_Fill_Print(outputF, iEvent, jEvent, j, phiTempV, etaTempV, energyTempV, sumEtaPos, sumEtaNeg, histReflect, histJetTemp)
             # print ('sum eta pn: %f' % (sumEtaPos + sumEtaNeg))
 
             eTot = sumEtaPos + sumEtaNeg + sumEtaZero
@@ -284,36 +290,36 @@ def readTree(filename1, filename2, fileOut, dimension, collisionType):
             histJetTemp.Reset()
 
             
-            # printOutput(outputC, j, iEvent, histCentre, collisionType)
-            # printOutput(outputR, j, iEvent, histRotate, collisionType)
-            # printOutput(outputT, j, iEvent, histTranslate, collisionType)
-            printOutput(outputN, j, iEvent, histNormalize, collisionType)
+            printOutput(outputC, j, iEvent, histCentre)
+            printOutput(outputR, j, iEvent, histRotate)
+            printOutput(outputT, j, iEvent, histTranslate)
+            printOutput(outputN, j, iEvent, histNormalize)
 
                 
         iEvent+=1
 
 
     #see others for examples of iterating through
-    # canvasBefore.cd()
-    # histBefore.Draw("lego")
-    # canvasBefore.SaveAs("before.pdf")
+    canvasBefore.cd()
+    histBefore.Draw("lego")
+    canvasBefore.SaveAs("before.pdf")
 
-    # canvasCentre.cd()
-    # histCentre.Draw("lego")
-    # #https://root.cern.ch/root/html534/guides/users-guide/Histograms.html
-    # canvasCentre.SaveAs("centre.pdf")
+    canvasCentre.cd()
+    histCentre.Draw("lego")
+    #https://root.cern.ch/root/html534/guides/users-guide/Histograms.html
+    canvasCentre.SaveAs("centre.pdf")
 
-    # canvasRotate.cd()
-    # histRotate.Draw("lego")
-    # canvasRotate.SaveAs("rotate.pdf")
+    canvasRotate.cd()
+    histRotate.Draw("lego")
+    canvasRotate.SaveAs("rotate.pdf")
 
-    # canvasTranslate.cd()
-    # histTranslate.Draw("lego")
-    # canvasTranslate.SaveAs("translate.pdf")
+    canvasTranslate.cd()
+    histTranslate.Draw("lego")
+    canvasTranslate.SaveAs("translate.pdf")
 
-    # canvasReflect.cd()
-    # histReflect.Draw("lego")
-    # canvasReflect.SaveAs("reflect.pdf")
+    canvasReflect.cd()
+    histReflect.Draw("lego")
+    canvasReflect.SaveAs("reflect.pdf")
     
     canvasNormalize.cd()
     histNormalize.Draw("lego")
@@ -323,14 +329,10 @@ if __name__ == "__main__":
 
     filename1 = raw_input("Please provide filename 1 (a .root file from original tree): ")
     filename2 = raw_input("Please provide filename 2 (a .root file after original tree goes through jet finder): ")
-
-    fileOut = raw_input("Please provide an output filename (a .txt file):")
-
-    dimension = raw_input("Enter the side-length of the jet images")
-
+    fileOut = raw_input("Please provide an output filename (a .txt file)")
     #filename1 = "ppfileHard.root"
     #filename2 = "jetFile.root"
 
-    readTree(filename1 = filename1, filename2 = filename2, fileOut = fileOut, dimension = dimension, collisionType = collisionType)
+    readTree(filename1 = filename1, filename2 = filename2, fileOut = fileOut)
 
 
