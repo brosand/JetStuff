@@ -12,7 +12,11 @@ def printOutput(output, j, iEvent):
     for q in range(DIMENSION_JET_IMAGE):
         for r in range(DIMENSION_JET_IMAGE):
             output.write(" %f" % DECOY)
+<<<<<<< HEAD
     output.write(" %d %d\n" % (j, iEvent))
+=======
+    output.write(" %d %d \n" % (j, iEvent))
+>>>>>>> 9f4b858e09e9427c299b5dc110699a7156cdb12d
 
 if __name__ == "__main__":
 
