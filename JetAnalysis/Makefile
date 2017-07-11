@@ -50,7 +50,7 @@ LHAPDFARGS =
 # where the make file is placed. 
 clean:
 	 rm -f $(obj) 
-lead:
+leadmake:
 
 	g++ -o lead leadtree3.cpp $(PYTHIAFLAGS) $(PYTHIALIBS) $(FASTJETINC) $(FASTJETLIB) $(LHAPDFARGS) $(ROOTFLAGS) $(ROOTLIBS) -lTreePlayer loader_C.so
 
