@@ -8,7 +8,7 @@ from ROOT import gROOT, TCanvas, TH2D
 # Open first dataset and read into arrays X,Y, Z
 dataset = pandas.read_csv("outputN.txt",sep=" ",header=None)
 array = dataset.values
-X = array[ : , 1:9]  # WARNING this only reads in 8 numbers
+X = array[ : , 1:10]  # WARNING this only reads in 8 numbers
 Y = array[ : , 0]
 Z = array[ : , 10:12]
 
@@ -20,7 +20,7 @@ Z = array[ : , 10:12]
 
 dataset2 = pandas.read_csv("outputZeroDecoy.txt",sep=" ",header=None)
 array = dataset2.values
-X = np.concatenate((X,array[ : , 1:9])) # WARNING this only reads in 8 numbers
+X = np.concatenate((X,array[ : , 1:10])) # WARNING this only reads in 8 numbers
 Y = np.concatenate((Y,array[ : , 0]))
 Z = np.concatenate((Z,array[ : , 10:12]))
 
@@ -32,8 +32,8 @@ validation_size = 0.20
 seed = 7
 X_train, X_validation, Y_train, Y_validation = model_selection.train_test_split(X, Y, test_size=validation_size, random_state=seed)
 
-print X_train
-print Y_train
+# print X_train
+# print Y_train
 
 # Run LDA
 
