@@ -6,6 +6,7 @@ import array
 import numpy
 import math
 
+<<<<<<< HEAD
 COLLISION_TYPE = "pp"
 HIST_BOUND = .6
 
@@ -13,6 +14,16 @@ def printOutput(output, j, iEvent, histogram, dimension):
     output.write(COLLISION_TYPE)
     for q in range(dimension):
         for r in range(dimension):
+=======
+DIMENSION_JET_IMAGE = 3
+# COLLISION_TYPE = "pp"
+HIST_BOUND = .6
+
+def printOutput(output, j, iEvent, histogram, collisionType):
+    output.write(collisionType)
+    for q in range(DIMENSION_JET_IMAGE):
+        for r in range(DIMENSION_JET_IMAGE):
+>>>>>>> 4bd56d7edc09ecefaadffc3d7b1814d5225458cf
             output.write(" %f" % histogram.GetBinContent(q + 1, r + 1))
     output.write(" %d %d \n" % (j, iEvent))
     # print(histogram[0])
@@ -78,8 +89,8 @@ def findMaxSubmax(jEvent, pEvent, j):
 
             if ((pEvent.energy[submax] < pEvent.energy[jEvent.pIndex[j][k]]) and (pEvent.energy[jEvent.pIndex[j][k]] < pEvent.energy[maxm])):
                 submax = jEvent.pIndex[j][k]
-        print("\t\tsubmax: %d" % submax)
-        
+        # print("\t\tsubmax: %d" % submax)
+        # 
         phi_submax = getPhi(pEvent, submax)
         eta_submax = getEta(pEvent, submax)
 
@@ -116,7 +127,7 @@ def fTranslate(phi, eta, phi_maxm, eta_maxm):
 
     return phi, eta
 
-def fReflect_Fill_Print(output, iEvent, jEvent, j, phiTempV, etaTempV, energyTempV, sumEtaPos, sumEtaNeg, histReflect, histJetTemp):
+def fReflect_Fill_Print(output, iEvent, jEvent, j, phiTempV, etaTempV, energyTempV, sumEtaPos, sumEtaNeg, histReflect, histJetTemp, collisionType):
     if(len(jEvent.pIndex[j])>1):
  # if(len(jEvent.pIndex[j])>1):
         for i, a in enumerate(etaTempV):
@@ -127,7 +138,11 @@ def fReflect_Fill_Print(output, iEvent, jEvent, j, phiTempV, etaTempV, energyTem
         #fill a temporary histogram with data from one jet
             histJetTemp.Fill(phiTempV[i], a, energyTempV[i])
 
+<<<<<<< HEAD
     printOutput(output, j, iEvent, histJetTemp, dimension)
+=======
+    printOutput(output, j, iEvent, histJetTemp, collisionType)
+>>>>>>> 4bd56d7edc09ecefaadffc3d7b1814d5225458cf
 
 
     return etaTempV
@@ -143,7 +158,11 @@ def fNormalize(jEvent, phiTempV, etaTempV, energyTempV, eTot, histNormalize):
 
 
 
+<<<<<<< HEAD
 def readTree(filename1, filename2, fileOut, dimension):
+=======
+def readTree(filename1, filename2, fileOut, collisionType):
+>>>>>>> 4bd56d7edc09ecefaadffc3d7b1814d5225458cf
 
     fIn = ROOT.TFile(filename1, "READ")
     tree = fIn.Get("tree")
@@ -195,19 +214,19 @@ def readTree(filename1, filename2, fileOut, dimension):
     canvasReflect = ROOT.TCanvas("canvasReflect", "canvasReflect")
     canvasNormalize = ROOT.TCanvas("canvasNormalize", "canvasNormalize")
 
-
-    open('outputC.txt', 'w').close()
     iEvent = 0;
-    outputC = open("outputC.txt" , "w" )
 
-    open('outputR.txt', 'w').close()
-    outputR = open("outputR.txt" , "w" )
+    # open('outputC.txt', 'w').close()
+    # outputC = open("outputC.txt" , "w" )
 
-    open('outputT.txt', 'w').close()
-    outputT = open("outputT.txt" , "w" )
+    # open('outputR.txt', 'w').close()
+    # outputR = open("outputR.txt" , "w" )
 
-    open('outputF.txt', 'w').close()
-    outputF = open("outputF.txt" , "w" )
+    # open('outputT.txt', 'w').close()
+    # outputT = open("outputT.txt" , "w" )
+
+    # open('outputF.txt', 'w').close()
+    # outputF = open("outputF.txt" , "w" )
 
     open(fileOut, 'w').close()
     outputN = open(fileOut , "w" )
@@ -277,7 +296,7 @@ def readTree(filename1, filename2, fileOut, dimension):
             # print ('sum eta pn: %f' % (sumEtaPos + sumEtaNeg))
 
 
-            etaTempV = fReflect_Fill_Print(outputF, iEvent, jEvent, j, phiTempV, etaTempV, energyTempV, sumEtaPos, sumEtaNeg, histReflect, histJetTemp)
+            etaTempV = fReflect_Fill_Print(outputN, iEvent, jEvent, j, phiTempV, etaTempV, energyTempV, sumEtaPos, sumEtaNeg, histReflect, histJetTemp, collisionType)
             # print ('sum eta pn: %f' % (sumEtaPos + sumEtaNeg))
 
             eTot = sumEtaPos + sumEtaNeg + sumEtaZero
@@ -289,45 +308,46 @@ def readTree(filename1, filename2, fileOut, dimension):
             histJetTemp.Reset()
 
             
-            # printOutput(outputC, j, iEvent, histCentre)
-            # printOutput(outputR, j, iEvent, histRotate)
-            # printOutput(outputT, j, iEvent, histTranslate)
-            printOutput(outputN, j, iEvent, histNormalize)
+            # printOutput(outputC, j, iEvent, histCentre, collisionType)
+            # printOutput(outputR, j, iEvent, histRotate, collisionType)
+            # printOutput(outputT, j, iEvent, histTranslate, collisionType)
+            printOutput(outputN, j, iEvent, histNormalize, collisionType)
 
                 
         iEvent+=1
 
 
     #see others for examples of iterating through
-    canvasBefore.cd()
-    histBefore.Draw("lego")
-    canvasBefore.SaveAs("before.pdf")
+    # canvasBefore.cd()
+    # histBefore.Draw("lego")
+    # canvasBefore.SaveAs("before.pdf")
 
-    canvasCentre.cd()
-    histCentre.Draw("lego")
-    #https://root.cern.ch/root/html534/guides/users-guide/Histograms.html
-    canvasCentre.SaveAs("centre.pdf")
+    # canvasCentre.cd()
+    # histCentre.Draw("lego")
+    # #https://root.cern.ch/root/html534/guides/users-guide/Histograms.html
+    # canvasCentre.SaveAs("centre.pdf")
 
-    canvasRotate.cd()
-    histRotate.Draw("lego")
-    canvasRotate.SaveAs("rotate.pdf")
+    # canvasRotate.cd()
+    # histRotate.Draw("lego")
+    # canvasRotate.SaveAs("rotate.pdf")
 
-    canvasTranslate.cd()
-    histTranslate.Draw("lego")
-    canvasTranslate.SaveAs("translate.pdf")
+    # canvasTranslate.cd()
+    # histTranslate.Draw("lego")
+    # canvasTranslate.SaveAs("translate.pdf")
 
-    canvasReflect.cd()
-    histReflect.Draw("lego")
-    canvasReflect.SaveAs("reflect.pdf")
+    # canvasReflect.cd()
+    # histReflect.Draw("lego")
+    # canvasReflect.SaveAs("reflect.pdf")
     
-    canvasNormalize.cd()
-    histNormalize.Draw("lego")
-    canvasNormalize.SaveAs("normalize.pdf")
+    # canvasNormalize.cd()
+    # histNormalize.Draw("lego")
+    # canvasNormalize.SaveAs("normalize.pdf")
     
 if __name__ == "__main__":
 
     filename1 = raw_input("Please provide filename 1 (a .root file from original tree): ")
     filename2 = raw_input("Please provide filename 2 (a .root file after original tree goes through jet finder): ")
+<<<<<<< HEAD
     fileOut = raw_input("Please provide an output filename (a .txt file)")
 
     dimension = raw_input("Enter the side-length of the jet images")
@@ -336,5 +356,13 @@ if __name__ == "__main__":
     #filename2 = "jetFile.root"
 
     readTree(filename1 = filename1, filename2 = filename2, fileOut = fileOut, dimension = dimension)
+=======
+    fileOut = raw_input("Please provide an output filename (a .txt file): ")
+    collisionType = raw_input("Please provide collision type (i.e: pp, pb): ")
+    #filename1 = "ppfileHard.root"
+    #filename2 = "jetFile.root"
+
+    readTree(filename1 = filename1, filename2 = filename2, fileOut = fileOut, collisionType = collisionType)
+>>>>>>> 4bd56d7edc09ecefaadffc3d7b1814d5225458cf
 
 

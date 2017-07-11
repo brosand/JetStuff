@@ -107,7 +107,7 @@ for (int iEvents = 0; iEvents < nEvents; iEvents++){
 }
 tree.Print();
 //write the tree to a file
-TFile f("ppfileHard.root", "recreate");
+TFile f("pp.root", "recreate");
 tree.Write();
 //f.ls();
 f.Close();

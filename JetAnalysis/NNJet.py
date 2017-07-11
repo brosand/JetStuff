@@ -24,8 +24,14 @@ N_NODES = 8
 # Note that we use a "softmax" activation function in the output layer. This is to ensure the output values are in the range of 0 and 1 and may be used as predicted probabilities.
 
 # Finally, the network uses the efficient Adam gradient descent optimization algorithm with a logarithmic loss function, which is called "categorical_crossentropy" in Keras.
+<<<<<<< HEAD
 
 #make neural net
+=======
+input1 = raw_input("Enter the first txt file: ")
+input2 = raw_input("Enter the second txt file: ")
+
+>>>>>>> 4bd56d7edc09ecefaadffc3d7b1814d5225458cf
 def baseline_model():
     # create model
     model = Sequential()
@@ -44,7 +50,11 @@ seed = 7
 np.random.seed(seed)
 
 # Open first dataset and read into arrays X,Y, Z
+<<<<<<< HEAD
 dataset = pandas.read_csv("outputN.txt",sep=" ",header=None)
+=======
+dataset = pandas.read_csv(input1,sep=" ",header=None)
+>>>>>>> 4bd56d7edc09ecefaadffc3d7b1814d5225458cf
 array = dataset.values
 
 
@@ -58,7 +68,11 @@ Z = array[ : , 10:12]
 
 # Open second dataset and add information onto end of arrays X,Y, Z
 
+<<<<<<< HEAD
 dataset2 = pandas.read_csv("outputZeroDecoy.txt",sep=" ",header=None)
+=======
+dataset2 = pandas.read_csv(input2, sep=" ",header=None)
+>>>>>>> 4bd56d7edc09ecefaadffc3d7b1814d5225458cf
 array = dataset2.values
 X = np.concatenate((X,array[ : , 1:9]))
 Y = np.concatenate((Y,array[ : , 0]))

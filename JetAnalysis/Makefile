@@ -58,7 +58,7 @@ ppPythiaMake:
 
 	g++ -o ppPythia ppPythia.cpp $(PYTHIAFLAGS) $(PYTHIALIBS) $(FASTJETINC) $(FASTJETLIB) $(LHAPDFARGS) $(ROOTFLAGS) $(ROOTLIBS) -lTreePlayer loader_C.so
 
-all:
+jetFinderMake:
 	g++ -o jetFinder jetFinder.cpp $(PYTHIAFLAGS) $(PYTHIALIBS) $(FASTJETINC) $(FASTJETLIB) $(LHAPDFARGS) $(ROOTFLAGS) $(ROOTLIBS) -lTreePlayer loader_C.so
 
 
