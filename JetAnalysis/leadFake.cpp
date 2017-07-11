@@ -117,7 +117,7 @@ int main(){
 tree.Print();
 
 //write the tree to a file
-TFile f("pbfile.root", "recreate");
+TFile f("lead.root", "recreate");
 tree.Write();
 //f.ls();
 f.Close();
