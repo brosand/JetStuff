@@ -290,9 +290,9 @@ def readTree(filename1, filename2, fileOut):
             histJetTemp.Reset()
 
             
-            printOutput(outputC, j, iEvent, histCentre)
-            printOutput(outputR, j, iEvent, histRotate)
-            printOutput(outputT, j, iEvent, histTranslate)
+            # printOutput(outputC, j, iEvent, histCentre)
+            # printOutput(outputR, j, iEvent, histRotate)
+            # printOutput(outputT, j, iEvent, histTranslate)
             printOutput(outputN, j, iEvent, histNormalize)
 
                 
