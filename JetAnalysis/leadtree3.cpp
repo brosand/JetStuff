@@ -18,7 +18,7 @@ using namespace std;
 
 int main(){
 
-	int iEvents, nEvents, iParticles, nParticles, chargetemp;
+	int iEvents, nEvents, iParticles, nFinalParticles, chargetemp;
 	
 	double tao, theta, phi, eta;
         srand(time(NULL));
@@ -27,22 +27,22 @@ int main(){
         cin >> nEvents;
 
         cout << "Enter the number of particles per event: ";
-        cin >> nParticles;
+        cin >> nFinalParticles;
 
-	double pt[nParticles], px[nParticles], py[nParticles], pz[nParticles], mass[nParticles], energy[nParticles];
-	int charge[nParticles];
+	double pt[nFinalParticles], px[nFinalParticles], py[nFinalParticles], pz[nFinalParticles], mass[nFinalParticles], energy[nFinalParticles];
+	int charge[nFinalParticles];
 
 	//create a tree and link it
 	TTree tree("tree", "tree with event data and particle data in arrays");
 	tree.Branch("iEvents", &iEvents, "iEvents/I");
-	tree.Branch("nParticles", &nParticles, "nParticles/I");
-	tree.Branch("pt", &pt, "pt[nParticles]/D");
-	tree.Branch("px", &px, "px[nParticles]/D");
-	tree.Branch("py", &py, "py[nParticles]/D");
-	tree.Branch("pz", &pz, "pz[nParticles]/D");
-	tree.Branch("charge", &charge, "charge[nParticles]/I");
-	tree.Branch("mass", &mass, "mass[nParticles]/D");
-	tree.Branch("energy", &energy, "energy[nParticles]/I");
+	tree.Branch("nFinalParticles", &nFinalParticles, "nFinalParticles/I");
+	tree.Branch("pt", &pt, "pt[nFinalParticles]/D");
+	tree.Branch("px", &px, "px[nFinalParticles]/D");
+	tree.Branch("py", &py, "py[nFinalParticles]/D");
+	tree.Branch("pz", &pz, "pz[nFinalParticles]/D");
+	tree.Branch("charge", &charge, "charge[nFinalParticles]/I");
+	tree.Branch("mass", &mass, "mass[nFinalParticles]/D");
+	tree.Branch("energy", &energy, "energy[nFinalParticles]/D");
 
         //cout << "Enter the time constant: ";
         //cin >> tao;
@@ -59,7 +59,7 @@ int main(){
 		cout << "\nEvent " << iEvents << "\n" << endl;
 
 		//loop for particles
-		for(iParticles = 0; iParticles < nParticles; iParticles++){
+		for(iParticles = 0; iParticles < nFinalParticles; iParticles++){
 			
 		//cout << "Hello" << endl;
 				
