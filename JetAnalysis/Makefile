@@ -50,17 +50,16 @@ LHAPDFARGS =
 # where the make file is placed. 
 clean:
 	 rm -f $(obj) 
-leadmake:
+leadFakeMake:
 
-	g++ -o lead leadFake.cpp $(PYTHIAFLAGS) $(PYTHIALIBS) $(FASTJETINC) $(FASTJETLIB) $(LHAPDFARGS) $(ROOTFLAGS) $(ROOTLIBS) -lTreePlayer loader_C.so
+	g++ -o leadFake leadFake.cpp $(PYTHIAFLAGS) $(PYTHIALIBS) $(FASTJETINC) $(FASTJETLIB) $(LHAPDFARGS) $(ROOTFLAGS) $(ROOTLIBS) -lTreePlayer loader_C.so
 
-pp:
+ppPythiaMake:
 
 	g++ -o ppPythia ppPythia.cpp $(PYTHIAFLAGS) $(PYTHIALIBS) $(FASTJETINC) $(FASTJETLIB) $(LHAPDFARGS) $(ROOTFLAGS) $(ROOTLIBS) -lTreePlayer loader_C.so
 
 all:
 	g++ -o jetFinder jetFinder.cpp $(PYTHIAFLAGS) $(PYTHIALIBS) $(FASTJETINC) $(FASTJETLIB) $(LHAPDFARGS) $(ROOTFLAGS) $(ROOTLIBS) -lTreePlayer loader_C.so
-
 
 
 
