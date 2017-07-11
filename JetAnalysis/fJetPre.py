@@ -6,7 +6,7 @@ import array
 import numpy
 import math
 
-DIMENSION_JET_IMAGE = 5
+DIMENSION_JET_IMAGE = 3
 COLLISION_TYPE = "pp"
 HIST_BOUND = .6
 
@@ -14,7 +14,7 @@ def printOutput(output, j, iEvent, histogram):
     output.write(COLLISION_TYPE)
     for q in range(DIMENSION_JET_IMAGE):
         for r in range(DIMENSION_JET_IMAGE):
-            output.write(" %f  " % histogram.GetBinContent(q + 1, r + 1))
+            output.write(" %f" % histogram.GetBinContent(q + 1, r + 1))
     output.write(" %d %d \n" % (j, iEvent))
     # print(histogram[0])
     # print('histogram at 1,1')
@@ -134,9 +134,7 @@ def fReflect_Fill_Print(output, iEvent, jEvent, j, phiTempV, etaTempV, energyTem
     return etaTempV
 
 def fNormalize(jEvent, phiTempV, etaTempV, energyTempV, eTot, histNormalize):
-    print 'note 1'
     for i, a in enumerate(etaTempV):
-        print 'note2'
         histNormalize.Fill(phiTempV[i], a, (energyTempV[i]/eTot))
         # if(eTot > 0):
         #     print 'NOTE'
@@ -328,8 +326,11 @@ def readTree(filename1, filename2):
     canvasNormalize.SaveAs("normalize.pdf")
     
 if __name__ == "__main__":
-    filename1 = "ppfile.root"
-    filename2 = "jetFile.root"
+
+    filename1 = raw_input("Please provide filename 1 (a .root file from original tree)")
+    filename2 = raw_input("Please provide filename 2 (a .root file after original tree goes through jet finder)")
+    #filename1 = "ppfileHard.root"
+    #filename2 = "jetFile.root"
 
     readTree(filename1 = filename1, filename2 = filename2)
 

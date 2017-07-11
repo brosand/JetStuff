@@ -12,7 +12,7 @@ from sklearn.cross_validation import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn.pipeline import Pipeline
 
-nNodes = 8
+N_NODES = 8
 
 # define baseline model
 #creates a simple fully connected network with one hidden layer that contains 8 neurons.
@@ -29,11 +29,13 @@ nNodes = 8
 def baseline_model():
     # create model
     model = Sequential()
-    model.add(Dense(nNodes, input_dim=9, activation='relu'))
+    model.add(Dense(N_NODES, input_dim=9, activation='relu'))
     model.add(Dense(2, activation='softmax')) #these are the two possible outputs
+
     # Compile model
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
     return model
+
 
 
 
@@ -44,7 +46,9 @@ np.random.seed(seed)
 # Open first dataset and read into arrays X,Y, Z
 dataset = pandas.read_csv("outputN.txt",sep=" ",header=None)
 array = dataset.values
+
 X = array[ : , 1:10] # WARNING this only reads in 9 numbers
+
 Y = array[ : , 0]
 Z = array[ : , 10:12]
 
@@ -72,13 +76,14 @@ dummy_y = np_utils.to_categorical(encoded_Y)
 #There is a KerasClassifier class in Keras that can be used as an Estimator in scikit-learn, the base type of model in the library. The KerasClassifier takes the name of a function as an argument. This function must return the constructed neural network model, ready for training.
 #Below is a function that will create a baseline neural network for the iris classification problem.  with buildfn creating the baseline model
 
-							#trials
 estimator = KerasClassifier(build_fn=baseline_model, epochs=200, batch_size=5, verbose=0)
 
 # split data into a training and test sample
 validation_size = 0.20
 X_train, X_test, Y_train, Y_test = train_test_split(X, dummy_y, test_size=validation_size, random_state=seed)
 
+# print X_train
+# print Y_train
 
 # train our NN
 estimator.fit(X_train, Y_train)
