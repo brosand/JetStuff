@@ -57,14 +57,14 @@ def findMaxSubmax(jEvent, pEvent, j):
 
     for k, index in enumerate(jEvent.pIndex[j]):
 #index will give the particle index, eg [7, 21, 32], k gives 0, 1, 2
-        print("\t\t\tenergy[%d] = %f" % (jEvent.pIndex[j][k], pEvent.energy[jEvent.pIndex[j][k]]))
+        # print("\t\t\tenergy[%d] = %f" % (jEvent.pIndex[j][k], pEvent.energy[jEvent.pIndex[j][k]]))
         #events[0].energy[event[1].pIndex[j][k]] #how to tap into event number on other tree
         #tree.event.energy[event.pIndex[j][k]] #how to tap into event number on other tree
          
         #finding the particle in the jet with the highest energy
         if pEvent.energy[jEvent.pIndex[j][k]] > pEvent.energy[maxm]:
             maxm = jEvent.pIndex[j][k]
-    print("\t\tmax: %d" % maxm)
+    # print("\t\tmax: %d" % maxm)
     phi_maxm = getPhi(pEvent, maxm)
     eta_maxm = getEta(pEvent, maxm)
     submax = 0
@@ -144,7 +144,7 @@ def fNormalize(jEvent, phiTempV, etaTempV, energyTempV, eTot, histNormalize):
 
 
 
-def readTree(filename1, filename2):
+def readTree(filename1, filename2, fileOut):
 
     fIn = ROOT.TFile(filename1, "READ")
     tree = fIn.Get("tree")
@@ -210,8 +210,8 @@ def readTree(filename1, filename2):
     open('outputF.txt', 'w').close()
     outputF = open("outputF.txt" , "w" )
 
-    open('outputN.txt', 'w').close()
-    outputN = open("outputN.txt" , "w" )
+    open(fileOut, 'w').close()
+    outputN = open(fileOut , "w" )
 
 
 
@@ -220,13 +220,13 @@ def readTree(filename1, filename2):
 
         print("Event %d:" % iEvent)
     #for event in jetTree:
-        print("jEvent.nJets is %d" %jEvent.nJets)
-        print("pEvent.nParticles is %d" %pEvent.nFinalParticles)
+        # print("jEvent.nJets is %d" %jEvent.nJets)
+        # print("pEvent.nParticles is %d" %pEvent.nFinalParticles)
 #LOOP: through each jet in event    
         for j in range(jEvent.nJets): #j tells you which jet you are in
              
-            print("\tJet number %d" %j)
-            print("\tjEvent.pIndex[j][0] = %d" % jEvent.pIndex[j][0])
+            # print("\tJet number %d" %j)
+            # print("\tjEvent.pIndex[j][0] = %d" % jEvent.pIndex[j][0])
             
             phiTempV = []
             etaTempV = []
@@ -272,14 +272,14 @@ def readTree(filename1, filename2):
                 etaTempV.append(eta)
                 phiTempV.append(phi)
                 energyTempV.append(pEvent.energy[index])
-            print ('sum eta pos: %f' % sumEtaPos)
-            print ('sum eta Neg: %f' % sumEtaNeg)
-            print ('sum eta Zero: %f' % sumEtaZero)
-            print ('sum eta pn: %f' % (sumEtaPos + sumEtaNeg))
+            # print ('sum eta pos: %f' % sumEtaPos)
+            # print ('sum eta Neg: %f' % sumEtaNeg)
+            # print ('sum eta Zero: %f' % sumEtaZero)
+            # print ('sum eta pn: %f' % (sumEtaPos + sumEtaNeg))
 
 
             etaTempV = fReflect_Fill_Print(outputF, iEvent, jEvent, j, phiTempV, etaTempV, energyTempV, sumEtaPos, sumEtaNeg, histReflect, histJetTemp)
-            print ('sum eta pn: %f' % (sumEtaPos + sumEtaNeg))
+            # print ('sum eta pn: %f' % (sumEtaPos + sumEtaNeg))
 
             eTot = sumEtaPos + sumEtaNeg + sumEtaZero
             fNormalize(jEvent, phiTempV, etaTempV, energyTempV, eTot, histNormalize)
@@ -327,11 +327,12 @@ def readTree(filename1, filename2):
     
 if __name__ == "__main__":
 
-    filename1 = raw_input("Please provide filename 1 (a .root file from original tree)")
-    filename2 = raw_input("Please provide filename 2 (a .root file after original tree goes through jet finder)")
+    filename1 = raw_input("Please provide filename 1 (a .root file from original tree): ")
+    filename2 = raw_input("Please provide filename 2 (a .root file after original tree goes through jet finder): ")
+    fileOut = raw_input("Please provide an output filename (a .txt file)")
     #filename1 = "ppfileHard.root"
     #filename2 = "jetFile.root"
 
-    readTree(filename1 = filename1, filename2 = filename2)
+    readTree(filename1 = filename1, filename2 = filename2, fileOut = fileOut)
 
 
