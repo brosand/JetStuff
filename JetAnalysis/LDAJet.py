@@ -6,9 +6,18 @@ from sklearn import metrics as m
 from sklearn.utils import shuffle
 from ROOT import gROOT, TCanvas, TH2D
 
+input1 = raw_input("Enter the first txt file")
+input1 = raw_input("Enter the second txt file")
 
+# Open first dataset and read into arrays X,Y,Z
+
+dataset = pandas.read_csv(input1,sep= " ",header=None)
+
+<<<<<<< HEAD
 # Open first dataset and read into arrays X,Y, Z
 dataset = pandas.read_csv("ppfileHardJetPre.txt",sep=" ",header=None)
+=======
+>>>>>>> 596b8b6a17b424c364583ffc5df6ef8bd4d93260
 array = dataset.values
 X = array[ : , 1:10]  
 Y = array[ : , 0]
@@ -20,7 +29,12 @@ Z = array[ : , 10:12]
 
 # Open second dataset and add information onto end of arrays X,Y, Z
 
+<<<<<<< HEAD
 dataset2 = pandas.read_csv("pbPreOutput.txt",sep=" ",header=None)
+=======
+dataset2 = pandas.read_csv(input2,sep=" ",header=None)
+
+>>>>>>> 596b8b6a17b424c364583ffc5df6ef8bd4d93260
 array = dataset2.values
 X = np.concatenate((X,array[ : , 1:10]))
 Y = np.concatenate((Y,array[ : , 0]))
