@@ -1,6 +1,6 @@
 import pandas
 import numpy as np
-from sklearn import model_selection, metrics
+from sklearn import model_selection
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn import metrics as m
 from ROOT import gROOT, TCanvas, TH2D
@@ -27,14 +27,9 @@ X = np.concatenate((X,array[ : , 1:10])) # WARNING this only reads in 9 numbers
 Y = np.concatenate((Y,array[ : , 0]))
 Z = np.concatenate((Z,array[ : , 10:12]))
 
-<<<<<<< HEAD
+
 #print(Y)
 #print(X)
-
-=======
-# print(Y)
-# print(X)
->>>>>>> 9f4b858e09e9427c299b5dc110699a7156cdb12d
 
 # Randonly split the summed dataset into a training and validation set with 80:20 ratio
 validation_size = 0.20
@@ -66,16 +61,9 @@ for i in range(Y_validation.size):
     else:
         print "Got it wrong", predictions[i],Y_validation[i]
 
-<<<<<<< HEAD
-print(metrics.accuracy_score(Y_validation, predictions))
-
-#print(confusion_matrix(Y_validation, predictions))
-#print(classification_report(Y_validation, predictions))
-=======
 print(m.accuracy_score(Y_validation, predictions))
-print(m.confusion_matrix(Y_validation, predictions))
-print(m.classification_report(Y_validation, predictions))
->>>>>>> 9f4b858e09e9427c299b5dc110699a7156cdb12d
+#print(m.confusion_matrix(Y_validation, predictions))
+#print(m.classification_report(Y_validation, predictions))
 
 
 
