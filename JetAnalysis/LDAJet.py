@@ -25,8 +25,14 @@ X = np.concatenate((X,array[ : , 1:10]))
 Y = np.concatenate((Y,array[ : , 0]))
 Z = np.concatenate((Z,array[ : , 10:12]))
 
+<<<<<<< HEAD
 # print(Y)
 # print(X)
+=======
+
+#print(Y)
+#print(X)
+>>>>>>> ab9cf965e0c5bd2e94bce179c1376187d52208a2
 
 # Randonly split the summed dataset into a training and validation set with 80:20 ratio
 validation_size = 0.20
@@ -59,8 +65,13 @@ for i in range(Y_validation.size):
         print "Got it wrong", predictions[i],Y_validation[i]
 
 print(m.accuracy_score(Y_validation, predictions))
+<<<<<<< HEAD
 print(m.confusion_matrix(Y_validation, predictions))
 print(m.classification_report(Y_validation, predictions))
+=======
+#print(m.confusion_matrix(Y_validation, predictions))
+#print(m.classification_report(Y_validation, predictions))
+>>>>>>> ab9cf965e0c5bd2e94bce179c1376187d52208a2
 
 
 

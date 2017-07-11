@@ -83,6 +83,7 @@ int main (){
 		for (int i = 0; i < *myNFinalParticles; i++) //why pointer?
 		{
 			PseudoJet pj(myPx[i], myPy[i], myPz[i], myEnergy[i]);
+			cout << myEnergy[i];
 			pj.set_user_index(i);
 			particles.push_back(pj);
 		// cout << "65" << endl;

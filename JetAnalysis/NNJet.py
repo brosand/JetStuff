@@ -46,13 +46,9 @@ np.random.seed(seed)
 # Open first dataset and read into arrays X,Y, Z
 dataset = pandas.read_csv("outputN.txt",sep=" ",header=None)
 array = dataset.values
-<<<<<<< HEAD
+
 
 X = array[ : , 1:10] # WARNING this only reads in 9 numbers
-
-=======
-X = array[ : , 1:9] # WARNING this only reads in 8 numbers
->>>>>>> 9f4b858e09e9427c299b5dc110699a7156cdb12d
 Y = array[ : , 0]
 Z = array[ : , 10:12]
 
@@ -68,11 +64,9 @@ X = np.concatenate((X,array[ : , 1:9]))
 Y = np.concatenate((Y,array[ : , 0]))
 Z = np.concatenate((Z,array[ : , 10:12]))
 
-<<<<<<< HEAD
-=======
 # print(Y)
 # print(X)
->>>>>>> 9f4b858e09e9427c299b5dc110699a7156cdb12d
+
 # encode class values as integers since NN can't work with strings (I think)
 encoder = LabelEncoder()
 encoder.fit(Y)
