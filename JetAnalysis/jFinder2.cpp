@@ -24,14 +24,14 @@
 using namespace fastjet;
 using namespace std;
 
-JET_ENERGY_LOWER_LIMIT=20;
+int JET_ENERGY_LOWER_LIMIT=20;
 
 int main (){
 	
 	
   // cout << "test1";
   //create a reader to interpret the TTree
-	TFile *f = TFile::Open("ppfile.root");	
+	TFile *f = TFile::Open("ppfileHard.root");	
 	TFile a("jetFile.root", "recreate");
 	if (f == 0) {
 		cout << "Error. Could not open file." << endl;
