@@ -6,7 +6,6 @@ from sklearn import metrics as m
 from sklearn.utils import shuffle
 from ROOT import gROOT, TCanvas, TH2D
 import math
-import pre
 
 input1 = raw_input("Enter the first txt file: ")
 input2 = raw_input("Enter the second txt file: ")
@@ -14,9 +13,11 @@ input2 = raw_input("Enter the second txt file: ")
 # Open first dataset and read into arrays X,Y, Z
 dataset = pandas.read_csv(input1,sep=" ",header=None)
 array = dataset.values
-X = array[ : , 1:(math.exp(pre.dimension, 2) + 1)]  
-Y = array[ : , 0]
-Z = array[ : , (math.exp(pre.dimension, 2) + 1):(math.exp(pre.dimension, 2) + 3)]
+dimension = array[0, 1]
+print("dimension: %d" % math.pow(dimension, 2))
+X = array[: , 2:int(math.pow(dimension, 2) + 2)]  
+Y = array[: , 0]
+Z = array[: , int(math.pow(dimension, 2) + 2):int(math.pow(dimension, 2) + 4)]
 
 #print(X)
 #print(Y)
@@ -34,7 +35,7 @@ Z = np.concatenate((Z,array[ : , 10:12]))
 # print(X)
 
 # Randonly split the summed dataset into a training and validation set with 80:20 ratio
-validation_size = 0.20
+validation_size = 0.15
 seed = 7
 X_train, X_validation, Y_train, Y_validation = model_selection.train_test_split(X, Y, test_size=validation_size, random_state=seed)
 

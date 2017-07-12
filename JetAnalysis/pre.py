@@ -8,8 +8,13 @@ import math
 
 HIST_BOUND = .6
 
-def printOutput(output, j, iEvent, histogram, dimension, collisionType):
+def getDimension():
+    dimension = input("Enter the side-length of the jet images")
+    return dimension
+
+def printOutput(output, j, iEvent, histogram, dimension,  collisionType):
     output.write(collisionType)
+    output.write(" %d" % dimension)
     for q in range(dimension):
         for r in range(dimension):
             output.write(" %f" % histogram.GetBinContent(q + 1, r + 1))
@@ -207,8 +212,6 @@ def readTree(filename1, filename2, fileOut, dimension, collisionType):
     open(fileOut, 'w').close()
     outputN = open(fileOut , "w" )
 
-
-
 #LOOP: through each event in tree
     for pEvent, jEvent in  izip(tree, jetTree): #zip
 
@@ -284,10 +287,10 @@ def readTree(filename1, filename2, fileOut, dimension, collisionType):
             histJetTemp.Reset()
 
             
-            # printOutput(outputC, j, iEvent, histCentre, collisionType)
-            # printOutput(outputR, j, iEvent, histRotate, collisionType)
-            # printOutput(outputT, j, iEvent, histTranslate, collisionType)
-            printOutput(outputN, j, iEvent, histNormalize, collisionType)
+            # printOutput(outputC, j, iEvent, histCentre, dimension, collisionType)
+            # printOutput(outputR, j, iEvent, histRotate, dimension, collisionType)
+            # printOutput(outputT, j, iEvent, histTranslate, dimension, collisionType)
+            printOutput(outputN, j, iEvent, histNormalize, dimension, collisionType)
 
                 
         iEvent+=1
@@ -325,12 +328,13 @@ if __name__ == "__main__":
     filename2 = raw_input("Please provide filename 2 (a .root file after original tree goes through jet finder): ")
 
     fileOut = raw_input("Please provide an output filename (a .txt file):")
-
-    dimension = raw_input("Enter the side-length of the jet images")
-
+    collisionType = raw_input("Enter the collision type: ")
+    dimension = getDimension()
     #filename1 = "ppfileHard.root"
     #filename2 = "jetFile.root"
 
     readTree(filename1 = filename1, filename2 = filename2, fileOut = fileOut, dimension = dimension, collisionType = collisionType)
+    print(dimension)
+print(dimension)
 
 
