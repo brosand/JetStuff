@@ -6,7 +6,8 @@ log/
 # Used by pytest
 .cache/
 .eggs/
-
+# ignore execs
+jetFinder
 # Ignore filetypes
 *.root
 *.jpg
@@ -35,6 +36,7 @@ G__*.cxx
 */build/*
 
 # Keep this files in the repo
+# B
 # For build/
 !*/build/Makefile.am
 !*/build/configure.ac

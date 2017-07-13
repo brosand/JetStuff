@@ -14,7 +14,7 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.pipeline import Pipeline
 
 N_NODES = 8
-
+N_OUTPUT_NODES = 2
 # define baseline model
 #creates a simple fully connected network with one hidden layer that contains 8 neurons.
 #The hidden layer uses a rectifier activation function which is a good practice. Because we used a one-hot encoding for our  dataset, the output layer must create 2 output values, one for each class. The output value with the largest value will be taken as the class predicted by the model.
@@ -26,14 +26,20 @@ N_NODES = 8
 
 # Finally, the network uses the efficient Adam gradient descent optimization algorithm with a logarithmic loss function, which is called "categorical_crossentropy" in Keras.
 
+<<<<<<< HEAD
+=======
+#make neural net
+
+>>>>>>> 9777dcb8eee6153b01d3ec6e89e75eab249b1765
 input1 = raw_input("Enter the first txt file: ")
 input2 = raw_input("Enter the second txt file: ")
+nEpochs = int(raw_input("Enter the number of epochs: "))
 
 def baseline_model():
     # create model
     model = Sequential()
     model.add(Dense(N_NODES, input_dim=9, activation='relu'))
-    model.add(Dense(2, activation='softmax')) #these are the two possible outputs
+    model.add(Dense(N_OUTPUT_NODES, activation='softmax')) #these are the two possible outputs
 
     # Compile model
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
@@ -50,11 +56,17 @@ np.random.seed(seed)
 
 dataset = pandas.read_csv(input1,sep=" ",header=None)
 array = dataset.values
+<<<<<<< HEAD
 dimension = array[0, 1]
 #print("dimension: %d" % math.pow(dimension, 2))
 X = array[: , 2:int(math.pow(dimension, 2) + 2)]  
 Y = array[: , 0]
 Z = array[: , int(math.pow(dimension, 2) + 2):int(math.pow(dimension, 2) + 4)]
+=======
+X = array[ : , 1:10] # WARNING this only reads in 9 numbers
+Y = array[ : , 0]
+Z = array[ : , 10:12]
+>>>>>>> 9777dcb8eee6153b01d3ec6e89e75eab249b1765
 
 #print(X)
 #print(Y)
@@ -62,11 +74,18 @@ Z = array[: , int(math.pow(dimension, 2) + 2):int(math.pow(dimension, 2) + 4)]
 
 # Open second dataset and add information onto end of arrays X,Y, Z
 
+<<<<<<< HEAD
 dataset2 = pandas.read_csv(input2, sep=" ",header=None)
 
 array = dataset2.values
 dimension = array[0, 1]
 X = np.concatenate((X,array[: , 2:int(math.pow(dimension, 2) + 2)]))
+=======
+
+dataset2 = pandas.read_csv(input2, sep=" ",header=None)
+array = dataset2.values
+X = np.concatenate((X,array[ : , 1:10]))
+>>>>>>> 9777dcb8eee6153b01d3ec6e89e75eab249b1765
 Y = np.concatenate((Y,array[ : , 0]))
 Z = np.concatenate((Z,array[: , int(math.pow(dimension, 2) + 2):int(math.pow(dimension, 2) + 4)]))
 
@@ -86,7 +105,7 @@ dummy_y = np_utils.to_categorical(encoded_Y)
 #There is a KerasClassifier class in Keras that can be used as an Estimator in scikit-learn, the base type of model in the library. The KerasClassifier takes the name of a function as an argument. This function must return the constructed neural network model, ready for training.
 #Below is a function that will create a baseline neural network for the iris classification problem.  with buildfn creating the baseline model
 
-estimator = KerasClassifier(build_fn=baseline_model, epochs=200, batch_size=5, verbose=0)
+estimator = KerasClassifier(build_fn=baseline_model, epochs=nEpochs, batch_size=5, verbose=0)
 
 # split data into a training and test sample
 validation_size = 0.20

@@ -318,9 +318,9 @@ def readTree(filename1, filename2, fileOut, dimension, collisionType):
     # histReflect.Draw("lego")
     # canvasReflect.SaveAs("reflect.pdf")
     
-    # canvasNormalize.cd()
-    # histNormalize.Draw("lego")
-    # canvasNormalize.SaveAs("normalize.pdf")
+    canvasNormalize.cd()
+    histNormalize.Draw("lego")
+    canvasNormalize.SaveAs("normalize.pdf")
     
 if __name__ == "__main__":
 

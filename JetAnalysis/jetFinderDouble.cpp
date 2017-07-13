@@ -32,34 +32,23 @@ int main (){
     cout << "Input file path: ";
     cin >> iPath;
 
+    cout << "Input file path2: ";
+    cin >> iPath2;
+
     cout << "Output file path:";
     cin >> oPath;
   // cout << "test1";
   //create a reader to interpret the TTree
+
     TFile *f = TFile::Open(iPath.c_str());
+    TFile *g = TFile::Open(iPath2.c_str());
+
     // cout << "hi" <<iPath.c_str();   
     TFile a(oPath.c_str(), "recreate");
     if (f == 0) {
         cout << "Error. Could not open file." << endl;
         return 1;
     }
-    TTreeReader myReader("tree" ,f);
-    TTreeReaderArray<double> myPx(myReader, "px");
-    TTreeReaderArray<double> myPy(myReader, "py");
-    TTreeReaderArray<double> myPz(myReader, "pz");
-    TTreeReaderArray<double> myEnergy(myReader, "energy");
-    // TTreeReaderArray<int> numParticles(myReader, "nFinalParticles"); //??
-    // TTreeReaderValue<int> myEvents(myReader, "iEvents");
-    TTreeReaderValue<int> myNFinalParticles(myReader, "nFinalParticles");
-
-    // vector<int> pTempV;
-    vector<vector<int> > pIndex;
-    //y is rapidity
-
-    int eventN = 0;
-    int nJets = 0;
-    vector<double> eta, phi;
-
     //create output TTree
     TTree jetTree("jetTree", "ttree with jet data");
     jetTree.Branch("eventN", &eventN, "eventN/I");
@@ -68,22 +57,49 @@ int main (){
     jetTree.Branch("phi", &phi);
     jetTree.Branch("eta", &eta);
 
+    TTreeReader myReader1("tree" ,f);
+    TTreeReaderArray<double> myPx(myReader, "px");
+    TTreeReaderArray<double> myPy(myReader, "py");
+    TTreeReaderArray<double> myPz(myReader, "pz");
+    TTreeReaderArray<double> myEnergy(myReader, "energy");
+    TTreeReaderArray<int> numParticles(myReader, "nFinalParticles"); //??
+    TTreeReaderValue<int> myNFinalParticles(myReader, "nFinalParticles");
+
+    TTreeReader myReader2("tree" ,g);
+    TTreeReaderArray<double> myPx(myReader, "px");
+    TTreeReaderArray<double> myPy(myReader, "py");
+    TTreeReaderArray<double> myPz(myReader, "pz");
+    TTreeReaderArray<double> myEnergy(myReader, "energy");
+    TTreeReaderArray<int> numParticles(myReader, "nFinalParticles"); //??
+    TTreeReaderValue<int> myNFinalParticles(myReader, "nFinalParticles");
+    // TTreeReaderValue<int> myEvents(myReader, "iEvents");
+
+    // vector<int> pTempV;
+    vector<vector<int> > pIndex;
+    //y is rapidity
+
+    vector<double> eta, phi;
+
+    TTreeReader tReaders []= {myReader1, myReader2}
+
+
   //Pseudojet vector
   //vector of pseudoJets
     // vector<vector<PseudoJet>> particlesVector;
   //loop through the particles and turn them into pseudojets
         // int iEvent = 0;
-    while(myReader.Next()) {
+    for (i = 0; i <tReaders.length(); i++){
+    int eventN = 0;
+    int nJets = 0;
+    while(myReader1.Next()) {
     //Note For Understanding: myReader.Next() --> iterates through the first level of the reader, or the only level for the value reader, the array reader needs to levels (understanding as of 6/20/17)
-        cout << "num particles in this event is " << *myNFinalParticles << endl;
+        cout << "num particles in this jet is " << *myNFinalParticles << endl;
+        cout << "test";
         vector<PseudoJet> particles;            
         for (int i = 0; i < *myNFinalParticles; i++) //why pointer?
         {
             PseudoJet pj(myPx[i], myPy[i], myPz[i], myEnergy[i]);
-            // cout << myEnergy[i] << endl;
-            // cout << myPx[i] << endl;
-            // cout << myEnergy[i] << endl;
-
+            cout << myPx[i];
             pj.set_user_index(i);
             particles.push_back(pj);
         // cout << "65" << endl;
@@ -109,7 +125,7 @@ int main (){
         //for each jet, loop through a single jet, adding each userindex to the array
         //jets.size is the number of jets
         for (int a = 0; a < jets.size(); a++) {
-            // cout << jets[a].pt() << endl;
+            cout << jets[a].pt() << endl;
             if (jets[a].pt() < JET_ENERGY_LOWER_LIMIT) {
                 jets.erase(jets.begin()+a);
                 a--;
@@ -168,7 +184,7 @@ int main (){
         phi.resize(0);
 
             //}
-    }
+    }}
 
     jetTree.Write();
     jetTree.Print();
