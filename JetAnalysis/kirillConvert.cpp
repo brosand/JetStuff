@@ -15,8 +15,9 @@ using namespace std;
 
 int main(){
 
-	int dummy, iEvents = 0;
-
+	int dummyI, iEvents = 0, nFinalParticlesTemp;
+	double dummyD;
+	double pxtemp, pytemp, pztemp, energytemp, masstemp;
 	vector <int> nFinalParticles; //technically not final any more, but for naming consistency
 	vector <double> px;
 	vector <double> py;
@@ -34,12 +35,10 @@ int main(){
 	tree.Branch("energy", &energy);
 	tree.Branch("mass", &mass);
 
-	cout << "seg1" << endl;
-
 	ifstream inputFile;
 	string filename, rootFileName, waste;
 
-	cout << "Enter the name of the file to read from (a .dat probs):\t";
+	cout << "Enter the name of the file to read from (probs a .dat):\t";
 	cin >> filename;
 
 	inputFile.open(filename);
@@ -49,30 +48,26 @@ int main(){
         	cout << "Error: The file named " << filename << " was not successfully opened." << endl;
 
 	}
-	cout << "seg2" << endl;
 
 	iEvents = 0;
 	for(int j = 0; j < 3; j++){
 
 		getline(inputFile, waste);
-		//cout << "ignore " << j << endl;	
 
 		}
 
 	while(!inputFile.eof()){
 
-		int nFinalParticlesTemp;
-		inputFile >> iEvents >> nFinalParticlesTemp >> dummy >> dummy; //in top line
-		nFinalParticles.push_back(nFinalParticlesTemp);
-		//cout << "yo2"  << endl;
-		cout << "iEvents: "<< iEvents << endl;
+		inputFile >> iEvents >> nFinalParticlesTemp >> dummyD >> dummyD; //in top line
 
-		for (int i = 0; i < nFinalParticles[iEvents]; i++){ 
+		nFinalParticles.push_back(nFinalParticlesTemp);
+
+		cout << "iEvents: "<< iEvents << " nFinalParticles.at(iEvents): " << nFinalParticles.at(iEvents-1) << endl;
+
+		for (int i = 0; i < nFinalParticles.at(iEvents-1); i++){ 
 				// particle number, particle id aren't needed
 			
-			cout << "i " << i << endl;
-			int dummy, pxtemp, pytemp, pztemp, energytemp, masstemp;
-			inputFile >> dummy >> dummy >> pxtemp >> pytemp >> pztemp >> energytemp >> masstemp >> dummy >> dummy;
+			inputFile >> dummyI >> dummyI >> pxtemp >> pytemp >> pztemp >> energytemp >> masstemp >> dummyD >> dummyD >> dummyD >> dummyD;
 
 			//fill vectors
 			px.push_back(pxtemp);
@@ -80,9 +75,10 @@ int main(){
 			pz.push_back(pztemp);
 			energy.push_back(energytemp);
 			mass.push_back(masstemp);
+
+			//cout << "\t\t" << i << "\t" << pxtemp << "\t" << pytemp << "\t" << pztemp << "\t" << energytemp << "\t" << masstemp << "\t" << endl;
 			
-			//cout << iEvents << "\t" << i << "\t" << px.at(nFinalParticles) << "\t" << py.at(nFinalParticles) << "\t" << pz.at(nFinalParticles) << "\t" << energy.at(nFinalParticles) << "\t" << "\t" << mass.at(nFinalParticles) << endl;
-			
+			cout << "\t\t" << i << "\t" << px.at(i) << "\t" << py.at(i) << "\t" << pz.at(i) << "\t" << energy.at(i) << "\t" << mass.at(i) << endl;
 		}
 
 		tree.Fill();
@@ -93,15 +89,11 @@ int main(){
 		mass.clear();
 	
 		//iEvents++;
-
-
 	}
-	cout << "seg3" << endl;	
 	
 	tree.Print();
 
 	size_t pos = filename.find(".");
-	  //std::string str3 = str.substr (pos);     // get from "live" to the end
     	rootFileName = filename.substr(0, pos);
 
 	TFile *f = new TFile(rootFileName.c_str(), "recreate");
