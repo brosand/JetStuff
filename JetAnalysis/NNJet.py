@@ -22,15 +22,13 @@ N_OUTPUT_NODES = 2
 #The network topology of this simple one-layer neural network can be summarized as:
 
 # 8 inputs --> [ 8 hidden nodes ] --> 3 outputs
-# Note that we use a "softmax" activation function in the output layer. This is to ensure the output values are in the range of 0 and 1 and may be used as predicted probabilities.
+# Note that we use a "softmax" activation function in tohe output layer. This is to ensure the output values are in the range of 0 and 1 and may be used as predicted probabilities.
 
 # Finally, the network uses the efficient Adam gradient descent optimization algorithm with a logarithmic loss function, which is called "categorical_crossentropy" in Keras.
 
-<<<<<<< HEAD
-=======
+
 #make neural net
 
->>>>>>> 9777dcb8eee6153b01d3ec6e89e75eab249b1765
 input1 = raw_input("Enter the first txt file: ")
 input2 = raw_input("Enter the second txt file: ")
 nEpochs = int(raw_input("Enter the number of epochs: "))
@@ -56,42 +54,21 @@ np.random.seed(seed)
 
 dataset = pandas.read_csv(input1,sep=" ",header=None)
 array = dataset.values
-<<<<<<< HEAD
 dimension = array[0, 1]
-#print("dimension: %d" % math.pow(dimension, 2))
 X = array[: , 2:int(math.pow(dimension, 2) + 2)]  
 Y = array[: , 0]
 Z = array[: , int(math.pow(dimension, 2) + 2):int(math.pow(dimension, 2) + 4)]
-=======
-X = array[ : , 1:10] # WARNING this only reads in 9 numbers
-Y = array[ : , 0]
-Z = array[ : , 10:12]
->>>>>>> 9777dcb8eee6153b01d3ec6e89e75eab249b1765
-
-#print(X)
-#print(Y)
-#print Z
 
 # Open second dataset and add information onto end of arrays X,Y, Z
 
-<<<<<<< HEAD
 dataset2 = pandas.read_csv(input2, sep=" ",header=None)
-
 array = dataset2.values
 dimension = array[0, 1]
 X = np.concatenate((X,array[: , 2:int(math.pow(dimension, 2) + 2)]))
-=======
-
-dataset2 = pandas.read_csv(input2, sep=" ",header=None)
-array = dataset2.values
-X = np.concatenate((X,array[ : , 1:10]))
->>>>>>> 9777dcb8eee6153b01d3ec6e89e75eab249b1765
 Y = np.concatenate((Y,array[ : , 0]))
 Z = np.concatenate((Z,array[: , int(math.pow(dimension, 2) + 2):int(math.pow(dimension, 2) + 4)]))
 
 
-# print(Y)
-# print(X)
 
 # encode class values as integers since NN can't work with strings (I think)
 encoder = LabelEncoder()
@@ -111,8 +88,6 @@ estimator = KerasClassifier(build_fn=baseline_model, epochs=nEpochs, batch_size=
 validation_size = 0.20
 X_train, X_test, Y_train, Y_test = train_test_split(X, dummy_y, test_size=validation_size, random_state=seed)
 
-# print(X_train)
-# print Y_train
 
 # train our NN
 estimator.fit(X_train, Y_train)

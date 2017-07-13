@@ -9,7 +9,7 @@ import math
 HIST_BOUND = .6
 
 def getDimension():
-    dimension = input("Enter the side-length of the jet images")
+    dimension = input("Enter the side-length of the jet images: ")
     return dimension
 
 def printOutput(output, j, iEvent, histogram, dimension,  collisionType):

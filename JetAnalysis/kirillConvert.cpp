@@ -63,7 +63,8 @@ int main(){
 
 		int nFinalParticlesTemp;
 		inputFile >> iEvents >> nFinalParticlesTemp >> dummy >> dummy; //in top line
-		nFinalParticles.push_back(nFinalParticlesTemp);
+		cout << iEvents;
+		// nFinalParticles.push_back(nFinalParticlesTemp);
 		//cout << "yo2"  << endl;
 		cout << "iEvents: "<< iEvents << endl;
 
