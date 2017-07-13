@@ -84,7 +84,7 @@ dummy_y = np_utils.to_categorical(encoded_Y)
 #There is a KerasClassifier class in Keras that can be used as an Estimator in scikit-learn, the base type of model in the library. The KerasClassifier takes the name of a function as an argument. This function must return the constructed neural network model, ready for training.
 #Below is a function that will create a baseline neural network for the iris classification problem.  with buildfn creating the baseline model
 
-estimator = KerasClassifier(build_fn=baseline_model, epochs=nEpochs, batch_size=5, verbose=0)
+estimator = KerasClassifier(build_fn=baseline_model, epochs=nEpochs, batch_size=5, verbose=1)
 
 # split data into a training and test sample
 validation_size = 0.20
@@ -109,5 +109,6 @@ for i in range(predictions.size):
 #Some more tests for how training is doing
 # This takes some time, not sure why
 kfold = KFold(n_splits=10, shuffle=True, random_state=seed)
+print 'finished KFold'
 results = cross_val_score(estimator, X, dummy_y, cv=kfold)
 print("Baseline: %.2f%% (%.2f%%)" % (results.mean()*100, results.std()*100))
