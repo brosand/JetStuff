@@ -15,48 +15,57 @@ def rootCombine(file1, file2, fileOut):
 
     #Declaration of variables for the output tree
 
-    maxn=0 #Problem: have to go through both trees twice, first to count for length of array
-    for e1, e2 in izip(tree1,tree2):
-         maxn+= (tree1.nFinalParticles + tree2.nFinalParticles)
+    # maxn=1 #Problem: have to go through both trees twice, first to count for length of array
+    # for e1, e2 in izip(tree1,tree2):
+    #      if ((e1.nFinalParticles + e2.nFinalParticles) > maxn):
+    #         maxn = e1.nFinalParticles + e2.nFinalParticles
 
-    iEvents = array('i', [0])
-    nFinalParticles = array('i', [0])
-    pt = array('f', maxn*[0.])
-    px = array('f', maxn*[0.])
-    py = array('f', maxn*[0.])
-    pz = array('f', maxn*[0.])
-    charge = array('f', maxn*[0.])
-    mass = array('f', maxn*[0.])
-    energy = array('f', maxn*[0.])
+    iEvents = 0 #array('i')
+    nParticles = 0#array('i')
+    # nFinalParticles[0] = 10000
+    # pt = array('d', maxn*[])
+    px = array('f')
+    py = array('f')
+    pz = array('f')
+    charge = array('f')
+    mass = array('f')
+    energy = array('f')
 
 
     #works best with trees with same length
     #create the output tree
     tree = TTree('tree', 'tree with event data and particle data in arrays')
     tree.Branch('iEvents', iEvents, 'iEvents/I');
-    tree.Branch('nFinalParticles', nFinalParticles, 'nFinalParticles/I');
+    tree.Branch('nFinalParticles', nParticles, 'nFinalParticles/I');
     # tree.Branch('pt', pt, 'pt[nFinalParticles]/D');
-    tree.Branch('px', px, 'px[nFinalParticles]/F');
-    tree.Branch('py', py, 'py[nFinalParticles]/F');
-    tree.Branch('pz', pz, 'pz[nFinalParticles]/F');
+    tree.Branch('px', px, 'px[1100]/F');
+    tree.Branch('py', py, 'py[1100]/F');
+    tree.Branch('pz', pz, 'pz[1100]/F');
+    tree.Branch('energy', energy, 'energy[1100]/F');
     # tree.Branch('charge', charge, 'charge[nFinalParticles]/I');
-    # tree.Branch('mass', mass, 'mass[nFinalParticles]/F');
-    tree.Branch('energy', energy, 'energy[nFinalParticles]/F');
+    # tree.Branch('mass', mass, 'mass[nFinalParticles]/D');
 
 
 
     for aEvent, bEvent in izip(tree1, tree2):
-        iEvents[0] = aEvent.iEvents
-        nFinalParticles[0] = (aEvent.nFinalParticles + bEvent.nFinalParticles)
+        iEvents = aEvent.iEvents
+        nParticles = (aEvent.nFinalParticles + bEvent.nFinalParticles)
         px.extend(aEvent.px)
-        px.extend(bEvent.px)
+        # px.extend(bEvent.px)
         py.extend(aEvent.py)
-        py.extend(bEvent.py)
+        # py.extend(bEvent.py)
         pz.extend(aEvent.pz)
-        pz.extend(bEvent.pz)
+        # pz.extend(bEvent.pz)
         energy.extend(aEvent.energy)
-        energy.extend(bEvent.energy)
-    tree.Fill()
+        # energy.extend(bEvent.energy)
+        print nParticles
+        # print px
+        tree.Fill()
+        print len(px)
+        px = []
+        py = []
+        pz = []
+        energy = []
     fOut.Write()
 
     fOut.Close()

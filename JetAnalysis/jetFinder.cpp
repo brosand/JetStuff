@@ -43,13 +43,12 @@ int main (){
         cout << "Error. Could not open file." << endl;
         return 1;
     }
-
     TTreeReader myReader("tree" ,f);
     TTreeReaderArray<double> myPx(myReader, "px");
     TTreeReaderArray<double> myPy(myReader, "py");
     TTreeReaderArray<double> myPz(myReader, "pz");
     TTreeReaderArray<double> myEnergy(myReader, "energy");
-    TTreeReaderArray<int> numParticles(myReader, "nFinalParticles"); //??
+    // TTreeReaderArray<int> numParticles(myReader, "nFinalParticles"); //??
     // TTreeReaderValue<int> myEvents(myReader, "iEvents");
     TTreeReaderValue<int> myNFinalParticles(myReader, "nFinalParticles");
 
@@ -60,7 +59,6 @@ int main (){
     int eventN = 0;
     int nJets = 0;
     vector<double> eta, phi;
-
 
     //create output TTree
     TTree jetTree("jetTree", "ttree with jet data");
@@ -77,13 +75,15 @@ int main (){
         // int iEvent = 0;
     while(myReader.Next()) {
     //Note For Understanding: myReader.Next() --> iterates through the first level of the reader, or the only level for the value reader, the array reader needs to levels (understanding as of 6/20/17)
-        cout << "num particles in this jet is " << *myNFinalParticles << endl;
-        cout << "test";
+        cout << "num particles in this event is " << *myNFinalParticles << endl;
         vector<PseudoJet> particles;            
         for (int i = 0; i < *myNFinalParticles; i++) //why pointer?
         {
             PseudoJet pj(myPx[i], myPy[i], myPz[i], myEnergy[i]);
-            cout << myEnergy[i];
+            // cout << myEnergy[i] << endl;
+            // cout << myPx[i] << endl;
+            // cout << myEnergy[i] << endl;
+
             pj.set_user_index(i);
             particles.push_back(pj);
         // cout << "65" << endl;
@@ -109,7 +109,7 @@ int main (){
         //for each jet, loop through a single jet, adding each userindex to the array
         //jets.size is the number of jets
         for (int a = 0; a < jets.size(); a++) {
-            cout << jets[a].pt() << endl;
+            // cout << jets[a].pt() << endl;
             if (jets[a].pt() < JET_ENERGY_LOWER_LIMIT) {
                 jets.erase(jets.begin()+a);
                 a--;
