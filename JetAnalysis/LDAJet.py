@@ -27,9 +27,9 @@ Z = array[: , int(math.pow(dimension, 2) + 2):int(math.pow(dimension, 2) + 4)]
 
 dataset2 = pandas.read_csv(input2,sep=" ",header=None)
 array = dataset2.values
-X = np.concatenate((X,array[ : , 1:10]))
+X = np.concatenate((X,array[: , 2:int(math.pow(dimension, 2) + 2)]))
 Y = np.concatenate((Y,array[ : , 0]))
-Z = np.concatenate((Z,array[ : , 10:12]))
+Z = np.concatenate((Z,array[: , int(math.pow(dimension, 2) + 2):int(math.pow(dimension, 2) + 4)]))
 
 # print(Y)
 # print(X)
@@ -57,6 +57,7 @@ X_trans2 = lda.transform(X_validation)
 #Make predictions as to what each data row is in the validation set
 predictions = lda.predict(X_validation)
 
+#lda.coef_
 
 #look at accuracy of predicitons
 for i in range(Y_validation.size):

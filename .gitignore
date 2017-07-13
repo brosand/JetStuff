@@ -9,6 +9,7 @@ log/
 
 # Ignore filetypes
 *.root
+*.dat
 *.jpg
 *.jpeg
 *.txt

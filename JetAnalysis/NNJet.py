@@ -1,6 +1,7 @@
 import numpy as np
 import pandas
 import keras
+import math
 
 from keras.models import Sequential
 from keras.layers import Dense
@@ -25,8 +26,11 @@ N_OUTPUT_NODES = 2
 
 # Finally, the network uses the efficient Adam gradient descent optimization algorithm with a logarithmic loss function, which is called "categorical_crossentropy" in Keras.
 
+<<<<<<< HEAD
+=======
 #make neural net
 
+>>>>>>> 9777dcb8eee6153b01d3ec6e89e75eab249b1765
 input1 = raw_input("Enter the first txt file: ")
 input2 = raw_input("Enter the second txt file: ")
 nEpochs = int(raw_input("Enter the number of epochs: "))
@@ -52,9 +56,17 @@ np.random.seed(seed)
 
 dataset = pandas.read_csv(input1,sep=" ",header=None)
 array = dataset.values
+<<<<<<< HEAD
+dimension = array[0, 1]
+#print("dimension: %d" % math.pow(dimension, 2))
+X = array[: , 2:int(math.pow(dimension, 2) + 2)]  
+Y = array[: , 0]
+Z = array[: , int(math.pow(dimension, 2) + 2):int(math.pow(dimension, 2) + 4)]
+=======
 X = array[ : , 1:10] # WARNING this only reads in 9 numbers
 Y = array[ : , 0]
 Z = array[ : , 10:12]
+>>>>>>> 9777dcb8eee6153b01d3ec6e89e75eab249b1765
 
 #print(X)
 #print(Y)
@@ -62,12 +74,21 @@ Z = array[ : , 10:12]
 
 # Open second dataset and add information onto end of arrays X,Y, Z
 
+<<<<<<< HEAD
+dataset2 = pandas.read_csv(input2, sep=" ",header=None)
+
+array = dataset2.values
+dimension = array[0, 1]
+X = np.concatenate((X,array[: , 2:int(math.pow(dimension, 2) + 2)]))
+=======
 
 dataset2 = pandas.read_csv(input2, sep=" ",header=None)
 array = dataset2.values
 X = np.concatenate((X,array[ : , 1:10]))
+>>>>>>> 9777dcb8eee6153b01d3ec6e89e75eab249b1765
 Y = np.concatenate((Y,array[ : , 0]))
-Z = np.concatenate((Z,array[ : , 10:12]))
+Z = np.concatenate((Z,array[: , int(math.pow(dimension, 2) + 2):int(math.pow(dimension, 2) + 4)]))
+
 
 # print(Y)
 # print(X)
