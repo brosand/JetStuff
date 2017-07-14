@@ -64,7 +64,13 @@ int main(){
 	while(inputFile >> iEvents >> nFinalParticles >> dummyD >> dummyD){
 
 		if (iEvents % 100 == 0){
+<<<<<<< HEAD
 			cout << "iEvents: "<< iEvents << " nFinalParticles: " << nFinalParticles << endl;
+=======
+
+			cout << "iEvents: "<< iEvents << " nFinalParticles.at(iEvents-1): " << nFinalParticles.at(iEvents-1) << endl;
+
+>>>>>>> d05f3044fc7b3e14cebd7ba87408814b5d678894
 		}
 
 		for (int i = 0; i < nFinalParticles; i++){ 
