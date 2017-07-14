@@ -57,8 +57,6 @@ X_trans2 = lda.transform(X_validation)
 #Make predictions as to what each data row is in the validation set
 predictions = lda.predict(X_validation)
 
-#lda.coef_
-
 #look at accuracy of predicitons
 for i in range(Y_validation.size):
     if predictions[i] == Y_validation[i] :
@@ -66,9 +64,39 @@ for i in range(Y_validation.size):
     else:
         print "Got it wrong", predictions[i],Y_validation[i]
 
+#put all print statements after the loop
+print("X_trans[0][0]")
+print(X_trans[0][0])
+
+print("X_trans[1][0]")
+print(X_trans[1][0])
+
+print("X_trans[2][0]")
+print(X_trans[2][0])
+
+#print("X_trans[0][1]")
+#print(X_trans[0][1])
+
+print("X_trans[0]")
+print(X_trans[0])
+
+print("X_trans[1]")
+print(X_trans[1])
+
+print("X_trans[2]")
+print(X_trans[2])
+
+print(X_trans)
+
+
+
+
+print("lda coef thing: ")
+print(lda.coef_)
+
 print(m.accuracy_score(Y_validation, predictions))
-print(m.confusion_matrix(Y_validation, predictions))
-print(m.classification_report(Y_validation, predictions))
+#print(m.confusion_matrix(Y_validation, predictions))
+#print(m.classification_report(Y_validation, predictions))
 
 
 

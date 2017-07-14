@@ -61,12 +61,8 @@ int main(){
 
 	}
 
-	while(!inputFile.eof()){
-		// if (iEvents == 30000) {
-		// 	break;
-		// }
-		int nFinalParticlesTemp;
-		inputFile >> iEvents >> nFinalParticlesTemp >> dummyD >> dummyD; //in top line
+	while(inputFile >> iEvents >> nFinalParticlesTemp >> dummyD >> dummyD){
+
 		nFinalParticles.push_back(nFinalParticlesTemp);
 		if (iEvents % 100 == 0){
 			cout << "iEvents: "<< iEvents << " nFinalParticles.at(iEvents): " << nFinalParticles.at(iEvents-1) << endl;
@@ -99,6 +95,7 @@ int main(){
 
 		//iEvents++;
 	}
+
 	tree.Write();
 	tree.Print();
 	//f.ls();
