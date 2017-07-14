@@ -33,6 +33,15 @@ input1 = raw_input("Enter the first txt file: ")
 input2 = raw_input("Enter the second txt file: ")
 nEpochs = int(raw_input("Enter the number of epochs: "))
 
+def saveInfo(input1, input2, nEpochs, mean, std):
+    output=open('NeuralNetData.txt \n', 'a')
+    output.write('Tree 1: %s \n' % input1)
+    output.write('Tree 2: %s \n' % input2)
+    output.write('Number of epochs: %i \n' % nEpochs)
+    output.write('Number of Nodes: %s \n' % N_NODES)
+    output.write('Number of Output Nodes: %s \n' % N_OUTPUT_NODES)
+    output.write("Baseline: %.2f%% (%.2f%%) \n" % (mean, std))
+
 def baseline_model():
     # create model
     model = Sequential()
@@ -108,3 +117,4 @@ kfold = KFold(n_splits=10, shuffle=True, random_state=seed)
 print 'finished KFold'
 results = cross_val_score(estimator, X, dummy_y, cv=kfold)
 print("Baseline: %.2f%% (%.2f%%)" % (results.mean()*100, results.std()*100))
+saveInfo(input1, input2, nEpochs, results.mean()*100, results.std()*100)
