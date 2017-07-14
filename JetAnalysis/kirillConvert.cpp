@@ -56,9 +56,9 @@ int main(){
 
 		}
 
-	while(!inputFile.eof()){
+	while(inputFile >> iEvents >> nFinalParticlesTemp >> dummyD >> dummyD){
 
-		inputFile >> iEvents >> nFinalParticlesTemp >> dummyD >> dummyD; //in top line
+		//inputFile >> iEvents >> nFinalParticlesTemp >> dummyD >> dummyD; //in top line
 
 		nFinalParticles.push_back(nFinalParticlesTemp);
 
@@ -94,7 +94,7 @@ int main(){
 	tree.Print();
 
 	size_t pos = filename.find(".");
-    	rootFileName = filename.substr(0, pos);
+    	rootFileName = filename.substr(0, pos) + ".root";
 
 	TFile *f = new TFile(rootFileName.c_str(), "recreate");
 	tree.Write();
