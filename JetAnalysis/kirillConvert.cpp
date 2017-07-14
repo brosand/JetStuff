@@ -65,7 +65,7 @@ int main(){
 
 		nFinalParticles.push_back(nFinalParticlesTemp);
 		if (iEvents % 100 == 0){
-			cout << "iEvents: "<< iEvents << " nFinalParticles.at(iEvents): " << nFinalParticles.at(iEvents-1) << endl;
+			cout << "iEvents: "<< iEvents << " nFinalParticles.at(iEvents-1): " << nFinalParticles.at(iEvents-1) << endl;
 		}
 
 		for (int i = 0; i < nFinalParticles.at(iEvents-1); i++){ 
