@@ -3,7 +3,7 @@
 from itertools import izip
 import ROOT
 import array
-import numpy
+import numpy as np
 import math
 
 HIST_BOUND = .6
@@ -135,9 +135,17 @@ def fReflect_Fill_Print(output, iEvent, jEvent, j, phiTempV, etaTempV, energyTem
 
     return etaTempV
 
-def fNormalize(jEvent, phiTempV, etaTempV, energyTempV, eTot, histNormalize):
-    for i, a in enumerate(etaTempV):
-        histNormalize.Fill(phiTempV[i], a, (energyTempV[i]/eTot))
+def fNormalize(energyTempV):
+    outVector = []
+    eSum = np.sum(energyTempV)
+    for i in energyTempV:
+        outVector.append(i/eSum)
+    return outVector
+
+    # for i, a in enumerate(etaTempV):
+    #     histNormalize.Fill(phiTempV[i], a, (energyTempV[i]/eTot))
+    # return histNormalize
+
         # if(eTot > 0):
         #     print 'NOTE'
         # else:
@@ -214,8 +222,8 @@ def readTree(filename1, filename2, fileOut, dimension, collisionType):
 
 #LOOP: through each event in tree
     for pEvent, jEvent in  izip(tree, jetTree): #zip
-
-        print("Event %d:" % iEvent)
+        if (iEvent % 100 == 0):
+            print("Event %d:" % iEvent)
     #for event in jetTree:
         # print("jEvent.nJets is %d" %jEvent.nJets)
         # print("pEvent.nParticles is %d" %pEvent.nFinalParticles)
@@ -274,24 +282,26 @@ def readTree(filename1, filename2, fileOut, dimension, collisionType):
             # print ('sum eta Zero: %f' % sumEtaZero)
             # print ('sum eta pn: %f' % (sumEtaPos + sumEtaNeg))
 
-
+            energyTempV = fNormalize(energyTempV)
             etaTempV = fReflect_Fill_Print(outputN, iEvent, jEvent, j, phiTempV, etaTempV, energyTempV, sumEtaPos, sumEtaNeg, histReflect, histJetTemp, collisionType)
             # print ('sum eta pn: %f' % (sumEtaPos + sumEtaNeg))
 
-            eTot = sumEtaPos + sumEtaNeg + sumEtaZero
-            fNormalize(jEvent, phiTempV, etaTempV, energyTempV, eTot, histNormalize)
+            # eTot = sumEtaPos + sumEtaNeg + sumEtaZero
+            # histNormalize = fNormalize(jEvent, phiTempV, etaTempV, energyTempV, eTot, histNormalize, dimension, collisionType)
 
             etaTempV = []
             phiTempV = []
             energyTempV = []
             histJetTemp.Reset()
 
+
             
             # printOutput(outputC, j, iEvent, histCentre, dimension, collisionType)
             # printOutput(outputR, j, iEvent, histRotate, dimension, collisionType)
             # printOutput(outputT, j, iEvent, histTranslate, dimension, collisionType)
-            printOutput(outputN, j, iEvent, histNormalize, dimension, collisionType)
-
+            # printOutput(outputN, j, iEvent, histNormalize, dimension, collisionType)
+            # printOutput(outputN, j, iEvent, histReflect, dimension, collisionType)
+# 
                 
         iEvent+=1
 
@@ -314,13 +324,13 @@ def readTree(filename1, filename2, fileOut, dimension, collisionType):
     # histTranslate.Draw("lego")
     # canvasTranslate.SaveAs("translate.pdf")
 
-    # canvasReflect.cd()
-    # histReflect.Draw("lego")
-    # canvasReflect.SaveAs("reflect.pdf")
+    canvasReflect.cd()
+    histReflect.Draw("lego")
+    canvasReflect.SaveAs("reflect.pdf")
     
-    canvasNormalize.cd()
-    histNormalize.Draw("lego")
-    canvasNormalize.SaveAs("normalize.pdf")
+    # canvasNormalize.cd()
+    # histNormalize.Draw("lego")
+    # canvasNormalize.SaveAs("normalize.pdf")
     
 if __name__ == "__main__":
 
@@ -334,7 +344,6 @@ if __name__ == "__main__":
     #filename2 = "jetFile.root"
 
     readTree(filename1 = filename1, filename2 = filename2, fileOut = fileOut, dimension = dimension, collisionType = collisionType)
-    print(dimension)
-print(dimension)
+    
 
 

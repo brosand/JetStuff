@@ -13,8 +13,8 @@ from sklearn.cross_validation import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn.pipeline import Pipeline
 
-N_NODES = 8
-N_OUTPUT_NODES = 2
+N_NODES = 25
+N_OUTPUT_NODES = 4
 # define baseline model
 #creates a simple fully connected network with one hidden layer that contains 8 neurons.
 #The hidden layer uses a rectifier activation function which is a good practice. Because we used a one-hot encoding for our  dataset, the output layer must create 2 output values, one for each class. The output value with the largest value will be taken as the class predicted by the model.
@@ -31,12 +31,18 @@ N_OUTPUT_NODES = 2
 
 input1 = raw_input("Enter the first txt file: ")
 input2 = raw_input("Enter the second txt file: ")
+input3 = raw_input("Enter the third txt file: ")
+input4 = raw_input("Enter the fourth txt file: ")
+inputDim = int(raw_input("Enter the Jet Dimension: "))
 nEpochs = int(raw_input("Enter the number of epochs: "))
 
 def saveInfo(input1, input2, nEpochs, mean, std):
     output=open('NeuralNetData.txt \n', 'a')
     output.write('Tree 1: %s \n' % input1)
     output.write('Tree 2: %s \n' % input2)
+    output.write('Tree 3: %s \n' % input3)
+    output.write('Tree 4: %s \n' % input4)
+
     output.write('Number of epochs: %i \n' % nEpochs)
     output.write('Number of Nodes: %s \n' % N_NODES)
     output.write('Number of Output Nodes: %s \n' % N_OUTPUT_NODES)
@@ -45,7 +51,9 @@ def saveInfo(input1, input2, nEpochs, mean, std):
 def baseline_model():
     # create model
     model = Sequential()
-    model.add(Dense(N_NODES, input_dim=9, activation='relu'))
+    model.add(Dense(N_NODES, input_dim=inputDim, activation='relu'))
+    model.add(Dense(N_NODES))
+    model.add(Dense(N_NODES))
     model.add(Dense(N_OUTPUT_NODES, activation='softmax')) #these are the two possible outputs
 
     # Compile model
@@ -72,6 +80,24 @@ Z = array[: , int(math.pow(dimension, 2) + 2):int(math.pow(dimension, 2) + 4)]
 
 dataset2 = pandas.read_csv(input2, sep=" ",header=None)
 array = dataset2.values
+dimension = array[0, 1]
+X = np.concatenate((X,array[: , 2:int(math.pow(dimension, 2) + 2)]))
+Y = np.concatenate((Y,array[ : , 0]))
+Z = np.concatenate((Z,array[: , int(math.pow(dimension, 2) + 2):int(math.pow(dimension, 2) + 4)]))
+
+# Open third dataset and read into arrays X,Y, Z
+
+dataset3 = pandas.read_csv(input3,sep=" ",header=None)
+array = dataset3.values
+dimension = array[0, 1]
+X = np.concatenate((X,array[: , 2:int(math.pow(dimension, 2) + 2)]  ))
+Y = np.concatenate((Y,array[: , 0]))
+Z = np.concatenate((Z,array[: , int(math.pow(dimension, 2) + 2):int(math.pow(dimension, 2) + 4)]))
+
+# Open fourth dataset and add information onto end of arrays X,Y, Z
+
+dataset4 = pandas.read_csv(input4, sep=" ",header=None)
+array = dataset4.values
 dimension = array[0, 1]
 X = np.concatenate((X,array[: , 2:int(math.pow(dimension, 2) + 2)]))
 Y = np.concatenate((Y,array[ : , 0]))
