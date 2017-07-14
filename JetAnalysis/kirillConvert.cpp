@@ -102,9 +102,12 @@ int main(){
 	tree.Write();
 	tree.Print();
 	//f.ls();
-
+cout << "105" << endl;
 	f = tree.GetCurrentFile();
+cout << "107" << endl;
+
 	f->Close();
+cout << "110" << endl;
 
 	return 0;
 
