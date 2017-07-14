@@ -18,7 +18,7 @@ int main(){
 	int dummyI, iEvents = 0, nFinalParticlesTemp;
 	double dummyD;
 	double pxtemp, pytemp, pztemp, energytemp, masstemp;
-	vector <int> nFinalParticles; //technically not final any more, but for naming consistency
+	int nFinalParticles; //technically not final any more, but for naming consistency
 	vector <double> px;
 	vector <double> py;
 	vector <double> pz;
@@ -61,14 +61,15 @@ int main(){
 
 	}
 
-	while(inputFile >> iEvents >> nFinalParticlesTemp >> dummyD >> dummyD){
+	while(inputFile >> iEvents >> nFinalParticles >> dummyD >> dummyD){
 
-		nFinalParticles.push_back(nFinalParticlesTemp);
 		if (iEvents % 100 == 0){
+
 			cout << "iEvents: "<< iEvents << " nFinalParticles.at(iEvents-1): " << nFinalParticles.at(iEvents-1) << endl;
+
 		}
 
-		for (int i = 0; i < nFinalParticles.at(iEvents-1); i++){ 
+		for (int i = 0; i < nFinalParticles; i++){ 
 				// particle number, particle id aren't needed
 			
 			inputFile >> dummyI >> dummyI >> pxtemp >> pytemp >> pztemp >> energytemp >> masstemp >> dummyD >> dummyD >> dummyD >> dummyD;
@@ -91,7 +92,6 @@ int main(){
 		pz.clear();
 		energy.clear();
 		mass.clear();
-		nFinalParticles.clear();
 
 		//iEvents++;
 	}
@@ -99,8 +99,8 @@ int main(){
 	tree.Write();
 	tree.Print();
 	//f.ls();
-
 	f = tree.GetCurrentFile();
+
 	f->Close();
 
 	return 0;
