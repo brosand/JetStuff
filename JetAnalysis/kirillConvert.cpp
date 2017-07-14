@@ -65,7 +65,7 @@ int main(){
 
 		if (iEvents % 100 == 0){
 
-			cout << "iEvents: "<< iEvents << " nFinalParticles.at(iEvents-1): " << nFinalParticles.at(iEvents-1) << endl;
+			cout << "iEvents: "<< iEvents << " nFinalParticles: " << nFinalParticles << endl;
 
 		}
 
@@ -99,8 +99,6 @@ int main(){
 	tree.Write();
 	tree.Print();
 	//f.ls();
-	f = tree.GetCurrentFile();
-
 	f->Close();
 
 	return 0;
