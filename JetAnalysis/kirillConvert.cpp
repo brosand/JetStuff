@@ -95,6 +95,7 @@ int main(){
 		pz.clear();
 		energy.clear();
 		mass.clear();
+		nFinalParticles.clear();
 
 		//iEvents++;
 	}
