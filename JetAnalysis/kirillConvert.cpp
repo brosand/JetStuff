@@ -42,27 +42,31 @@ int main(){
 	cin >> filename;
 
 	inputFile.open(filename);
+	
 
 	if(inputFile.fail()){
 
-        	cout << "Error: The file named " << filename << " was not successfully opened." << endl;
+		cout << "Error: The file named " << filename << " was not successfully opened." << endl;
 
 	}
+
+	size_t pos = filename.find(".");
+	rootFileName = filename.substr(0, pos) + ".root";
+	TFile *f = new TFile(rootFileName.c_str(), "recreate");
 
 	iEvents = 0;
 	for(int j = 0; j < 3; j++){
 
 		getline(inputFile, waste);
 
-		}
+	}
 
 	while(inputFile >> iEvents >> nFinalParticlesTemp >> dummyD >> dummyD){
 
-		//inputFile >> iEvents >> nFinalParticlesTemp >> dummyD >> dummyD; //in top line
-
 		nFinalParticles.push_back(nFinalParticlesTemp);
-
-		cout << "iEvents: "<< iEvents << " nFinalParticles.at(iEvents): " << nFinalParticles.at(iEvents-1) << endl;
+		if (iEvents % 100 == 0){
+			cout << "iEvents: "<< iEvents << " nFinalParticles.at(iEvents): " << nFinalParticles.at(iEvents-1) << endl;
+		}
 
 		for (int i = 0; i < nFinalParticles.at(iEvents-1); i++){ 
 				// particle number, particle id aren't needed
@@ -78,27 +82,25 @@ int main(){
 
 			//cout << "\t\t" << i << "\t" << pxtemp << "\t" << pytemp << "\t" << pztemp << "\t" << energytemp << "\t" << masstemp << "\t" << endl;
 			
-			cout << "\t\t" << i << "\t" << px.at(i) << "\t" << py.at(i) << "\t" << pz.at(i) << "\t" << energy.at(i) << "\t" << mass.at(i) << endl;
+			// cout << "\t\t" << i << "\t" << px.at(i) << "\t" << py.at(i) << "\t" << pz.at(i) << "\t" << energy.at(i) << "\t" << mass.at(i) << endl;
 		}
-
 		tree.Fill();
+
 		px.clear();
 		py.clear();
 		pz.clear();
 		energy.clear();
 		mass.clear();
-	
+		nFinalParticles.clear();
+
 		//iEvents++;
 	}
-	
-	tree.Print();
 
-	size_t pos = filename.find(".");
-    	rootFileName = filename.substr(0, pos) + ".root";
-
-	TFile *f = new TFile(rootFileName.c_str(), "recreate");
 	tree.Write();
+	tree.Print();
 	//f.ls();
+
+	f = tree.GetCurrentFile();
 	f->Close();
 
 	return 0;

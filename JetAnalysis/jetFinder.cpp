@@ -75,7 +75,7 @@ int main (){
         // int iEvent = 0;
     while(myReader.Next()) {
     //Note For Understanding: myReader.Next() --> iterates through the first level of the reader, or the only level for the value reader, the array reader needs to levels (understanding as of 6/20/17)
-        cout << "num particles in this event is " << *myNFinalParticles << endl;
+        // cout << "num particles in this event is " << *myNFinalParticles << endl;
         vector<PseudoJet> particles;            
         for (int i = 0; i < *myNFinalParticles; i++) //why pointer?
         {
@@ -115,7 +115,7 @@ int main (){
                 a--;
             }
         }
-        cout << "jets.size is " << jets.size() << endl;
+        // cout << "jets.size is " << jets.size() << endl;
 
         //jets[i].constituents().size() is the number of particles in that jet
         for (int i = 0; i < jets.size(); i++) {
@@ -158,6 +158,7 @@ int main (){
         nJets = jets.size();
         jetTree.Fill();
 
+        cout << eventN << endl;
         //cout << "102";
         eventN = eventN + 1;
         pIndex.clear();
