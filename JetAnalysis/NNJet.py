@@ -22,7 +22,7 @@ inputDim = 5
 numClasses = 2
 nEpochs = 5
 BATCH_SIZE = 5
-
+nLayers = 3
 # define baseline model
 #creates a simple fully connected network with one hidden layer that contains 8 neurons.
 #The hidden layer uses a rectifier activation function which is a good practice. Because we used a one-hot encoding for our  dataset, the output layer must create 2 output values, one for each class. The output value with the largest value will be taken as the class predicted by the model.
@@ -61,8 +61,10 @@ else:
             numClasses = int(sys.argv[a+1])
         if (sys.argv[a] == 'nNodes'):
             nNodes = int(sys.argv[a+1])
+        if (sys.argv[a] == 'nLayers'):
+            nLayers = int(sys.argv[a+1])
 
-def saveInfo(inputFiles, nEpochs, sTest, sTotal, numClasses):
+def saveInfo(inputFiles, nEpochs, sTest, numClasses):
     output=open('NeuralNetData.txt', 'a')
     output.write('DNN   ')
     for i, file in enumerate(inputFiles):
@@ -71,7 +73,7 @@ def saveInfo(inputFiles, nEpochs, sTest, sTotal, numClasses):
     output.write('Number of epochs: %i   ' % nEpochs)
     output.write('Number of Nodes: %s   ' % nNodes)
     output.write('Number of Output Nodes: %s   ' % numClasses)
-    output.write("Accuracy on test sample and whole sample: %.2f%% (%.2f%%)   " % (sTest, sTotal))
+    output.write("Accuracy on test sample: %.2f%%   " % sTest)
 
 # def baseline_model():
     # create model
@@ -127,7 +129,7 @@ model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accur
 # split data into a training and test sample
 validation_size = 0.20
 X_train, X_test, Y_train, Y_test = train_test_split(X, dummy_y, test_size=validation_size, random_state=seed)
-print X_train.shape
+# print X_train.shape
 model.fit(X_train, Y_train, validation_data=(X_test, Y_test), epochs=nEpochs, batch_size=BATCH_SIZE, verbose=1)
 
 # train our NN
@@ -147,18 +149,18 @@ model.fit(X_train, Y_train, validation_data=(X_test, Y_test), epochs=nEpochs, ba
 # This takes some time, not sure why
 
 scores = model.evaluate(X_test, Y_test, verbose=1)
-print("(FOR JUST THE TEST SET) %s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
+print("\n(FOR JUST THE TEST SET) %s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
 
-scores1 = model.evaluate(X, Y, verbose=1)
-print("(FOR WHOLE DATA SET) %s: %.2f%%" % (model.metrics_names[1], scores1[1]*100))
+# scores1 = model.evaluate(X, Y, verbose=1)
+# print("(FOR WHOLE DATA SET) %s: %.2f%%" % (model.metrics_names[1], scores1[1]*100))
 
-kfold = KFold(n_splits=10, shuffle=True, random_state=seed)
-print 'finished KFold'
+# kfold = KFold(n_splits=10, shuffle=True, random_state=seed)
+# print 'finished KFold'
 
-start = timer()
-results = cross_val_score(estimator, X, dummy_y, cv=kfold)
-end = timer()
-print(end-start)
+# start = timer()
+# results = cross_val_score(estimator, X, dummy_y, cv=kfold)
+# end = timer()
+# print(end-start)
 
-saveInfo(inputFiles, nEpochs, scores[1]*100, scores1[1]*100, numClasses)
-print("Baseline: %.2f%% (%.2f%%)" % (results.mean()*100, results.std()*100))
+saveInfo(inputFiles, nEpochs, scores[1]*100, numClasses)
+# print("Baseline: %.2f%% (%.2f%%)" % (results.mean()*100, results.std()*100))
