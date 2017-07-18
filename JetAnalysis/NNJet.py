@@ -46,7 +46,7 @@ def saveInfo(inputFiles, nEpochs, mean, std):
 def baseline_model():
     # create model
     model = Sequential()
-    model.add(Dense(N_NODES, input_dim=inputDim, activation='relu'))
+    model.add(Dense(N_NODES, input_dim=dimension, activation='relu'))
     model.add(Dense(N_NODES))
     model.add(Dense(N_NODES))
     model.add(Dense(nOutputNodes, activation='softmax')) #these are the two possible outputs
@@ -103,7 +103,7 @@ dummy_y = np_utils.to_categorical(encoded_Y)
 #There is a KerasClassifier class in Keras that can be used as an Estimator in scikit-learn, the base type of model in the library. The KerasClassifier takes the name of a function as an argument. This function must return the constructed neural network model, ready for training.
 #Below is a function that will create a baseline neural network for the iris classification problem.  with buildfn creating the baseline model
 model = baseline_model
-estimator = KerasClassifier(build_fn=model, epochs=nEpochs, batch_size=5, verbose=0)
+estimator = KerasClassifier(build_fn=model, epochs=nEpochs, batch_size=5, verbose=1)
 
 # split data into a training and test sample
 validation_size = 0.20
