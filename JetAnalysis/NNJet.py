@@ -15,9 +15,14 @@ from sklearn.pipeline import Pipeline
 
 # from quiver_engine import 
 from timeit import default_timer as timer
+import sys
 
-N_NODES = 1000
-inputDim = 25
+nNodes = 1000
+inputDim = 5
+numClasses = 2
+nEpochs = 5
+BATCH_SIZE = 5
+
 # define baseline model
 #creates a simple fully connected network with one hidden layer that contains 8 neurons.
 #The hidden layer uses a rectifier activation function which is a good practice. Because we used a one-hot encoding for our  dataset, the output layer must create 2 output values, one for each class. The output value with the largest value will be taken as the class predicted by the model.
@@ -31,41 +36,54 @@ inputDim = 25
 
 
 #make neural net
-
-def saveInfo(inputFiles, nEpochs, mean, std):
-    output=open('NeuralNetData.txt \n', 'a')
-    
-    for i, file in enumerate(inputFiles):
-        otuput.write('File %i: %s ' % (i, file))
-
-    output.write('Number of epochs: %i \n' % nEpochs)
-    output.write('Number of Nodes: %s \n' % N_NODES)
-    output.write('Number of Output Nodes: %s \n' % nOutputNodes)
-    output.write("Baseline: %.2f%% (%.2f%%) \n" % (mean, std))
-
-def baseline_model():
-    # create model
-    model = Sequential()
-    model.add(Dense(N_NODES, input_dim=dimension, activation='relu'))
-    model.add(Dense(N_NODES))
-    model.add(Dense(N_NODES))
-    model.add(Dense(nOutputNodes, activation='softmax')) #these are the two possible outputs
-
-    # Compile model
-    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-    return model
-
-
-
-numFiles = int(raw_input("Enter the number of files: "))
-
 inputFiles = []
-for i in range(numFiles):
-    inputFiles.append(raw_input("Enter file %i: " % (i+1)))
+cmdargs = str(sys.argv)
+if len(sys.argv) == 1:
+    numFiles = int(raw_input("Enter the number of files: "))
 
-nEpochs = int(raw_input("Enter the number of epochs: "))
-nOutputNodes = int(raw_input("Enter the number of outputs: "))
-nLayers = int(raw_input("Enter the number of layers: "))
+    for i in range(numFiles):
+        inputFiles.append(raw_input("Enter file %i: " % (i+1)))
+    nEpochs = int(raw_input("Enter the number of epochs: "))
+    numClasses = int(raw_input("Enter the number of outputs: "))
+    nLayers = int(raw_input("Enter the number of layers: "))
+    nNodes = int(raw_input("Enter the number of nodes: "))
+    inputDim = int((math.pow(float(raw_input("Enter the dimension (temporary): ")),2)))
+else:
+    numFiles = int(sys.argv[1])
+    for file in range(numFiles):
+        inputFiles.append(sys.argv[file + 2])
+    for a in range(len(sys.argv)):
+        if (sys.argv[a] == 'nEpochs'):
+            nEpochs = int(sys.argv[a+1])
+        if (sys.argv[a] == 'inputDim'):
+            inputDim = int(math.pow(float(sys.argv[a+1]),2))
+        if (sys.argv[a] == 'numClasses'):
+            numClasses = int(sys.argv[a+1])
+        if (sys.argv[a] == 'nNodes'):
+            nNodes = int(sys.argv[a+1])
+
+def saveInfo(inputFiles, nEpochs, sTest, sTotal, numClasses):
+    output=open('NeuralNetData.txt', 'a')
+    output.write('DNN   ')
+    for i, file in enumerate(inputFiles):
+        output.write('File %i: %s ' % (i, file))
+    output.write('Number of layers: %s   ' % nLayers)
+    output.write('Number of epochs: %i   ' % nEpochs)
+    output.write('Number of Nodes: %s   ' % nNodes)
+    output.write('Number of Output Nodes: %s   ' % numClasses)
+    output.write("Accuracy on test sample and whole sample: %.2f%% (%.2f%%)   " % (sTest, sTotal))
+
+# def baseline_model():
+    # create model
+    # return model
+
+model = Sequential()
+model.add(Dense(nNodes, input_dim=inputDim, activation='relu'))
+model.add(Dense(nNodes))
+model.add(Dense(nNodes))
+model.add(Dense(numClasses, activation='softmax')) #these are the two possible outputs
+
+# Compile model
 
 # fix random seed for reproducibility, later can be time
 seed = 7
@@ -78,7 +96,7 @@ array = dataset.values
 dimension = array[0, 1]
 
 
-print("Dimension: %d" % math.pow(dimension, 2))
+print("Dimension: %d" % dimension)
 
 X = array[: , 2:int(math.pow(dimension, 2) + 2)]  
 Y = array[: , 0]
@@ -102,33 +120,37 @@ dummy_y = np_utils.to_categorical(encoded_Y)
 
 #There is a KerasClassifier class in Keras that can be used as an Estimator in scikit-learn, the base type of model in the library. The KerasClassifier takes the name of a function as an argument. This function must return the constructed neural network model, ready for training.
 #Below is a function that will create a baseline neural network for the iris classification problem.  with buildfn creating the baseline model
-model = baseline_model
-estimator = KerasClassifier(build_fn=model, epochs=nEpochs, batch_size=5, verbose=1)
+# estimator = KerasClassifier(build_fn=model, epochs=nEpochs, batch_size=5, verbose=1)
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+   
 
 # split data into a training and test sample
 validation_size = 0.20
 X_train, X_test, Y_train, Y_test = train_test_split(X, dummy_y, test_size=validation_size, random_state=seed)
-
+print X_train.shape
+model.fit(X_train, Y_train, validation_data=(X_test, Y_test), epochs=nEpochs, batch_size=BATCH_SIZE, verbose=1)
 
 # train our NN
-estimator.fit(X_train, Y_train)
+# estimator.fit(X_train, Y_train)
 #prediction = estimator.predict(X_train)
 #print(prediction)
 
 # see how it does on our test data
-predictions = estimator.predict(X_test)
-for i in range(predictions.size):
-    if Y_test[i][predictions[i]] == 1 :
-        print "Got it right"
-    else :
-        print "WRONG!!!!!!!!!!!!!!!!!!!!!!!!!"
+# predictions = estimator.predict(X_test)
+# for i in range(predictions.size):
+#     if Y_test[i][predictions[i]] == 1 :
+#         print "Got it right"
+#     else :
+#         print "WRONG!!!!!!!!!!!!!!!!!!!!!!!!!"
 
 #Some more tests for how training is doing
 # This takes some time, not sure why
 
-model.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
-score = model.evaluate(X, Y, verbose=0)
-print("%s: %.2f%%" % (model.metrics_names[1], score[1]*100))
+scores = model.evaluate(X_test, Y_test, verbose=1)
+print("(FOR JUST THE TEST SET) %s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
+
+scores1 = model.evaluate(X, Y, verbose=1)
+print("(FOR WHOLE DATA SET) %s: %.2f%%" % (model.metrics_names[1], scores1[1]*100))
 
 kfold = KFold(n_splits=10, shuffle=True, random_state=seed)
 print 'finished KFold'
@@ -138,5 +160,5 @@ results = cross_val_score(estimator, X, dummy_y, cv=kfold)
 end = timer()
 print(end-start)
 
-saveInfo(inputFiles, nEpochs, results.mean()*100, results.std()*100)
+saveInfo(inputFiles, nEpochs, scores[1]*100, scores1[1]*100, numClasses)
 print("Baseline: %.2f%% (%.2f%%)" % (results.mean()*100, results.std()*100))
