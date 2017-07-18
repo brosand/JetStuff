@@ -325,7 +325,7 @@ def readTree(filename1, filename2, fileOut, dimension, collisionType):
     # canvasTranslate.SaveAs("translate.pdf")
 
     canvasReflect.cd()
-    histReflect.Draw("lego")
+    histReflect.Draw("surf1")
     canvasReflect.SaveAs("reflect.pdf")
     
     # canvasNormalize.cd()

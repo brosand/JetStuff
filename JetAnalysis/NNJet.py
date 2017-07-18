@@ -13,8 +13,11 @@ from sklearn.cross_validation import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn.pipeline import Pipeline
 
-N_NODES = 25
-N_OUTPUT_NODES = 4
+# from quiver_engine import 
+from timeit import default_timer as timer
+
+N_NODES = 1000
+inputDim = 25
 # define baseline model
 #creates a simple fully connected network with one hidden layer that contains 8 neurons.
 #The hidden layer uses a rectifier activation function which is a good practice. Because we used a one-hot encoding for our  dataset, the output layer must create 2 output values, one for each class. The output value with the largest value will be taken as the class predicted by the model.
@@ -29,23 +32,15 @@ N_OUTPUT_NODES = 4
 
 #make neural net
 
-input1 = raw_input("Enter the first txt file: ")
-input2 = raw_input("Enter the second txt file: ")
-input3 = raw_input("Enter the third txt file: ")
-input4 = raw_input("Enter the fourth txt file: ")
-inputDim = int(raw_input("Enter the Jet Dimension: "))
-nEpochs = int(raw_input("Enter the number of epochs: "))
-
-def saveInfo(input1, input2, nEpochs, mean, std):
+def saveInfo(inputFiles, nEpochs, mean, std):
     output=open('NeuralNetData.txt \n', 'a')
-    output.write('Tree 1: %s \n' % input1)
-    output.write('Tree 2: %s \n' % input2)
-    output.write('Tree 3: %s \n' % input3)
-    output.write('Tree 4: %s \n' % input4)
+    
+    for i, file in enumerate(inputFiles):
+        otuput.write('File %i: %s ' % (i, file))
 
     output.write('Number of epochs: %i \n' % nEpochs)
     output.write('Number of Nodes: %s \n' % N_NODES)
-    output.write('Number of Output Nodes: %s \n' % N_OUTPUT_NODES)
+    output.write('Number of Output Nodes: %s \n' % nOutputNodes)
     output.write("Baseline: %.2f%% (%.2f%%) \n" % (mean, std))
 
 def baseline_model():
@@ -54,7 +49,7 @@ def baseline_model():
     model.add(Dense(N_NODES, input_dim=inputDim, activation='relu'))
     model.add(Dense(N_NODES))
     model.add(Dense(N_NODES))
-    model.add(Dense(N_OUTPUT_NODES, activation='softmax')) #these are the two possible outputs
+    model.add(Dense(nOutputNodes, activation='softmax')) #these are the two possible outputs
 
     # Compile model
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
@@ -62,6 +57,15 @@ def baseline_model():
 
 
 
+numFiles = int(raw_input("Enter the number of files: "))
+
+inputFiles = []
+for i in range(numFiles):
+    inputFiles.append(raw_input("Enter file %i: " % (i+1)))
+
+nEpochs = int(raw_input("Enter the number of epochs: "))
+nOutputNodes = int(raw_input("Enter the number of outputs: "))
+nLayers = int(raw_input("Enter the number of layers: "))
 
 # fix random seed for reproducibility, later can be time
 seed = 7
@@ -69,41 +73,23 @@ np.random.seed(seed)
 
 # Open first dataset and read into arrays X,Y, Z
 
-dataset = pandas.read_csv(input1,sep=" ",header=None)
+dataset = pandas.read_csv(inputFiles[0],sep=" ",header=None)
 array = dataset.values
 dimension = array[0, 1]
+
+
+print("Dimension: %d" % math.pow(dimension, 2))
+
 X = array[: , 2:int(math.pow(dimension, 2) + 2)]  
 Y = array[: , 0]
 Z = array[: , int(math.pow(dimension, 2) + 2):int(math.pow(dimension, 2) + 4)]
-
 # Open second dataset and add information onto end of arrays X,Y, Z
-
-dataset2 = pandas.read_csv(input2, sep=" ",header=None)
-array = dataset2.values
-dimension = array[0, 1]
-X = np.concatenate((X,array[: , 2:int(math.pow(dimension, 2) + 2)]))
-Y = np.concatenate((Y,array[ : , 0]))
-Z = np.concatenate((Z,array[: , int(math.pow(dimension, 2) + 2):int(math.pow(dimension, 2) + 4)]))
-
-# Open third dataset and read into arrays X,Y, Z
-
-dataset3 = pandas.read_csv(input3,sep=" ",header=None)
-array = dataset3.values
-dimension = array[0, 1]
-X = np.concatenate((X,array[: , 2:int(math.pow(dimension, 2) + 2)]  ))
-Y = np.concatenate((Y,array[: , 0]))
-Z = np.concatenate((Z,array[: , int(math.pow(dimension, 2) + 2):int(math.pow(dimension, 2) + 4)]))
-
-# Open fourth dataset and add information onto end of arrays X,Y, Z
-
-dataset4 = pandas.read_csv(input4, sep=" ",header=None)
-array = dataset4.values
-dimension = array[0, 1]
-X = np.concatenate((X,array[: , 2:int(math.pow(dimension, 2) + 2)]))
-Y = np.concatenate((Y,array[ : , 0]))
-Z = np.concatenate((Z,array[: , int(math.pow(dimension, 2) + 2):int(math.pow(dimension, 2) + 4)]))
-
-
+for file in range(1, len(inputFiles)):
+    dataset1 = pandas.read_csv(inputFiles[file], sep=" ",header=None)
+    array = dataset1.values
+    X = np.concatenate((X,array[: , 2:int(math.pow(dimension, 2) + 2)]))
+    Y = np.concatenate((Y,array[ : , 0]))
+    Z = np.concatenate((Z,array[: , int(math.pow(dimension, 2) + 2):int(math.pow(dimension, 2) + 4)]))
 
 # encode class values as integers since NN can't work with strings (I think)
 encoder = LabelEncoder()
@@ -116,8 +102,8 @@ dummy_y = np_utils.to_categorical(encoded_Y)
 
 #There is a KerasClassifier class in Keras that can be used as an Estimator in scikit-learn, the base type of model in the library. The KerasClassifier takes the name of a function as an argument. This function must return the constructed neural network model, ready for training.
 #Below is a function that will create a baseline neural network for the iris classification problem.  with buildfn creating the baseline model
-
-estimator = KerasClassifier(build_fn=baseline_model, epochs=nEpochs, batch_size=5, verbose=1)
+model = baseline_model
+estimator = KerasClassifier(build_fn=model, epochs=nEpochs, batch_size=5, verbose=0)
 
 # split data into a training and test sample
 validation_size = 0.20
@@ -139,8 +125,18 @@ for i in range(predictions.size):
 
 #Some more tests for how training is doing
 # This takes some time, not sure why
+
+model.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
+score = model.evaluate(X, Y, verbose=0)
+print("%s: %.2f%%" % (model.metrics_names[1], score[1]*100))
+
 kfold = KFold(n_splits=10, shuffle=True, random_state=seed)
 print 'finished KFold'
+
+start = timer()
 results = cross_val_score(estimator, X, dummy_y, cv=kfold)
+end = timer()
+print(end-start)
+
+saveInfo(inputFiles, nEpochs, results.mean()*100, results.std()*100)
 print("Baseline: %.2f%% (%.2f%%)" % (results.mean()*100, results.std()*100))
-saveInfo(input1, input2, nEpochs, results.mean()*100, results.std()*100)
