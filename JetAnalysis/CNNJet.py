@@ -3,6 +3,8 @@ import pandas
 import keras
 import math
 import sys
+import csv
+import os
 
 from keras.layers import Dense, Dropout, Activation, Flatten
 from keras.layers import Conv2D, MaxPooling2D
@@ -32,6 +34,7 @@ inputDim = 0
 nLayers1 = 2
 nLayers2 = 2
 verboseL = 0
+networkType = 'CNN'
 #DRAW OUT SCHEMATIC
 
 
@@ -90,17 +93,19 @@ else:
 
 
 def saveInfo(inputFiles, nEpochs, accuracy, nOutputNodes):
-    output=open('NeuralNetData.txt', 'a')
-    output.write('CNN   ')
-    for i, file in enumerate(inputFiles):
-        output.write('File %i: %s   ' % (i+1, file))
-
-    output.write('Number of epochs: %i   ' % nEpochs)
-    output.write('Number of Output Nodes: %s   ' % nOutputNodes)
-    output.write("Image dimension: %i" %inputDim)
-    output.write("Accuracy on test sample: %.2f%% " % accuracy)
-    output.write("Number of convolutional layers with depth %i: %i " %(conv_depth_1, nLayers1))
-    output.write("Number of convolutional layers with depth %i: %i \n" %(conv_depth_2, nLayers2))
+    fieldnames = ['Network Type','inputFile1','inputFile2','inputFile3', 'inputFile4', 'Epochs', 'Image Dimension', 'Accuracy', 'Layers', 'Nodes', 'Kernal size']
+    output = open('NNData.csv', 'a')
+    writer = csv.DictWriter(output, fieldnames=fieldnames)
+    if os.stat('NNData.csv').st_size==0:
+        writer.writeheader()
+    for i in range(5):
+        if (len(inputFiles) < i):
+            inputFiles.append('')
+    
+    writer.writerow({'Network Type': networkType, 'inputFile1': inputFiles[0],'inputFile2': inputFiles[1],
+        'inputFile3':inputFiles[2], 'inputFile4': inputFiles[3], 'Epochs': nEpochs,
+         'Image Dimension': inputDim, 'Accuracy': accuracy, 'Layers': (nLayers1+nLayers2), 'Nodes': nNodes, 
+         'Kernal size': kernal_size})
 
 def trainModel():
 

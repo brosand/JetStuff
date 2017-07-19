@@ -77,11 +77,11 @@ def saveInfo(inputFiles, nEpochs, sTest, numClasses):
     writer = csv.DictWriter(output, fieldnames=fieldnames)
     if os.stat('NNData.csv').st_size==0:
         writer.writeheader()
-    for i in range(4):
+    for i in range(5):
         if (len(inputFiles) < i):
             inputFiles.append('')
     
-    output.writerow({'Network Type': networkType, 'inputFile1': inputFiles[0],'inputFile2': inputFiles[1],
+    writer.writerow({'Network Type': networkType, 'inputFile1': inputFiles[0],'inputFile2': inputFiles[1],
         'inputFile3':inputFiles[2], 'inputFile4': inputFiles[3], 'Epochs': nEpochs,
          'Image Dimension': inputDim, 'Accuracy': sTest, 'Layers': nLayers, 'Nodes': nNodes})
 

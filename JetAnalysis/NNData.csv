@@ -1,1 +1,2 @@
 Network Type,inputFile1,inputFile2,inputFile3,inputFile4,Epochs,Image Dimension,Accuracy,Layers,Nodes
+DNN,preTxt/aJetPre.txt,preTxt/bJetPre.txt,,,1,25,73.212853553862018,3,100
