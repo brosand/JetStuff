@@ -2,6 +2,7 @@ import numpy as np
 import pandas
 import keras
 import math
+import sys
 
 from keras.layers import Dense, Dropout, Activation, Flatten
 from keras.layers import Conv2D, MaxPooling2D
@@ -15,19 +16,23 @@ K.set_image_dim_ordering('th')
 
 
 
-BATCH_SIZE = 32 # in each iteration, we consider 32 training examples at once
-NUM_EPOCHS = 5 # we iterate 200 times over the entire training set
-KERNEL_SIZE = 3 # we will use 3x3 kernels throughout
-POOL_SIZE = 2 # we will use 2x2 pooling throughout
-CONV_DEPTH_1 = 32 # we will initially have 32 kernels per conv. layer...
-CONV_DEPTH_2 = 64 # ...switching to 64 after the first pooling layer
-DROP_PROB_1 = 0.25 # dropout after pooling with probability 0.25
-DROP_PROB_2 = 0.5 # dropout in the FC layer with probability 0.5
-HIDDEN_SIZE = 512 # the FC layer will have 512 neurons
-NUM_CLASSES = 2 # the number of possible outputs
-inputFiles = ['aJetPre.txt', 'cJetPre.txt']
-nOutputNodes = 2
-
+batch_size = 32 # in each iteration, we consider 32 training examples at once
+nEpochs = 5 # we iterate 200 times over the entire training set
+kernal_size = 3 # we will use 3x3 kernels throughout
+pool_size = 2 # we will use 2x2 pooling throughout
+conv_depth_1 = 32 # we will initially have 32 kernels per conv. layer...
+conv_depth_2 = 64 # ...switching to 64 after the first pooling layer
+drop_prob_1 = 0.25 # dropout after pooling with probability 0.25
+drop_prob_2 = 0.5 # dropout in the FC layer with probability 0.5
+hidden_size = 512 # the FC layer will have 512 neurons
+numClasses = 2 # the number of possible outputs
+nLayers = 2
+nNodes = 0
+inputDim = 0
+nLayers1 = 2
+nLayers2 = 2
+verboseL = 0
+#DRAW OUT SCHEMATIC
 
 
 # def saveModel():
@@ -38,6 +43,50 @@ nOutputNodes = 2
     # model.add(Conv2D(40, (3, 3), activation='relu', padding='same'))
     # model.add(MaxPooling2D(pool_size=(2, 2)))
     # model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
+#GO THROUGH HERE AND NN, SIMPLIFY THE LIST OF VARIABLES SO LESS UGLY IFS AND FOR
+inputFiles = []
+cmdargs = str(sys.argv)
+if len(sys.argv) == 1:
+    numFiles = int(raw_input("Enter the number of files: "))
+
+    for i in range(numFiles):
+        inputFiles.append('preTxt/' + raw_input("Enter file %i: " % (i+1)))
+    nEpochs = int(raw_input("Enter the number of epochs: "))
+    numClasses = int(raw_input("Enter the number of outputs: "))
+    nLayers = int(raw_input("Enter the number of layers: "))
+    nNodes = int(raw_input("Enter the number of nodes: "))
+    inputDim = int((math.pow(float(raw_input("Enter the dimension (temporary): ")),2)))
+else:
+    numFiles = int(sys.argv[1])
+    for file in range(numFiles):
+        inputFiles.append('preTxt/' + sys.argv[file + 2])
+    for a in range(len(sys.argv)):
+        if (sys.argv[a] == 'nEpochs'):
+            nEpochs = int(sys.argv[a+1])
+        if (sys.argv[a] == 'inputDim'):
+            inputDim = int(math.pow(float(sys.argv[a+1]),2))
+        if (sys.argv[a] == 'numClasses'):
+            numClasses = int(sys.argv[a+1])
+        if (sys.argv[a] == 'batch_size'):
+            batch_size = int(sys.argv[a+1])
+        if (sys.argv[a] == 'kernal_size'):
+            kernal_size = int(math.pow(float(sys.argv[a+1]),2))
+        if (sys.argv[a] == 'pool_size'):
+            pool_size = int(sys.argv[a+1])
+        if (sys.argv[a] == 'conv_depth_1'):
+            conv_depth_1 = int(sys.argv[a+1])
+
+
+        if (sys.argv[a] == 'conv_depth_2'):
+            conv_depth_2 = int(math.pow(float(sys.argv[a+1]),2))
+        if (sys.argv[a] == 'drop_prob_1'):
+            drop_prob_1 = int(sys.argv[a+1])
+        if (sys.argv[a] == 'drop_prob_2'):
+            drop_prob_2 = int(sys.argv[a+1])
+        if (sys.argv[a] == 'hidden_size'):
+            hidden_size = int(sys.argv[a+1])
+        if (sys.argv[a] == 'verbose'):
+            verboseL = int(sys.argv[a+1])
 
 
 def saveInfo(inputFiles, nEpochs, accuracy, nOutputNodes):
@@ -48,7 +97,10 @@ def saveInfo(inputFiles, nEpochs, accuracy, nOutputNodes):
 
     output.write('Number of epochs: %i   ' % nEpochs)
     output.write('Number of Output Nodes: %s   ' % nOutputNodes)
-    output.write("App accuracy: %f \n\n" % accuracy)
+    output.write("Image dimension: %i" %inputDim)
+    output.write("Accuracy on test sample: %.2f%% " % accuracy)
+    output.write("Number of convolutional layers with depth %i: %i " %(conv_depth_1, nLayers1))
+    output.write("Number of convolutional layers with depth %i: %i \n" %(conv_depth_2, nLayers2))
 
 def trainModel():
 
@@ -97,28 +149,28 @@ def trainModel():
     # print(X_train.shape)
     # print(X_train.shape[0])
     # print(X_train.shape[1])
-
     # print(X_train.shape[1:])
 
-    NUM_CLASSES = Y_test.shape[1]
+
+    numClasses = Y_test.shape[1]
     model = Sequential()
 
-    model.add(Conv2D(40, (3, 3), input_shape=(1, dimension, dimension), activation='relu', padding='same'))
-    model.add(Dropout(0.2))
-    model.add(Conv2D(40, (3, 3), activation='relu', padding='same'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
-    model.add(Dropout(0.2))
-    model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Conv2D(conv_depth_1, (kernal_size, kernal_size), input_shape=(X_train.shape[1:]), activation='relu', padding='same'))
+    model.add(Dropout(drop_prob_1))
+    model.add(Conv2D(conv_depth_1, (kernal_size, kernal_size), activation='relu', padding='same'))
+    model.add(MaxPooling2D(pool_size=(pool_size, pool_size)))
+    model.add(Conv2D(conv_depth_2, (kernal_size, kernal_size), activation='relu', padding='same'))
+    model.add(Dropout(drop_prob_2))
+    model.add(Conv2D(conv_depth_2, (kernal_size, kernal_size), activation='relu', padding='same'))
+    model.add(MaxPooling2D(pool_size=(pool_size, pool_size)))
 
     model.add(Flatten())
-    model.add(Dense(512, activation='relu'))
-    model.add(Dropout(DROP_PROB_2))
-    model.add(Dense(NUM_CLASSES, activation='softmax'))
+    model.add(Dense(hidden_size, activation='relu'))
+    model.add(Dropout(drop_prob_2))
+    model.add(Dense(numClasses, activation='softmax'))
     # model = baselineModel(X_train, dimension)
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-    # model.fit(X_train, Y_train, batch_size=BATCH_SIZE, epochs=NUM_EPOCHS, verbose=1)
+    # model.fit(X_train, Y_train, batch_size=batch_size, epochs=NUM_EPOCHS, verbose=1)
 
 
 
@@ -131,14 +183,14 @@ def trainModel():
         
     # Fit the model
     print X_train.shape
-    model.fit(X_train, Y_train, validation_data=(X_test, Y_test), epochs=NUM_EPOCHS, batch_size=BATCH_SIZE, verbose=1)
+    model.fit(X_train, Y_train, validation_data=(X_test, Y_test), epochs=nEpochs, batch_size=batch_size, verbose=verboseL)
     # Final evaluation of the model
     scores = model.evaluate(X_test, Y_test, verbose=1)
-    accuracy = (scores[1]*100)
-    print accuracy
+    print("\n(FOR JUST THE TEST SET) %s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
+
     model.save('CNNModel')
 
-    saveInfo(inputFiles, NUM_EPOCHS, accuracy, nOutputNodes)
+    saveInfo(inputFiles, nEpochs, scores[1]*100, numClasses)
 # def testModel(model):
 
 if __name__ == '__main__':

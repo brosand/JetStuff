@@ -205,17 +205,17 @@ def readTree(filename1, filename2, fileOut, dimension, collisionType):
 
     iEvent = 0;
 
-    # open('outputC.txt', 'w').close()
-    # outputC = open("outputC.txt" , "w" )
+    open('outputC.txt', 'w').close()
+    outputC = open("outputC.txt" , "w" )
 
-    # open('outputR.txt', 'w').close()
-    # outputR = open("outputR.txt" , "w" )
+    open('outputR.txt', 'w').close()
+    outputR = open("outputR.txt" , "w" )
 
-    # open('outputT.txt', 'w').close()
-    # outputT = open("outputT.txt" , "w" )
+    open('outputT.txt', 'w').close()
+    outputT = open("outputT.txt" , "w" )
 
-    # open('outputF.txt', 'w').close()
-    # outputF = open("outputF.txt" , "w" )
+    open('outputF.txt', 'w').close()
+    outputF = open("outputF.txt" , "w" )
 
     open(fileOut, 'w').close()
     outputN = open(fileOut , "w" )
@@ -296,36 +296,36 @@ def readTree(filename1, filename2, fileOut, dimension, collisionType):
 
 
             
-            # printOutput(outputC, j, iEvent, histCentre, dimension, collisionType)
-            # printOutput(outputR, j, iEvent, histRotate, dimension, collisionType)
-            # printOutput(outputT, j, iEvent, histTranslate, dimension, collisionType)
-            # printOutput(outputN, j, iEvent, histNormalize, dimension, collisionType)
-            # printOutput(outputN, j, iEvent, histReflect, dimension, collisionType)
+            printOutput(outputC, j, iEvent, histCentre, dimension, collisionType)
+            printOutput(outputR, j, iEvent, histRotate, dimension, collisionType)
+            printOutput(outputT, j, iEvent, histTranslate, dimension, collisionType)
+            printOutput(outputN, j, iEvent, histNormalize, dimension, collisionType)
+            printOutput(outputN, j, iEvent, histReflect, dimension, collisionType)
 # 
                 
         iEvent+=1
 
 
     #see others for examples of iterating through
-    # canvasBefore.cd()
-    # histBefore.Draw("lego")
-    # canvasBefore.SaveAs("before.pdf")
+    canvasBefore.cd()
+    histBefore.Draw("lego")
+    canvasBefore.SaveAs("before.pdf")
 
-    # canvasCentre.cd()
-    # histCentre.Draw("lego")
-    # #https://root.cern.ch/root/html534/guides/users-guide/Histograms.html
-    # canvasCentre.SaveAs("centre.pdf")
+    canvasCentre.cd()
+    histCentre.Draw("lego")
+    #https://root.cern.ch/root/html534/guides/users-guide/Histograms.html
+    canvasCentre.SaveAs("centre.pdf")
 
-    # canvasRotate.cd()
-    # histRotate.Draw("lego")
-    # canvasRotate.SaveAs("rotate.pdf")
+    canvasRotate.cd()
+    histRotate.Draw("lego")
+    canvasRotate.SaveAs("rotate.pdf")
 
-    # canvasTranslate.cd()
-    # histTranslate.Draw("lego")
-    # canvasTranslate.SaveAs("translate.pdf")
+    canvasTranslate.cd()
+    histTranslate.Draw("lego")
+    canvasTranslate.SaveAs("translate.pdf")
 
     canvasReflect.cd()
-    histReflect.Draw("surf1")
+    histReflect.Draw("lego")
     canvasReflect.SaveAs("reflect.pdf")
     
     # canvasNormalize.cd()

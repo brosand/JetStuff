@@ -2,6 +2,8 @@ import numpy as np
 import pandas
 import keras
 import math
+import csv
+import os
 
 from keras.models import Sequential
 from keras.layers import Dense
@@ -23,6 +25,8 @@ numClasses = 2
 nEpochs = 5
 BATCH_SIZE = 5
 nLayers = 3
+verboseL = 0
+networkType = 'DNN'
 # define baseline model
 #creates a simple fully connected network with one hidden layer that contains 8 neurons.
 #The hidden layer uses a rectifier activation function which is a good practice. Because we used a one-hot encoding for our  dataset, the output layer must create 2 output values, one for each class. The output value with the largest value will be taken as the class predicted by the model.
@@ -42,7 +46,7 @@ if len(sys.argv) == 1:
     numFiles = int(raw_input("Enter the number of files: "))
 
     for i in range(numFiles):
-        inputFiles.append(raw_input("Enter file %i: " % (i+1)))
+        inputFiles.append('preTxt/' + raw_input("Enter file %i: " % (i+1)))
     nEpochs = int(raw_input("Enter the number of epochs: "))
     numClasses = int(raw_input("Enter the number of outputs: "))
     nLayers = int(raw_input("Enter the number of layers: "))
@@ -50,8 +54,9 @@ if len(sys.argv) == 1:
     inputDim = int((math.pow(float(raw_input("Enter the dimension (temporary): ")),2)))
 else:
     numFiles = int(sys.argv[1])
+    numClasses = numFiles
     for file in range(numFiles):
-        inputFiles.append(sys.argv[file + 2])
+        inputFiles.append('preTxt/' + sys.argv[file + 2])
     for a in range(len(sys.argv)):
         if (sys.argv[a] == 'nEpochs'):
             nEpochs = int(sys.argv[a+1])
@@ -63,17 +68,22 @@ else:
             nNodes = int(sys.argv[a+1])
         if (sys.argv[a] == 'nLayers'):
             nLayers = int(sys.argv[a+1])
+        if (sys.argv[a] == 'verbose'):
+            verboseL = int(sys.argv[a+1])
 
 def saveInfo(inputFiles, nEpochs, sTest, numClasses):
-    output=open('NeuralNetData.txt', 'a')
-    output.write('DNN   ')
-    for i, file in enumerate(inputFiles):
-        output.write('File %i: %s ' % (i, file))
-    output.write('Number of layers: %s   ' % nLayers)
-    output.write('Number of epochs: %i   ' % nEpochs)
-    output.write('Number of Nodes: %s   ' % nNodes)
-    output.write('Number of Output Nodes: %s   ' % numClasses)
-    output.write("Accuracy on test sample: %.2f%%   " % sTest)
+    fieldnames = ['Network Type','inputFile1','inputFile2','inputFile3', 'inputFile4', 'Epochs', 'Image Dimension', 'Accuracy', 'Layers', 'Nodes']
+    output = open('NNData.csv', 'a')
+    writer = csv.DictWriter(output, fieldnames=fieldnames)
+    if os.stat('NNData.csv').st_size==0:
+        writer.writeheader()
+    for i in range(4):
+        if (len(inputFiles) < i):
+            inputFiles.append('')
+    
+    output.writerow({'Network Type': networkType, 'inputFile1': inputFiles[0],'inputFile2': inputFiles[1],
+        'inputFile3':inputFiles[2], 'inputFile4': inputFiles[3], 'Epochs': nEpochs,
+         'Image Dimension': inputDim, 'Accuracy': sTest, 'Layers': nLayers, 'Nodes': nNodes})
 
 # def baseline_model():
     # create model
@@ -130,7 +140,7 @@ model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accur
 validation_size = 0.20
 X_train, X_test, Y_train, Y_test = train_test_split(X, dummy_y, test_size=validation_size, random_state=seed)
 # print X_train.shape
-model.fit(X_train, Y_train, validation_data=(X_test, Y_test), epochs=nEpochs, batch_size=BATCH_SIZE, verbose=1)
+model.fit(X_train, Y_train, validation_data=(X_test, Y_test), epochs=nEpochs, batch_size=BATCH_SIZE, verbose=verboseL)
 
 # train our NN
 # estimator.fit(X_train, Y_train)
