@@ -5,14 +5,18 @@ import math
 import sys
 import csv
 import os
+import time
+import argparse
+
 
 from keras.layers import Dense, Dropout, Activation, Flatten
 from keras.layers import Conv2D, MaxPooling2D
 from keras.models import Sequential
-from sklearn.cross_validation import train_test_split
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from keras.utils import np_utils
 from keras import backend as K
+from quiver_engine import server
 
 K.set_image_dim_ordering('th')
 
@@ -27,10 +31,10 @@ conv_depth_2 = 64 # ...switching to 64 after the first pooling layer
 drop_prob_1 = 0.25 # dropout after pooling with probability 0.25
 drop_prob_2 = 0.5 # dropout in the FC layer with probability 0.5
 hidden_size = 512 # the FC layer will have 512 neurons
-numClasses = 2 # the number of possible outputs
+numClasses = 0 # the number of possible outputs
 nLayers = 2
 nNodes = 0
-inputDim = 0
+dimension = 0
 nLayers1 = 2
 nLayers2 = 2
 verboseL = 0
@@ -58,16 +62,14 @@ if len(sys.argv) == 1:
     numClasses = int(raw_input("Enter the number of outputs: "))
     nLayers = int(raw_input("Enter the number of layers: "))
     nNodes = int(raw_input("Enter the number of nodes: "))
-    inputDim = int((math.pow(float(raw_input("Enter the dimension (temporary): ")),2)))
+    dimension = int((math.pow(float(raw_input("Enter the dimension (temporary): ")),2)))
 else:
-    numFiles = int(sys.argv[1])
-    for file in range(numFiles):
-        inputFiles.append('preTxt/' + sys.argv[file + 2])
     for a in range(len(sys.argv)):
+    
         if (sys.argv[a] == 'nEpochs'):
             nEpochs = int(sys.argv[a+1])
-        if (sys.argv[a] == 'inputDim'):
-            inputDim = int(math.pow(float(sys.argv[a+1]),2))
+        if (sys.argv[a] == 'dimension'):
+            dimension = int(math.pow(float(sys.argv[a+1]),2))
         if (sys.argv[a] == 'numClasses'):
             numClasses = int(sys.argv[a+1])
         if (sys.argv[a] == 'batch_size'):
@@ -91,9 +93,13 @@ else:
         if (sys.argv[a] == 'verbose'):
             verboseL = int(sys.argv[a+1])
 
+        if (sys.argv[a].endswith('.txt')):
+            inputFiles.append('preTxt/'+sys.argv[a])
+    if (numClasses == 0):
+        numClasses = len(inputFiles)
 
-def saveInfo(inputFiles, nEpochs, accuracy, nOutputNodes):
-    fieldnames = ['Network Type','inputFile1','inputFile2','inputFile3', 'inputFile4', 'Epochs', 'Image Dimension', 'Accuracy', 'Layers', 'Nodes', 'Kernal size']
+def saveInfo(dimension, inputFiles, nEpochs, accuracy, nOutputNodes):
+    fieldnames = ['Date', 'Time', 'Network Type','inputFile1','inputFile2','inputFile3', 'inputFile4', 'Epochs', 'Image Dimension', 'Accuracy', 'Layers', 'Nodes', 'Kernal size']
     output = open('NNData.csv', 'a')
     writer = csv.DictWriter(output, fieldnames=fieldnames)
     if os.stat('NNData.csv').st_size==0:
@@ -102,9 +108,9 @@ def saveInfo(inputFiles, nEpochs, accuracy, nOutputNodes):
         if (len(inputFiles) < i):
             inputFiles.append('')
     
-    writer.writerow({'Network Type': networkType, 'inputFile1': inputFiles[0],'inputFile2': inputFiles[1],
+    writer.writerow({'Date': (time.strftime("%d/%m/%Y")),'Time': (time.strftime("%H:%M:%S")), 'Network Type': networkType, 'inputFile1': inputFiles[0],'inputFile2': inputFiles[1],
         'inputFile3':inputFiles[2], 'inputFile4': inputFiles[3], 'Epochs': nEpochs,
-         'Image Dimension': inputDim, 'Accuracy': accuracy, 'Layers': (nLayers1+nLayers2), 'Nodes': nNodes, 
+         'Image Dimension': int(math.pow(dimension,2)), 'Accuracy': accuracy, 'Layers': (nLayers1+nLayers2), 'Nodes': nNodes, 
          'Kernal size': kernal_size})
 
 def trainModel():
@@ -127,7 +133,7 @@ def trainModel():
     dimension = array[0, 1]
 
     print("Dimension: %d" % math.pow(dimension, 2))
-#Does the array inside x need to be an np.array? or a normal array
+    #Does the array inside x need to be an np.array? or a normal array
     X = array[: , 2: int(math.pow(dimension, 2) + 2)]  
     Y = array[: , 0]
     Z = array[: , int(math.pow(dimension, 2) + 2):int(math.pow(dimension, 2) + 4)]
@@ -187,17 +193,25 @@ def trainModel():
     #Once the model is fit, we evaluate it on the test dataset and print out the classification accuracy.
         
     # Fit the model
-    print X_train.shape
     model.fit(X_train, Y_train, validation_data=(X_test, Y_test), epochs=nEpochs, batch_size=batch_size, verbose=verboseL)
     # Final evaluation of the model
     scores = model.evaluate(X_test, Y_test, verbose=1)
-    print("\n(FOR JUST THE TEST SET) %s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
+    print("\nTest set accuracy %s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
+    # server.launch(model)
+    # model.save('CNNModel')
 
-    model.save('CNNModel')
-
-    saveInfo(inputFiles, nEpochs, scores[1]*100, numClasses)
+    saveInfo(dimension, inputFiles, nEpochs, scores[1]*100, numClasses)
 # def testModel(model):
 
 if __name__ == '__main__':
+    # parse = argparse.ArgumentParser()
+
+    #  parser.add_argument(
+    #   '--nEpochs',
+    #   type=int,
+    #   default=5,
+    #   help='Number of epochs for neural network to run.'
+    #   )
+    # FLAGS, unparsed = parser.parse_known_args()
     trainModel()
     # testModel()
