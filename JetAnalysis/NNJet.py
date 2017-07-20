@@ -19,6 +19,11 @@ from sklearn.pipeline import Pipeline
 
 # from quiver_engine import 
 from timeit import default_timer as timer
+<<<<<<< HEAD
+
+N_NODES = 1000
+inputDim = 100
+=======
 import sys
 
 nNodes = 1000
@@ -29,6 +34,7 @@ BATCH_SIZE = 5
 nLayers = 1
 verboseL = 1
 networkType = 'DNN'
+>>>>>>> ebfb57c2a26668a6415a6003fe4f94f61749e3c0
 # define baseline model
 #creates a simple fully connected network with one hidden layer that contains 8 neurons.
 #The hidden layer uses a rectifier activation function which is a good practice. Because we used a one-hot encoding for our  dataset, the output layer must create 2 output values, one for each class. The output value with the largest value will be taken as the class predicted by the model.
@@ -42,6 +48,31 @@ networkType = 'DNN'
 
 
 #make neural net
+<<<<<<< HEAD
+
+def saveInfo(inputFiles, nEpochs, mean, std, nOutputNodes):
+    output=open('NeuralNetData.txt \n', 'a')
+    
+    for i, file in enumerate(inputFiles):
+        output.write('File %i: %s ' % (i, file))
+
+    output.write('Number of epochs: %i \n' % nEpochs)
+    output.write('Number of Nodes: %s \n' % N_NODES)
+    output.write('Number of Output Nodes: %s \n' % nOutputNodes)
+    output.write("Baseline: %.2f%% (%.2f%%) \n" % (mean, std))
+
+def baseline_model():
+    # create model
+    model = Sequential()
+    model.add(Dense(N_NODES, input_dim=inputDim, activation='relu'))
+    model.add(Dense(N_NODES))
+    model.add(Dense(N_NODES))
+    model.add(Dense(nOutputNodes, activation='softmax')) #these are the two possible outputs
+
+    # Compile model
+    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+    return model
+=======
 inputFiles = []
 cmdargs = str(sys.argv)
 if len(sys.argv) == 1:
@@ -56,6 +87,7 @@ if len(sys.argv) == 1:
     # inputDim = int((math.pow(float(raw_input("Enter the dimension (temporary): ")),2)))
 else:
     
+>>>>>>> ebfb57c2a26668a6415a6003fe4f94f61749e3c0
 
 
     for a in range(len(sys.argv)):
@@ -177,5 +209,10 @@ print("\nAccuracy on test set %s: %.2f%%" % (model.metrics_names[1], scores[1]*1
 # end = timer()
 # print(end-start)
 
+<<<<<<< HEAD
+saveInfo(inputFiles, nEpochs, results.mean()*100, results.std()*100, nOutputNodes)
+print("Baseline: %.2f%% (%.2f%%)" % (results.mean()*100, results.std()*100))
+=======
 saveInfo(dimension, inputFiles, nEpochs, scores[1]*100, numClasses)
 # print("Baseline: %.2f%% (%.2f%%)" % (results.mean()*100, results.std()*100))
+>>>>>>> ebfb57c2a26668a6415a6003fe4f94f61749e3c0

@@ -61,8 +61,8 @@ int main(){
 
 	}
 
-	while(inputFile >> iEvents >> nFinalParticles >> dummyD >> dummyD){
-
+	while(iEvents<40000){
+		inputFile >> iEvents >> nFinalParticles >> dummyD >> dummyD;
 		if (iEvents % 100 == 0){
 
 			cout << "iEvents: "<< iEvents << " nFinalParticles: " << nFinalParticles << endl;
