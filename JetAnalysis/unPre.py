@@ -45,12 +45,12 @@ def fCentre(jEvent, j, phi, eta):
 
 
     # print('phi before centre: %f' % phi)
-    phijet = jEvent.phi[j]
-    etajet = jEvent.eta[j]
-    # print('phijet: %f' % phijet)
-#translation 1: centering 
-    phi = phi-phijet
-    eta = eta-etajet
+#     phijet = jEvent.phi[j]
+#     etajet = jEvent.eta[j]
+#     # print('phijet: %f' % phijet)
+# #translation 1: centering 
+#     phi = phi-phijet
+#     eta = eta-etajet
     # print('phi after centre: %f' % phi)
 
     return phi, eta
@@ -90,15 +90,15 @@ def findMaxSubmax(jEvent, pEvent, j):
     return phi_maxm, eta_maxm, phi_submax, eta_submax
 
 def fRotate(jEvent, j, phi, eta, phi_maxm, eta_maxm, phi_submax, eta_submax):
-    if(len(jEvent.pIndex[j])>1):
-        # print("phi before rotate: %f" % phi)
-        # print("phi_maxm to be rotated around: %f" % phi_maxm)
-        star = math.atan2((eta_maxm-eta_submax), (phi_maxm-phi_submax))
+    # if(len(jEvent.pIndex[j])>1):
+    #     # print("phi before rotate: %f" % phi)
+    #     # print("phi_maxm to be rotated around: %f" % phi_maxm)
+    #     star = math.atan2((eta_maxm-eta_submax), (phi_maxm-phi_submax))
 
-        alpha = math.atan2(eta,phi) #fill in numbers
-        r = math.sqrt(math.pow(phi, 2) + math.pow(eta, 2))
-        phi = r * math.cos(alpha-star)
-        eta = r * math.sin(alpha-star)
+    #     alpha = math.atan2(eta,phi) #fill in numbers
+    #     r = math.sqrt(math.pow(phi, 2) + math.pow(eta, 2))
+    #     phi = r * math.cos(alpha-star)
+    #     eta = r * math.sin(alpha-star)
 
         # print('phi after rotate %f' % phi)
 
@@ -113,35 +113,35 @@ def fTranslate(phi, eta, phi_maxm, eta_maxm):
     # print("phi before translate = %f" % phi)
     # print("eta before translate = %f" % eta)
 
-    phi = phi - phi_maxm
-    eta = eta - eta_maxm
-    # print("phi after translate = %f" % phi)
+    # phi = phi - phi_maxm
+    # eta = eta - eta_maxm
+    # # print("phi after translate = %f" % phi)
     # print("eta after translate = %f\n" % eta)
 
     return phi, eta
 
 def fReflect_Fill_Print(output, iEvent, jEvent, j, phiTempV, etaTempV, energyTempV, sumEtaPos, sumEtaNeg, histReflect, histJetTemp, collisionType):
-    if(len(jEvent.pIndex[j])>1):
- # if(len(jEvent.pIndex[j])>1):
-        for i, a in enumerate(etaTempV):
-            if(sumEtaPos < sumEtaNeg):
-                a = -1*a
-        #fill the histogram for reflection
-            histReflect.Fill(phiTempV[i], a, energyTempV[i])
-        #fill a temporary histogram with data from one jet
-            histJetTemp.Fill(phiTempV[i], a, energyTempV[i])
+ #    if(len(jEvent.pIndex[j])>1):
+ # # if(len(jEvent.pIndex[j])>1):
+ #        for i, a in enumerate(etaTempV):
+ #            if(sumEtaPos < sumEtaNeg):
+ #                a = -1*a
+ #        #fill the histogram for reflection
+ #            histReflect.Fill(phiTempV[i], a, energyTempV[i])
+ #        #fill a temporary histogram with data from one jet
+ #            histJetTemp.Fill(phiTempV[i], a, energyTempV[i])
 
-    printOutput(output, j, iEvent, histJetTemp, dimension, collisionType)
+ #    printOutput(output, j, iEvent, histJetTemp, dimension, collisionType)
 
     return etaTempV
 
 def fNormalize(energyTempV):
-    outVector = []
-    eSum = np.sum(energyTempV)
-    for i in energyTempV:
-        outVector.append(i/eSum)
-    return outVector
-
+    # outVector = []
+    # eSum = np.sum(energyTempV)
+    # for i in energyTempV:
+    #     outVector.append(i/eSum)
+    # return outVector
+    return energyTempV
     # for i, a in enumerate(etaTempV):
     #     histNormalize.Fill(phiTempV[i], a, (energyTempV[i]/eTot))
     # return histNormalize
@@ -307,26 +307,26 @@ def readTree(filename1, filename2, fileOut, dimension, collisionType):
 
 
     #see others for examples of iterating through
-    canvasBefore.cd()
-    histBefore.Draw("lego")
-    canvasBefore.SaveAs("before.pdf")
+    # canvasBefore.cd()
+    # histBefore.Draw("lego")
+    # canvasBefore.SaveAs("before.pdf")
 
-    canvasCentre.cd()
-    histCentre.Draw("lego")
-    #https://root.cern.ch/root/html534/guides/users-guide/Histograms.html
-    canvasCentre.SaveAs("centre.pdf")
+    # canvasCentre.cd()
+    # histCentre.Draw("lego")
+    # #https://root.cern.ch/root/html534/guides/users-guide/Histograms.html
+    # canvasCentre.SaveAs("centre.pdf")
 
-    canvasRotate.cd()
-    histRotate.Draw("lego")
-    canvasRotate.SaveAs("rotate.pdf")
+    # canvasRotate.cd()
+    # histRotate.Draw("lego")
+    # canvasRotate.SaveAs("rotate.pdf")
 
-    canvasTranslate.cd()
-    histTranslate.Draw("lego")
-    canvasTranslate.SaveAs("translate.pdf")
+    # canvasTranslate.cd()
+    # histTranslate.Draw("lego")
+    # canvasTranslate.SaveAs("translate.pdf")
 
     canvasReflect.cd()
     histReflect.Draw("lego")
-    canvasReflect.SaveAs("reflect.pdf")
+    canvasReflect.SaveAs("reflectUnPros.pdf")
     
     # canvasNormalize.cd()
     # histNormalize.Draw("lego")
