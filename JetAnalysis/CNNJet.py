@@ -64,6 +64,7 @@ if len(sys.argv) == 1:
     nNodes = int(raw_input("Enter the number of nodes: "))
     dimension = int((math.pow(float(raw_input("Enter the dimension (temporary): ")),2)))
 else:
+
     for a in range(len(sys.argv)):
     
         if (sys.argv[a] == 'nEpochs'):
@@ -154,8 +155,10 @@ def trainModel():
     dummy_y = np_utils.to_categorical(encoded_Y)
 
     # split data into a training and test sample
-    validation_size = 0.20
+    validation_size = 0.90
     X_train, X_test, Y_train, Y_test = train_test_split(X, dummy_y, test_size=validation_size, random_state=seed)
+    print X_train.shape
+    print X_train.shape[1:]
     # X = X.reshape(X.shape[0], dimension, dimension, 1)
     # print(X_train.shape)
     # print(X_train.shape[0])
@@ -197,8 +200,8 @@ def trainModel():
     # Final evaluation of the model
     scores = model.evaluate(X_test, Y_test, verbose=1)
     print("\nTest set accuracy %s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
-    # server.launch(model)
-    # model.save('CNNModel')
+    server.launch(model)
+    model.save('CNNModel')
 
     saveInfo(dimension, inputFiles, nEpochs, scores[1]*100, numClasses)
 # def testModel(model):

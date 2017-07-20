@@ -24,7 +24,7 @@
 using namespace fastjet;
 using namespace std;
 
-int JET_ENERGY_LOWER_LIMIT=20;
+double JET_ENERGY_LOWER_LIMIT=120;
 
 int main (){
     string oPath, iPath;
@@ -44,9 +44,9 @@ int main (){
         return 1;
     }
     TTreeReader myReader("tree" ,f);
-    TTreeReaderArray<double> myPx(myReader, "px");
-    TTreeReaderArray<double> myPy(myReader, "py");
-    TTreeReaderArray<double> myPz(myReader, "pz");
+    TTreeReaderArray<double> myPz(myReader, "px");
+    TTreeReaderArray<double> myPx(myReader, "py");
+    TTreeReaderArray<double> myPy(myReader, "pz");
     TTreeReaderArray<double> myEnergy(myReader, "energy");
     // TTreeReaderArray<int> numParticles(myReader, "nFinalParticles"); //??
     // TTreeReaderValue<int> myEvents(myReader, "iEvents");
@@ -58,7 +58,7 @@ int main (){
 
     int eventN = 0;
     int nJets = 0;
-    vector<double> eta, phi;
+    vector<double> eta, phi, e;
 
     //create output TTree
     TTree jetTree("jetTree", "ttree with jet data");
@@ -67,6 +67,7 @@ int main (){
     jetTree.Branch("pIndex", &pIndex);
     jetTree.Branch("phi", &phi);
     jetTree.Branch("eta", &eta);
+    jetTree.Branch("e", &e);
 
   //Pseudojet vector
   //vector of pseudoJets
@@ -91,7 +92,7 @@ int main (){
 
 
         // choose a jet definition
-        double R = 0.6;
+        double R = 1;
 
         JetDefinition jet_def(antikt_algorithm, R);
         AreaDefinition area_def(voronoi_area);
@@ -140,6 +141,7 @@ int main (){
             // cout << pIndex[0][0] << endl;
             phi.push_back(jets[i].phi());
             eta.push_back(jets[i].rap());
+            e.push_back(jets[i].e());
 
 //pIndex needs to increment outside, need to use pushback on it because pIndex at some i doesn't exist yet
             // pt.push_back(jets[i].pt());
@@ -157,17 +159,19 @@ int main (){
         }
         nJets = jets.size();
         jetTree.Fill();
-
+        if(eventN % 1000 == 0){
         cout << eventN << endl;
+    }
         //cout << "102";
         eventN = eventN + 1;
         pIndex.clear();
         eta.clear();
         phi.clear();
+        e.clear();
         pIndex.resize(0);
         eta.resize(0);
         phi.resize(0);
-
+        e.resize(0);
             //}
     }
 

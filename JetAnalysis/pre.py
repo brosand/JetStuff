@@ -5,6 +5,7 @@ import ROOT
 import array
 import numpy as np
 import math
+from PIL import Image
 
 HIST_BOUND = .6
 
@@ -13,12 +14,19 @@ def getDimension():
     return dimension
 
 def printOutput(output, j, iEvent, histogram, dimension,  collisionType):
+    im = Image.new("RGB", (dimension, dimension))
+    pix = im.load()
+
+
     output.write(collisionType)
     output.write(" %d" % dimension)
     for q in range(dimension):
         for r in range(dimension):
             output.write(" %f" % histogram.GetBinContent(q + 1, r + 1))
+            pix[q,r] = (int(histogram.GetBinContent(q+1, r+1)*256),0,0)
     output.write(" %d %d \n" % (j, iEvent))
+    im.save("test.png", "PNG")
+
     # print(histogram[0])
     # print('histogram at 1,1')
     # print(histogram.GetBinContent(1,1))
@@ -203,7 +211,7 @@ def readTree(filename1, filename2, fileOut, dimension, collisionType):
     canvasReflect = ROOT.TCanvas("canvasReflect", "canvasReflect")
     canvasNormalize = ROOT.TCanvas("canvasNormalize", "canvasNormalize")
 
-    iEvent = 0;
+    iEvent = 0
 
     open('outputC.txt', 'w').close()
     outputC = open("outputC.txt" , "w" )
@@ -220,8 +228,11 @@ def readTree(filename1, filename2, fileOut, dimension, collisionType):
     open(fileOut, 'w').close()
     outputN = open(fileOut , "w" )
 
+
 #LOOP: through each event in tree
     for pEvent, jEvent in  izip(tree, jetTree): #zip
+        if (iEvent==2):
+            break
         if (iEvent % 100 == 0):
             print("Event %d:" % iEvent)
     #for event in jetTree:
@@ -283,11 +294,16 @@ def readTree(filename1, filename2, fileOut, dimension, collisionType):
             # print ('sum eta pn: %f' % (sumEtaPos + sumEtaNeg))
 
             energyTempV = fNormalize(energyTempV)
+            # print 'len energy'
+            # print len(energyTempV)
+            # print energyTempV[21]
             etaTempV = fReflect_Fill_Print(outputN, iEvent, jEvent, j, phiTempV, etaTempV, energyTempV, sumEtaPos, sumEtaNeg, histReflect, histJetTemp, collisionType)
             # print ('sum eta pn: %f' % (sumEtaPos + sumEtaNeg))
 
             # eTot = sumEtaPos + sumEtaNeg + sumEtaZero
             # histNormalize = fNormalize(jEvent, phiTempV, etaTempV, energyTempV, eTot, histNormalize, dimension, collisionType)
+
+          
 
             etaTempV = []
             phiTempV = []
@@ -328,18 +344,27 @@ def readTree(filename1, filename2, fileOut, dimension, collisionType):
     histReflect.Draw("lego")
     canvasReflect.SaveAs("reflect.pdf")
     
+
+
+    
     # canvasNormalize.cd()
     # histNormalize.Draw("lego")
     # canvasNormalize.SaveAs("normalize.pdf")
     
 if __name__ == "__main__":
 
-    filename1 = raw_input("Please provide filename 1 (a .root file from original tree): ")
-    filename2 = raw_input("Please provide filename 2 (a .root file after original tree goes through jet finder): ")
+    # filename1 = raw_input("Please provide filename 1 (a .root file from original tree): ")
+    # filename2 = raw_input("Please provide filename 2 (a .root file after original tree goes through jet finder): ")
 
-    fileOut = raw_input("Please provide an output filename (a .txt file):")
-    collisionType = raw_input("Enter the collision type: ")
-    dimension = getDimension()
+    # fileOut = raw_input("Please provide an output filename (a .txt file):")
+    # collisionType = raw_input("Enter the collision type: ")
+    filename1 = 'eventRoot/sampleA.root'
+    filename2 = 'jetRoot/sampleAJet.root'
+    fileOut = 'ignore.txt'
+    collisionType = 'A'
+    dimension = 5
+    # dimension = getDimension()
+
     #filename1 = "ppfileHard.root"
     #filename2 = "jetFile.root"
 
