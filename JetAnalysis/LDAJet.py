@@ -7,23 +7,68 @@ from sklearn.utils import shuffle
 import ROOT 
 import math
 import sys
+import csv
+import os
+import time
+# from sklearn.decomposition import PCA
 
 HIST_BOUND = 3
 
+def saveInfo(nClasses, inputs, dimension, score):
+    fieldnames = ['Date','Time','Number of Classes','inputfile1', 'inputfile2' , 'inputfile3', 'inputfile4', 'dimension', 'score', 'Cone R']
+    print(fieldnames)
+    for i in range(5):
+        if (len(inputs) < i):
+            inputs.append('')
+
+    output = open('LDA_Data.csv', 'a')
+    writer = csv.DictWriter(output, fieldnames = fieldnames)
+
+    if (os.stat('LDA_Data.csv').st_size==0):
+        writer.writeheader()
+        print("Inside if")
+    else:
+        print("inside else")
+        most_recent_heading_row_number = 0 #get rid
+        with open('LDA_Data.csv', 'r') as original:
+            for iLine, line in enumerate(original): #get rid enum
+                print(line)
+                print("line split 0: %s" % line.split(',')[0])
+                if (line.split(',')[0] == 'Date'):
+                    most_recent_heading_row_number = iLine #get rid
+                    most_recent_heading = line
+
+        print("most_recent_heading_row_number: %d" % most_recent_heading_row_number)
+        print(most_recent_heading.rstrip().split(','))
+        if(most_recent_heading.rstrip().split(',') != fieldnames):
+            writer.writeheader()
+    
+    writer.writerow({'Date': time.strftime("%d/%m/%Y"), 'Time': time.strftime("%H:%M:%S"),'Number of Classes': nClasses, 'inputfile1':inputs[0], 'inputfile2':inputs[1], 'inputfile3':inputs[2], 'inputfile4':inputs[3], 'dimension':dimension, 'score':score, 'Cone R':0.6})
+
+
+
 inputs = []
+cmdargs = str(sys.argv)
 datasets = []
 types = []
 canvas = ROOT.TCanvas("canvas", "canvas")
+canvas2 = ROOT.TCanvas("canvas2", "canvas2")
 
+if (len(sys.argv) == 1):
+    nClasses = input("Enter the number of classes among which you would like to discriminate: ")
+    if(nClasses < 2):
+        print("Error: you must provide at least 2 classes. Aborting.")
+        sys.exit()
+    for i in range(nClasses):
+        inputs.append(raw_input("Enter file %d: " % int(i+1)))
 
-nClasses = input("Enter the number of classes among which you would like to discriminate: ")
+else:
+    nClasses = 0
+    for a in range(len(sys.argv)):
+        if ('.txt' in sys.argv[a]):
+            inputs.append(sys.argv[a])
+            nClasses+=1
 
-inputs.append(raw_input("Enter the first txt file: "))
-#inputs.append(raw_input("Enter the second txt file: "))
-
-if(nClasses < 2):
-    print("Error: you must provide at least 2 classes. Aborting.")
-    sys.exit()
 
 # Open first dataset and read into arrays X,Y, Z
 datasets.append(pandas.read_csv(inputs[0],sep=" ",header=None))
@@ -37,8 +82,6 @@ types.append(Y[0])
 Z = array[: , int(math.pow(dimension, 2) + 2):int(math.pow(dimension, 2) + 4)]
 
 for i in range (1, nClasses):
-    inputs.append(raw_input("Enter file %d: " % int(i+1)))
-
     # Open next dataset and add information onto end of arrays X,Y, Z
     datasets.append(pandas.read_csv(inputs[i],sep=" ",header=None))
     array = datasets[i].values
@@ -54,6 +97,14 @@ X_train, X_validation, Y_train, Y_validation = model_selection.train_test_split(
 
 # print(X_train)
 # print Y_train 
+
+# print("n_components size: %d" % X_train.size)
+# print("n_components len: %d" % len(X_train))
+# print("n_components index 0: %d" % len(X_train[0]))
+
+# pca = PCA(n_components = (len(X_train)-2))
+# pca.fit(X_train)
+# X_train = pca.transform(X_train)
 
 # Run LDA
 
@@ -113,26 +164,58 @@ print(lda.coef_.size)
 
 if (nClasses == 2):
 
-    histogram1 = ROOT.TH1F("histogram1", "histogram1", 1000, -HIST_BOUND, HIST_BOUND)
-    histogram2 = ROOT.TH1F("histogram2", "histogram2", 1000, -HIST_BOUND, HIST_BOUND)
+    histogram1 = ROOT.TH1F("histogram1", "histogram1", 200, -HIST_BOUND, HIST_BOUND)
+    histogram2 = ROOT.TH1F("histogram2", "histogram2", 200, -HIST_BOUND, HIST_BOUND)
+    histogramCOEF = ROOT.TH2F("histogramCOEF", "histogramCOEF", dimension, 0, dimension, dimension, 0, dimension)
     histogram1.GetXaxis().SetTitle("X_trans[j]");
     histogram1.GetYaxis().SetTitle("frequency");
 
+#how many times was each type guessed?
+#predictions and y validation
+    denom1 = 0
+    denom2 = 0 #turn to array
+    num1 = 0
+    num2 = 0
+    for i in range(Y_validation.size):
+        if(Y_validation[i] == types[0]):
+            denom1 +=1
+
+        elif(Y_validation[i] == types[1]):
+            denom2 +=1
+
+        if(predictions[i] == types[0]):
+            num1 +=1
+
+        elif(predictions[i] == types[1]):
+            num2 +=1
+
+    efficiency1 = num1/float(denom1)
+    efficiency2 = num2/float(denom2)
+
+    print("Efficiency for %s: %f" % (types[0], efficiency1))
+    print("Efficiency for %s: %f" % (types[1], efficiency2))
+
+    hits1 = 0
+    hits2 = 0
     for j in range(X_trans.size):
 
         if(Y_train[j]  == types[0]):
 
-            histogram1.Fill(X_trans[j][0])
+            hits1 += 1
 
         elif(Y_train[j] == types[1]):
 
-            histogram2.Fill(X_trans[j][0])
+            hits2 += 1
 
-# h1->Draw();
-# h1->SetLineColor(kRed);
-# h2->Draw("same");
-# h2->SetLineColor(kBlue);
-# c1->Update();
+    for j in range(X_trans.size):
+
+        if(Y_train[j]  == types[0]):
+            #histogram1.Scale(1/hits1)
+            histogram1.Fill(X_trans[j][0], 1/float(hits1))
+
+        elif(Y_train[j] == types[1]):
+            #histogram2.Scale(1/hits2)
+            histogram2.Fill(X_trans[j][0], 1/float(hits2))
 
     title = types[0]+ "-" + types[1]
 
@@ -142,6 +225,27 @@ if (nClasses == 2):
     histogram2.Draw("same")
     histogram2.SetLineColor(2) #red
     canvas.SaveAs(title + ".pdf")
+
+
+    #fill histcoef
+    print("lda coef 0, 0 = %f" % lda.coef_[0][0])
+    print("lda coef 0, 1 = %f" % lda.coef_[0][1])
+
+    counter = 0
+    for column in range(dimension): #not sold on order of filling
+        for row in range (dimension):
+            #histogramCOEF.Fill(row, column, pca.inverse_transform(lda.coef_[0][counter]))
+            histogramCOEF.Fill(column, row, lda.coef_[0][counter])
+
+            counter += 1
+
+    canvas2.cd()
+    histogramCOEF.Draw("LEGO2Z")
+    histogramCOEF.SetTitle(title + " LDA Coef")
+    histogramCOEF.GetXaxis().SetTitle("column");
+    histogramCOEF.GetYaxis().SetTitle("row");
+    histogramCOEF.GetZaxis().SetTitle("LDA Coef of that pixel");
+    canvas2.SaveAs(title + "LDACoef.pdf")
 
 # if(nClasses == 3):
 #     histogram1 = ROOT.TH2F("histogram1", "histogram1", 1000, -HIST_BOUND, HIST_BOUND, 1000, -HIST_BOUND, HIST_BOUND)
@@ -179,10 +283,12 @@ if (nClasses == 2):
 #     canvas.SaveAs(title + ".pdf")
 
 
+score = m.accuracy_score(Y_validation, predictions)
 
-print(m.accuracy_score(Y_validation, predictions))
+print(score)
 #print(m.confusion_matrix(Y_validation, predictions))
 #print(m.classification_report(Y_validation, predictions))
 
+saveInfo(nClasses, inputs, dimension, score)
 
 

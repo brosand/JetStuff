@@ -17,7 +17,7 @@ from sklearn.pipeline import Pipeline
 from timeit import default_timer as timer
 
 N_NODES = 1000
-inputDim = 25
+inputDim = 100
 # define baseline model
 #creates a simple fully connected network with one hidden layer that contains 8 neurons.
 #The hidden layer uses a rectifier activation function which is a good practice. Because we used a one-hot encoding for our  dataset, the output layer must create 2 output values, one for each class. The output value with the largest value will be taken as the class predicted by the model.
@@ -32,11 +32,11 @@ inputDim = 25
 
 #make neural net
 
-def saveInfo(inputFiles, nEpochs, mean, std):
+def saveInfo(inputFiles, nEpochs, mean, std, nOutputNodes):
     output=open('NeuralNetData.txt \n', 'a')
     
     for i, file in enumerate(inputFiles):
-        otuput.write('File %i: %s ' % (i, file))
+        output.write('File %i: %s ' % (i, file))
 
     output.write('Number of epochs: %i \n' % nEpochs)
     output.write('Number of Nodes: %s \n' % N_NODES)
@@ -46,7 +46,7 @@ def saveInfo(inputFiles, nEpochs, mean, std):
 def baseline_model():
     # create model
     model = Sequential()
-    model.add(Dense(N_NODES, input_dim=dimension, activation='relu'))
+    model.add(Dense(N_NODES, input_dim=inputDim, activation='relu'))
     model.add(Dense(N_NODES))
     model.add(Dense(N_NODES))
     model.add(Dense(nOutputNodes, activation='softmax')) #these are the two possible outputs
@@ -138,5 +138,5 @@ results = cross_val_score(estimator, X, dummy_y, cv=kfold)
 end = timer()
 print(end-start)
 
-saveInfo(inputFiles, nEpochs, results.mean()*100, results.std()*100)
+saveInfo(inputFiles, nEpochs, results.mean()*100, results.std()*100, nOutputNodes)
 print("Baseline: %.2f%% (%.2f%%)" % (results.mean()*100, results.std()*100))
