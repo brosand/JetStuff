@@ -24,6 +24,7 @@
 using namespace fastjet;
 using namespace std;
 
+<<<<<<< HEAD
 double JET_ENERGY_LOWER_LIMIT=120;
 
 int main (){

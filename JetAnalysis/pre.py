@@ -5,7 +5,11 @@ import ROOT
 import array
 import numpy as np
 import math
+<<<<<<< HEAD
 from PIL import Image
+=======
+import sys
+>>>>>>> 14123f0e5cee53302dccbff6deeebc5e54054a33
 
 HIST_BOUND = .6
 
@@ -353,6 +357,7 @@ def readTree(filename1, filename2, fileOut, dimension, collisionType):
     
 if __name__ == "__main__":
 
+<<<<<<< HEAD
     # filename1 = raw_input("Please provide filename 1 (a .root file from original tree): ")
     # filename2 = raw_input("Please provide filename 2 (a .root file after original tree goes through jet finder): ")
 
@@ -367,6 +372,33 @@ if __name__ == "__main__":
 
     #filename1 = "ppfileHard.root"
     #filename2 = "jetFile.root"
+=======
+    cmdargs = str(sys.argv)
+    if (len(sys.argv) == 1):
+
+        filename1 = raw_input("Please provide filename 1 (a .root file from original tree): ")
+        filename2 = raw_input("Please provide filename 2 (a .root file after original tree goes through jet finder): ")
+
+        fileOut = raw_input("Please provide an output filename (a .txt file):")
+        collisionType = raw_input("Enter the collision type: ")
+        dimension = getDimension()
+        #filename1 = "ppfileHard.root"
+        #filename2 = "jetFile.root"
+#give tree, jettree, output txt, collisiontype= , dimension= 
+    else:
+        for a in range(len(sys.argv)):
+            if ('.root' in sys.argv[a]):
+                if('Jet' in sys.argv[a]):
+                    filename2 = sys.argv[a]
+                else:
+                    filename1 = sys.argv[a]
+            if ('.txt' in sys.argv[a]):
+                fileOut = sys.argv[a]
+            if ('collisionType' in sys.argv[a]):
+                collisionType = sys.argv[a].split('=')[1]
+            if ('dimension' in sys.argv[a]):
+                dimension = int(sys.argv[a].split('=')[1])
+>>>>>>> 14123f0e5cee53302dccbff6deeebc5e54054a33
 
     readTree(filename1 = filename1, filename2 = filename2, fileOut = fileOut, dimension = dimension, collisionType = collisionType)
     

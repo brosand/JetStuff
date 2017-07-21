@@ -18,7 +18,7 @@ from keras.utils import np_utils
 from keras import backend as K
 from quiver_engine import server
 
-K.set_image_dim_ordering('th')
+K.set_image_dim_ordering('tf')
 
 
 
@@ -66,7 +66,8 @@ if len(sys.argv) == 1:
 else:
 
     for a in range(len(sys.argv)):
-    
+        if (sys.argv[a] =='quiver')
+            quiver = int(sys.argv[a+1])
         if (sys.argv[a] == 'nEpochs'):
             nEpochs = int(sys.argv[a+1])
         if (sys.argv[a] == 'dimension'):
@@ -132,10 +133,11 @@ def trainModel():
     dataset = pandas.read_csv(inputFiles[0],sep=" ",header=None)
     array = dataset.values
     dimension = array[0, 1]
+    print(type(array))
 
     print("Dimension: %d" % math.pow(dimension, 2))
     #Does the array inside x need to be an np.array? or a normal array
-    X = array[: , 2: int(math.pow(dimension, 2) + 2)]  
+    X = array[: , 2: int(math.pow(dimension, 2) + 2)]
     Y = array[: , 0]
     Z = array[: , int(math.pow(dimension, 2) + 2):int(math.pow(dimension, 2) + 4)]
     # Open second dataset and add information onto end of arrays X,Y, Z
@@ -146,7 +148,7 @@ def trainModel():
         Y = np.concatenate((Y,array[ : , 0]))
         Z = np.concatenate((Z,array[: , int(math.pow(dimension, 2) + 2):int(math.pow(dimension, 2) + 4)]))
     #DOUBLE CHECK THAT RIGHT ORDER
-    X = X.reshape(X.shape[0], 1, dimension, dimension)
+    X = X.reshape(X.shape[0], dimension, dimension, 1)
 
     encoder = LabelEncoder()
     encoder.fit(Y)
@@ -156,6 +158,9 @@ def trainModel():
 
     # split data into a training and test sample
     validation_size = 0.90
+    Q=np.zeros((X.shape[0],X.shape[1],X.shape[2],2))
+    X = np.concatenate((Q,X),3)
+    print X.shape
     X_train, X_test, Y_train, Y_test = train_test_split(X, dummy_y, test_size=validation_size, random_state=seed)
     print X_train.shape
     print X_train.shape[1:]
@@ -200,8 +205,9 @@ def trainModel():
     # Final evaluation of the model
     scores = model.evaluate(X_test, Y_test, verbose=1)
     print("\nTest set accuracy %s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
-    server.launch(model)
-    model.save('CNNModel')
+    if (quiver==1):
+        server.launch(model)
+    model.save('CNNModel',classes=['a','b'])
 
     saveInfo(dimension, inputFiles, nEpochs, scores[1]*100, numClasses)
 # def testModel(model):
