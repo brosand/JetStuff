@@ -39,6 +39,7 @@ nLayers1 = 2
 nLayers2 = 2
 verboseL = 0
 networkType = 'CNN'
+quiver = 0
 #DRAW OUT SCHEMATIC
 
 
@@ -57,7 +58,7 @@ if len(sys.argv) == 1:
     numFiles = int(raw_input("Enter the number of files: "))
 
     for i in range(numFiles):
-        inputFiles.append('preTxt/' + raw_input("Enter file %i: " % (i+1)))
+        inputFiles.append('r1.0/' + raw_input("Enter file %i: " % (i+1)))
     nEpochs = int(raw_input("Enter the number of epochs: "))
     numClasses = int(raw_input("Enter the number of outputs: "))
     nLayers = int(raw_input("Enter the number of layers: "))
@@ -66,8 +67,8 @@ if len(sys.argv) == 1:
 else:
 
     for a in range(len(sys.argv)):
-        if (sys.argv[a] =='quiver')
-            quiver = int(sys.argv[a+1])
+        # if (sys.argv[a] =='quiver'):
+            # quiver = int(sys.argv[a+1])
         if (sys.argv[a] == 'nEpochs'):
             nEpochs = int(sys.argv[a+1])
         if (sys.argv[a] == 'dimension'):
@@ -96,7 +97,7 @@ else:
             verboseL = int(sys.argv[a+1])
 
         if (sys.argv[a].endswith('.txt')):
-            inputFiles.append('preTxt/'+sys.argv[a])
+            inputFiles.append('r1.0/'+sys.argv[a])
     if (numClasses == 0):
         numClasses = len(inputFiles)
 
@@ -133,7 +134,6 @@ def trainModel():
     dataset = pandas.read_csv(inputFiles[0],sep=" ",header=None)
     array = dataset.values
     dimension = array[0, 1]
-    print(type(array))
 
     print("Dimension: %d" % math.pow(dimension, 2))
     #Does the array inside x need to be an np.array? or a normal array
@@ -157,7 +157,7 @@ def trainModel():
     dummy_y = np_utils.to_categorical(encoded_Y)
 
     # split data into a training and test sample
-    validation_size = 0.90
+    validation_size = 0.10
     Q=np.zeros((X.shape[0],X.shape[1],X.shape[2],2))
     X = np.concatenate((Q,X),3)
     print X.shape
@@ -205,11 +205,11 @@ def trainModel():
     # Final evaluation of the model
     scores = model.evaluate(X_test, Y_test, verbose=1)
     print("\nTest set accuracy %s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
-    if (quiver==1):
-        server.launch(model)
-    model.save('CNNModel',classes=['a','b'])
+     # if (quiver==1):
+    # server.launch(model, [1,['a','b']])
+    model.save('CNNModel.h5')
 
-    saveInfo(dimension, inputFiles, nEpochs, scores[1]*100, numClasses)
+    # saveInfo(dimension, inputFiles, nEpochs, scores[1]*100, numClasses)
 # def testModel(model):
 
 if __name__ == '__main__':
