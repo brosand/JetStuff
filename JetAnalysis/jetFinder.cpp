@@ -24,7 +24,7 @@
 using namespace fastjet;
 using namespace std;
 
-int JET_ENERGY_LOWER_LIMIT=20;
+int JET_ENERGY_LOWER_LIMIT=120;
 
 int main (){
     string oPath, iPath;
@@ -44,9 +44,9 @@ int main (){
         return 1;
     }
     TTreeReader myReader("tree" ,f);
-    TTreeReaderArray<double> myPx(myReader, "px");
-    TTreeReaderArray<double> myPy(myReader, "py");
-    TTreeReaderArray<double> myPz(myReader, "pz");
+    TTreeReaderArray<double> myPz(myReader, "px");
+    TTreeReaderArray<double> myPx(myReader, "py");
+    TTreeReaderArray<double> myPy(myReader, "pz");
     TTreeReaderArray<double> myEnergy(myReader, "energy");
     // TTreeReaderArray<int> numParticles(myReader, "nFinalParticles"); //??
     // TTreeReaderValue<int> myEvents(myReader, "iEvents");
@@ -91,7 +91,7 @@ int main (){
 
 
         // choose a jet definition
-        double R = 0.6;
+        double R = 1.0;
 
         JetDefinition jet_def(antikt_algorithm, R);
         AreaDefinition area_def(voronoi_area);
