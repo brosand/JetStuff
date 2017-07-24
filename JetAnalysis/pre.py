@@ -232,8 +232,8 @@ def readTree(filename1, filename2, fileOut, dimension, collisionType, folder):
 
 #LOOP: through each event in tree
     for pEvent, jEvent in  izip(tree, jetTree): #zip
-        if (iEvent==2):
-            break
+        # if (iEvent==2):
+        #     break
         if (iEvent % 100 == 0):
             print("Event %d:" % iEvent)
     #for event in jetTree:
