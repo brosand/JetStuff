@@ -97,7 +97,7 @@ else:
             verboseL = int(sys.argv[a+1])
 
         if (sys.argv[a].endswith('.txt')):
-            inputFiles.append('r1.0/'+sys.argv[a])
+            inputFiles.append(sys.argv[a])
     if (numClasses == 0):
         numClasses = len(inputFiles)
 

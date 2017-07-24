@@ -12,8 +12,8 @@ from keras import backend as K
 from keras.models import load_model
 
 # dimensions of the generated pictures for each filter.
-img_width = 5
-img_height = 5
+img_width = 50
+img_height = 50
 
 # the name of the layer we want to visualize
 # (see model definition at keras/applications/vgg16.py)
