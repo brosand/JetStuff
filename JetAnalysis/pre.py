@@ -15,6 +15,8 @@ def getDimension():
     return dimension
 
 def printOutput(output, j, iEvent, histogram, dimension,  collisionType):
+    # im = Image.new("RGB", (dimension, dimension))
+    # pix = im.load()
 
     output.write(collisionType)
     output.write(" %d" % dimension)
