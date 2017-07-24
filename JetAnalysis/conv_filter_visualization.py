@@ -1,6 +1,7 @@
 
 from __future__ import print_function
-
+import PIL
+from PIL import Image
 
 from scipy.misc import imsave
 import numpy as np
@@ -117,7 +118,7 @@ kept_filters = kept_filters[:n * n]
 
 # build a black picture with enough space for
 # our 8 x 8 filters of size 128 x 128, with a 5px margin in between
-margin = 5
+margin = 2
 width = n * img_width + (n - 1) * margin
 height = n * img_height + (n - 1) * margin
 stitched_filters = np.zeros((width, height, 3))
@@ -133,3 +134,10 @@ for i in range(n):
 
 # save the result to disk
 imsave('stitched_filters_%dx%d.png' % (n, n), stitched_filters)
+
+basewidth = 1000
+img = Image.open('stitched_filters_4x4.png')
+wpercent = (basewidth/float(img.size[0]))
+hsize = int((float(img.size[1])*float(wpercent)))
+img = img.resize((basewidth,hsize), PIL.Image.ANTIALIAS)
+img.save('sompic.jpg') 

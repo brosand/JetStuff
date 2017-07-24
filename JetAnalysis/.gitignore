@@ -21,6 +21,7 @@ jetFinder
 *.o
 *.so
 *.d
+*.h5
 G__*.h
 G__*.cxx
 *.lo
