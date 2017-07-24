@@ -156,8 +156,8 @@ int main (int argc, char * argv[]){
         //for each jet, loop through a single jet, adding each userindex to the array
         //jets.size is the number of jets
         for (int a = 0; a < jets.size(); a++) {
-            // cout << jets[a].pt() << endl;
-            if (jets[a].pt() < JET_ENERGY_LOWER_LIMIT) {
+            // cout << jets[a].e() << endl;
+            if (jets[a].e() < JET_ENERGY_LOWER_LIMIT) {
                 jets.erase(jets.begin()+a);
                 a--; //because it will a++ but we just moved the whole thing back, so we end up staying in same spot
             }
