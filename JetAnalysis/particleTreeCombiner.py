@@ -79,5 +79,5 @@ if __name__ == "__main__":
 
     # fileOut = raw_input("Please provide an output filename (a .root file):")
 
-    rootCombine(file1='pp.root',file2='lead.root', fileOut='t.root')
+    rootCombine(file1='pp.root',file2='lead.root', fileOut='combine.root')
 
