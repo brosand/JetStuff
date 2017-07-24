@@ -18,7 +18,7 @@ from keras.utils import np_utils
 from keras import backend as K
 from quiver_engine import server
 
-K.set_image_dim_ordering('th')
+K.set_image_dim_ordering('tf')
 
 
 
@@ -39,6 +39,7 @@ nLayers1 = 2
 nLayers2 = 2
 verboseL = 0
 networkType = 'CNN'
+quiver = 0
 #DRAW OUT SCHEMATIC
 
 
@@ -57,15 +58,17 @@ if len(sys.argv) == 1:
     numFiles = int(raw_input("Enter the number of files: "))
 
     for i in range(numFiles):
-        inputFiles.append('preTxt/' + raw_input("Enter file %i: " % (i+1)))
+        inputFiles.append('r1.0/' + raw_input("Enter file %i: " % (i+1)))
     nEpochs = int(raw_input("Enter the number of epochs: "))
     numClasses = int(raw_input("Enter the number of outputs: "))
     nLayers = int(raw_input("Enter the number of layers: "))
     nNodes = int(raw_input("Enter the number of nodes: "))
     dimension = int((math.pow(float(raw_input("Enter the dimension (temporary): ")),2)))
 else:
+
     for a in range(len(sys.argv)):
-    
+        # if (sys.argv[a] =='quiver'):
+            # quiver = int(sys.argv[a+1])
         if (sys.argv[a] == 'nEpochs'):
             nEpochs = int(sys.argv[a+1])
         if (sys.argv[a] == 'dimension'):
@@ -94,7 +97,7 @@ else:
             verboseL = int(sys.argv[a+1])
 
         if (sys.argv[a].endswith('.txt')):
-            inputFiles.append('preTxt/'+sys.argv[a])
+            inputFiles.append('r1.0/'+sys.argv[a])
     if (numClasses == 0):
         numClasses = len(inputFiles)
 
@@ -134,7 +137,7 @@ def trainModel():
 
     print("Dimension: %d" % math.pow(dimension, 2))
     #Does the array inside x need to be an np.array? or a normal array
-    X = array[: , 2: int(math.pow(dimension, 2) + 2)]  
+    X = array[: , 2: int(math.pow(dimension, 2) + 2)]
     Y = array[: , 0]
     Z = array[: , int(math.pow(dimension, 2) + 2):int(math.pow(dimension, 2) + 4)]
     # Open second dataset and add information onto end of arrays X,Y, Z
@@ -145,7 +148,7 @@ def trainModel():
         Y = np.concatenate((Y,array[ : , 0]))
         Z = np.concatenate((Z,array[: , int(math.pow(dimension, 2) + 2):int(math.pow(dimension, 2) + 4)]))
     #DOUBLE CHECK THAT RIGHT ORDER
-    X = X.reshape(X.shape[0], 1, dimension, dimension)
+    X = X.reshape(X.shape[0], dimension, dimension, 1)
 
     encoder = LabelEncoder()
     encoder.fit(Y)
@@ -154,8 +157,13 @@ def trainModel():
     dummy_y = np_utils.to_categorical(encoded_Y)
 
     # split data into a training and test sample
-    validation_size = 0.20
+    validation_size = 0.10
+    Q=np.zeros((X.shape[0],X.shape[1],X.shape[2],2))
+    X = np.concatenate((Q,X),3)
+    print X.shape
     X_train, X_test, Y_train, Y_test = train_test_split(X, dummy_y, test_size=validation_size, random_state=seed)
+    print X_train.shape
+    print X_train.shape[1:]
     # X = X.reshape(X.shape[0], dimension, dimension, 1)
     # print(X_train.shape)
     # print(X_train.shape[0])
@@ -197,10 +205,11 @@ def trainModel():
     # Final evaluation of the model
     scores = model.evaluate(X_test, Y_test, verbose=1)
     print("\nTest set accuracy %s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
-    # server.launch(model)
-    # model.save('CNNModel')
+     # if (quiver==1):
+    # server.launch(model, [1,['a','b']])
+    model.save('CNNModel.h5')
 
-    saveInfo(dimension, inputFiles, nEpochs, scores[1]*100, numClasses)
+    # saveInfo(dimension, inputFiles, nEpochs, scores[1]*100, numClasses)
 # def testModel(model):
 
 if __name__ == '__main__':

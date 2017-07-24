@@ -108,7 +108,7 @@ int main (int argc, char * argv[]){
 
     int eventN = 0;
     int nJets = 0;
-    vector<double> eta, phi;
+    vector<double> eta, phi, e;
 
     //create output TTree
     TTree jetTree("jetTree", "ttree with jet data");
@@ -117,6 +117,7 @@ int main (int argc, char * argv[]){
     jetTree.Branch("pIndex", &pIndex);
     jetTree.Branch("phi", &phi);
     jetTree.Branch("eta", &eta);
+    jetTree.Branch("e", &e);
 
   //Pseudojet vector
   //vector of pseudoJets
@@ -186,6 +187,7 @@ int main (int argc, char * argv[]){
             // cout << pIndex[0][0] << endl;
             phi.push_back(jets[i].phi());
             eta.push_back(jets[i].rap());
+            e.push_back(jets[i].e());
 
 //pIndex needs to increment outside, need to use pushback on it because pIndex at some i doesn't exist yet
             // pt.push_back(jets[i].pt());
@@ -203,17 +205,19 @@ int main (int argc, char * argv[]){
         }
         nJets = jets.size();
         jetTree.Fill();
-
+        if(eventN % 1000 == 0){
         cout << eventN << endl;
+    }
         //cout << "102";
         eventN = eventN + 1;
         pIndex.clear();
         eta.clear();
         phi.clear();
+        e.clear();
         pIndex.resize(0);
         eta.resize(0);
         phi.resize(0);
-
+        e.resize(0);
             //}
     }
 
