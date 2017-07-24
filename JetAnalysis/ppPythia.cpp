@@ -59,7 +59,7 @@ obj.readString("Beams:frameType = 1");
 
 //
 obj.readString("HardQCD:all = on");
-obj.readString("PhaseSpace:pTHatMin = 20.");
+obj.readString("PhaseSpace:pTHatMin = 150.");
 
 obj.init();
 

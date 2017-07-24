@@ -16,7 +16,7 @@ HIST_BOUND = 3
 
 def saveInfo(nClasses, inputs, dimension, score):
     fieldnames = ['Date','Time','Number of Classes','inputfile1', 'inputfile2' , 'inputfile3', 'inputfile4', 'dimension', 'score', 'Cone R']
-    print(fieldnames)
+    #print(fieldnames)
     for i in range(5):
         if (len(inputs) < i):
             inputs.append('')
@@ -26,20 +26,20 @@ def saveInfo(nClasses, inputs, dimension, score):
 
     if (os.stat('LDA_Data.csv').st_size==0):
         writer.writeheader()
-        print("Inside if")
+        #print("Inside if")
     else:
-        print("inside else")
+        #print("inside else")
         most_recent_heading_row_number = 0 #get rid
         with open('LDA_Data.csv', 'r') as original:
             for iLine, line in enumerate(original): #get rid enum
-                print(line)
-                print("line split 0: %s" % line.split(',')[0])
+                #print(line)
+                #print("line split 0: %s" % line.split(',')[0])
                 if (line.split(',')[0] == 'Date'):
                     most_recent_heading_row_number = iLine #get rid
                     most_recent_heading = line
 
-        print("most_recent_heading_row_number: %d" % most_recent_heading_row_number)
-        print(most_recent_heading.rstrip().split(','))
+        #print("most_recent_heading_row_number: %d" % most_recent_heading_row_number)
+        #print(most_recent_heading.rstrip().split(','))
         if(most_recent_heading.rstrip().split(',') != fieldnames):
             writer.writeheader()
     
@@ -61,13 +61,15 @@ if (len(sys.argv) == 1):
         sys.exit()
     for i in range(nClasses):
         inputs.append(raw_input("Enter file %d: " % int(i+1)))
+    folder = raw_input("Enter the folder where you want things to go: ")
 
 else:
     nClasses = 0
-    for a in range(len(sys.argv)):
+    for a in range(len(sys.argv)-1):
         if ('.txt' in sys.argv[a]):
             inputs.append(sys.argv[a])
             nClasses+=1
+    folder = sys.argv[a+1]
 
 
 # Open first dataset and read into arrays X,Y, Z
@@ -224,8 +226,9 @@ if (nClasses == 2):
     histogram1.SetTitle(title)
     histogram2.Draw("same")
     histogram2.SetLineColor(2) #red
-    canvas.SaveAs(title + ".pdf")
-
+    canvas.SaveAs(folder + "/" + title + ".pdf")
+    print("Here's my folder: ")
+    print(folder + "/" + title  + ".pdf")
 
     #fill histcoef
     print("lda coef 0, 0 = %f" % lda.coef_[0][0])
@@ -245,7 +248,7 @@ if (nClasses == 2):
     histogramCOEF.GetXaxis().SetTitle("column");
     histogramCOEF.GetYaxis().SetTitle("row");
     histogramCOEF.GetZaxis().SetTitle("LDA Coef of that pixel");
-    canvas2.SaveAs(title + "LDACoef.pdf")
+    canvas2.SaveAs(folder + "/" + title + "_LDACoef.pdf")
 
 # if(nClasses == 3):
 #     histogram1 = ROOT.TH2F("histogram1", "histogram1", 1000, -HIST_BOUND, HIST_BOUND, 1000, -HIST_BOUND, HIST_BOUND)

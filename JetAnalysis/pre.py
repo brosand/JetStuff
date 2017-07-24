@@ -7,7 +7,7 @@ import numpy as np
 import math
 import sys
 
-HIST_BOUND = .6
+HIST_BOUND = 1.0
 
 def getDimension():
     dimension = input("Enter the side-length of the jet images: ")
@@ -152,7 +152,7 @@ def fNormalize(energyTempV):
         # else:
             # print 'wut'
 
-def readTree(filename1, filename2, fileOut, dimension, collisionType):
+def readTree(filename1, filename2, fileOut, dimension, collisionType, folder):
 
     fIn = ROOT.TFile(filename1, "READ")
     tree = fIn.Get("tree")
@@ -206,17 +206,17 @@ def readTree(filename1, filename2, fileOut, dimension, collisionType):
 
     iEvent = 0;
 
-    open('outputC.txt', 'w').close()
-    outputC = open("outputC.txt" , "w" )
+    # open('outputC.txt', 'w').close()
+    # outputC = open("outputC.txt" , "w" )
 
-    open('outputR.txt', 'w').close()
-    outputR = open("outputR.txt" , "w" )
+    # open('outputR.txt', 'w').close()
+    # outputR = open("outputR.txt" , "w" )
 
-    open('outputT.txt', 'w').close()
-    outputT = open("outputT.txt" , "w" )
+    # open('outputT.txt', 'w').close()
+    # outputT = open("outputT.txt" , "w" )
 
-    open('outputF.txt', 'w').close()
-    outputF = open("outputF.txt" , "w" )
+    # open('outputF.txt', 'w').close()
+    # outputF = open("outputF.txt" , "w" )
 
     open(fileOut, 'w').close()
     outputN = open(fileOut , "w" )
@@ -297,10 +297,10 @@ def readTree(filename1, filename2, fileOut, dimension, collisionType):
 
 
             
-            printOutput(outputC, j, iEvent, histCentre, dimension, collisionType)
-            printOutput(outputR, j, iEvent, histRotate, dimension, collisionType)
-            printOutput(outputT, j, iEvent, histTranslate, dimension, collisionType)
-            printOutput(outputN, j, iEvent, histNormalize, dimension, collisionType)
+            # printOutput(outputC, j, iEvent, histCentre, dimension, collisionType)
+            # printOutput(outputR, j, iEvent, histRotate, dimension, collisionType)
+            # printOutput(outputT, j, iEvent, histTranslate, dimension, collisionType)
+            # printOutput(outputN, j, iEvent, histNormalize, dimension, collisionType)
             printOutput(outputN, j, iEvent, histReflect, dimension, collisionType)
 # 
                 
@@ -310,58 +310,73 @@ def readTree(filename1, filename2, fileOut, dimension, collisionType):
     #see others for examples of iterating through
     canvasBefore.cd()
     histBefore.Draw("lego")
-    canvasBefore.SaveAs("before.pdf")
+    canvasBefore.SaveAs(folder + "/" + filename1.split('.')[0] + "_before.pdf")
 
     canvasCentre.cd()
     histCentre.Draw("lego")
     #https://root.cern.ch/root/html534/guides/users-guide/Histograms.html
-    canvasCentre.SaveAs("centre.pdf")
+    canvasCentre.SaveAs(folder + "/" + filename1.split('.')[0] + "_centre.pdf")
 
     canvasRotate.cd()
     histRotate.Draw("lego")
-    canvasRotate.SaveAs("rotate.pdf")
+    canvasRotate.SaveAs(folder + "/" + filename1.split('.')[0] + "_rotate.pdf")
 
     canvasTranslate.cd()
     histTranslate.Draw("lego")
-    canvasTranslate.SaveAs("translate.pdf")
+    canvasTranslate.SaveAs(folder + "/" + filename1.split('.')[0] + "_translate.pdf")
 
     canvasReflect.cd()
     histReflect.Draw("lego")
-    canvasReflect.SaveAs("reflect.pdf")
+    canvasReflect.SaveAs(folder + "/" + filename1.split('.')[0] + "_reflect.pdf")
     
-    # canvasNormalize.cd()
-    # histNormalize.Draw("lego")
-    # canvasNormalize.SaveAs("normalize.pdf")
+    canvasNormalize.cd()
+    histNormalize.Draw("lego")
+    canvasNormalize.SaveAs(folder + "/" + filename1.split('.')[0] + "_normalize.pdf")
     
 if __name__ == "__main__":
 
+    filename1 = ""
+    filename2 = ""
+    collisionType = ""
+    dimension = 0
+    folder = ""
+
     cmdargs = str(sys.argv)
-    if (len(sys.argv) == 1):
 
+    for a in range(len(sys.argv)):
+        if ('.root' in sys.argv[a]):
+            if('Jet' in sys.argv[a]):
+                filename2 = sys.argv[a]
+            else:
+                filename1 = sys.argv[a]
+        if ('collisionType' in sys.argv[a]):
+            collisionType = sys.argv[a].split('=')[1]
+        if ('dimension' in sys.argv[a]):
+            dimension = int(sys.argv[a].split('=')[1])
+        if ('folder' in sys.argv[a]):
+            folder = sys.argv[a].split('=')[1]
+
+    if(filename1 == ""):
         filename1 = raw_input("Please provide filename 1 (a .root file from original tree): ")
+    if(filename2 == ""):
         filename2 = raw_input("Please provide filename 2 (a .root file after original tree goes through jet finder): ")
-
-        fileOut = raw_input("Please provide an output filename (a .txt file):")
+    if(collisionType == ""):
         collisionType = raw_input("Enter the collision type: ")
+    if (dimension == 0):
         dimension = getDimension()
-        #filename1 = "ppfileHard.root"
-        #filename2 = "jetFile.root"
-#give tree, jettree, output txt, collisiontype= , dimension= 
-    else:
-        for a in range(len(sys.argv)):
-            if ('.root' in sys.argv[a]):
-                if('Jet' in sys.argv[a]):
-                    filename2 = sys.argv[a]
-                else:
-                    filename1 = sys.argv[a]
-            if ('.txt' in sys.argv[a]):
-                fileOut = sys.argv[a]
-            if ('collisionType' in sys.argv[a]):
-                collisionType = sys.argv[a].split('=')[1]
-            if ('dimension' in sys.argv[a]):
-                dimension = int(sys.argv[a].split('=')[1])
+    if(folder == ""):
+        folder = raw_input("Please provide folder where you would like everything to go: ")
 
-    readTree(filename1 = filename1, filename2 = filename2, fileOut = fileOut, dimension = dimension, collisionType = collisionType)
+#give tree, jettree, output txt, collisiontype= , dimension=         
+
+    fileOut = folder + "/" + filename2.split('/')[1].split('.')[0] + "Pre" + str(dimension) + ".txt"
+    print("fileOut: %s" % fileOut)
+    print("filename2: %s" % filename2)
+
+
+    print("folder: %s" % folder)
+
+    readTree(filename1 = filename1, filename2 = filename2, fileOut = fileOut, dimension = dimension, collisionType = collisionType, folder = folder)
     
 
 

@@ -15,6 +15,7 @@
 #include "TTreeReader.h"
 #include <TTreeReaderArray.h>
 #include <vector>
+#include <string.h>
 #ifdef __MAKECINT__
 #pragma link C++ class std::vector<int> +;
 #pragma link C++ class std::vector < std::vector<int> >+;   
@@ -25,15 +26,64 @@ using namespace fastjet;
 using namespace std;
 
 int JET_ENERGY_LOWER_LIMIT=120;
+  // choose a jet definition
+double R = 1.0;
 
-int main (){
-    string oPath, iPath;
+int main (int argc, char * argv[]){
 
-    cout << "Input file path: ";
-    cin >> iPath;
+    //cout << argc << endl;
+    string iPath, outputFolder;
+    
+    if (argc > 3){
 
-    cout << "Output file path:";
-    cin >> oPath;
+        cout << "Error. Please enter only two command-line arguments. Aborting." << endl;
+        exit;
+    }
+
+    if(argc < 1){
+        cout << "Input file path: ";
+        cin >> iPath;
+        cout << "Input folder where you would like this jet tree to go: ";
+        cin >> outputFolder;
+    }
+
+    iPath = argv[1];
+    outputFolder = argv[2];
+
+//this doesn't work yet
+    // string iPath = "";
+    // string outputFolder = "";
+    // for (int i = 1; i < argc; i ++){
+    //     cout << argv[i] << endl;
+    //     cout << strstr(*argv[1], "/.root/") << endl;
+    //     if(strstr(*argv[i], "/.root/")!=NULL){
+
+    //         iPath =  argv[i];
+
+    //     } else {
+
+    //         outputFolder = argv[i]; //not foolproof, but whatever
+    //     }
+
+
+    // }
+
+    // if(iPath == ""){
+    //     cout << "Input file path: ";
+    //     cin >> iPath;
+    // }
+
+    // cout << "Using input file: " << iPath << endl;
+
+    // if(outputFolder == ""){
+    //     cout << "Input folder where you would like this jet tree to go: ";
+    //     cin >> outputFolder;
+    // }
+
+    string oPath;
+    size_t pos = iPath.find(".");
+    oPath = outputFolder +  "/" + iPath.substr(0, pos) + "Jet.root";
+
   // cout << "test1";
   //create a reader to interpret the TTree
     TFile *f = TFile::Open(iPath.c_str());
@@ -44,9 +94,9 @@ int main (){
         return 1;
     }
     TTreeReader myReader("tree" ,f);
-    TTreeReaderArray<double> myPz(myReader, "px");
-    TTreeReaderArray<double> myPx(myReader, "py");
-    TTreeReaderArray<double> myPy(myReader, "pz");
+    TTreeReaderArray<double> myPx(myReader, "px");
+    TTreeReaderArray<double> myPy(myReader, "py");
+    TTreeReaderArray<double> myPz(myReader, "pz");
     TTreeReaderArray<double> myEnergy(myReader, "energy");
     // TTreeReaderArray<int> numParticles(myReader, "nFinalParticles"); //??
     // TTreeReaderValue<int> myEvents(myReader, "iEvents");
@@ -89,10 +139,6 @@ int main (){
         // cout << "65" << endl;
         }
 
-
-        // choose a jet definition
-        double R = 1.0;
-
         JetDefinition jet_def(antikt_algorithm, R);
         AreaDefinition area_def(voronoi_area);
         // cout << "74" << endl;
@@ -112,7 +158,7 @@ int main (){
             // cout << jets[a].pt() << endl;
             if (jets[a].pt() < JET_ENERGY_LOWER_LIMIT) {
                 jets.erase(jets.begin()+a);
-                a--;
+                a--; //because it will a++ but we just moved the whole thing back, so we end up staying in same spot
             }
         }
         // cout << "jets.size is " << jets.size() << endl;

@@ -71,7 +71,7 @@ int main(){
 		for (int i = 0; i < nFinalParticles; i++){ 
 				// particle number, particle id aren't needed
 			
-			inputFile >> dummyI >> dummyI >> pxtemp >> pytemp >> pztemp >> energytemp >> masstemp >> dummyD >> dummyD >> dummyD >> dummyD;
+			inputFile >> dummyI >> dummyI >> pztemp >> pxtemp >> pytemp >> energytemp >> masstemp >> dummyD >> dummyD >> dummyD >> dummyD;
 
 			//fill vectors
 			px.push_back(pxtemp);
