@@ -15,13 +15,15 @@ def getDimension():
     return dimension
 
 def printOutput(output, j, iEvent, histogram, dimension,  collisionType):
+    # im = Image.new("RGB", (dimension, dimension))
+    # pix = im.load()
 
     output.write(collisionType)
     output.write(" %d" % dimension)
     for q in range(dimension):
         for r in range(dimension):
             output.write(" %f" % histogram.GetBinContent(q + 1, r + 1))
-            pix[q,r] = (int(histogram.GetBinContent(q+1, r+1)*256),0,0)
+            # pix[q,r] = (int(histogram.GetBinContent(q+1, r+1)*256),0,0)
     output.write(" %d %d \n" % (j, iEvent))
 
     # print(histogram[0])
@@ -228,8 +230,8 @@ def readTree(filename1, filename2, fileOut, dimension, collisionType, folder):
 
 #LOOP: through each event in tree
     for pEvent, jEvent in  izip(tree, jetTree): #zip
-        if (iEvent==2):
-            break
+        # if (iEvent==2):
+        #     break
         if (iEvent % 100 == 0):
             print("Event %d:" % iEvent)
     #for event in jetTree:
