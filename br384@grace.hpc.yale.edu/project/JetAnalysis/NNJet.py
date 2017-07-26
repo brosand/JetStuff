@@ -46,16 +46,16 @@ networkType = 'DNN'
 
 #make neural net
 
-# def saveInfo(inputFiles, nEpochs, mean, std, nOutputNodes):
-#     output=open('NeuralNetData.txt \n', 'a')
+def saveInfo(inputFiles, nEpochs, mean, std, nOutputNodes):
+    output=open('NeuralNetData.txt \n', 'a')
     
-#     for i, file in enumerate(inputFiles):
-#         output.write('File %i: %s ' % (i, file))
+    for i, file in enumerate(inputFiles):
+        output.write('File %i: %s ' % (i, file))
 
-#     output.write('Number of epochs: %i \n' % nEpochs)
-#     output.write('Number of Nodes: %s \n' % N_NODES)
-#     output.write('Number of Output Nodes: %s \n' % nOutputNodes)
-#     output.write("Baseline: %.2f%% (%.2f%%) \n" % (mean, std))
+    output.write('Number of epochs: %i \n' % nEpochs)
+    output.write('Number of Nodes: %s \n' % N_NODES)
+    output.write('Number of Output Nodes: %s \n' % nOutputNodes)
+    output.write("Baseline: %.2f%% (%.2f%%) \n" % (mean, std))
 
 def baseline_model():
     # create model
@@ -97,7 +97,7 @@ else:
         if (sys.argv[a] == 'verbose'):
             verboseL = int(sys.argv[a+1])
         if (sys.argv[a].endswith('.txt')):
-            inputFiles.append(sys.argv[a])
+            inputFiles.append('preTxt/'+sys.argv[a])
     if (numClasses == 0):
         numClasses = len(inputFiles)
 
@@ -202,7 +202,7 @@ print("\nAccuracy on test set %s: %.2f%%" % (model.metrics_names[1], scores[1]*1
 # end = timer()
 # print(end-start)
 
-# saveInfo(inputFiles, nEpochs, results.mean()*100, results.std()*100, nOutputNodes)
-# print("Baseline: %.2f%% (%.2f%%)" % (results.mean()*100, results.std()*100))
+saveInfo(inputFiles, nEpochs, results.mean()*100, results.std()*100, nOutputNodes)
+print("Baseline: %.2f%% (%.2f%%)" % (results.mean()*100, results.std()*100))
 saveInfo(dimension, inputFiles, nEpochs, scores[1]*100, numClasses)
 # print("Baseline: %.2f%% (%.2f%%)" % (results.mean()*100, results.std()*100))

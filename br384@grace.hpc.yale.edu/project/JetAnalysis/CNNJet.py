@@ -209,7 +209,7 @@ def trainModel():
     # server.launch(model, [1,['a','b']])
     model.save('CNNModel%s.h5' % (time.strftime("%H:%M:%S")))
 
-    saveInfo(dimension, inputFiles, nEpochs, scores[1]*100, numClasses)
+    # saveInfo(dimension, inputFiles, nEpochs, scores[1]*100, numClasses)
 # def testModel(model):
 
 if __name__ == '__main__':

@@ -5,25 +5,20 @@ import ROOT
 import array
 import numpy as np
 import math
-from PIL import Image
-import sys
 
-HIST_BOUND = 1.0
+HIST_BOUND = .6
 
 def getDimension():
     dimension = input("Enter the side-length of the jet images: ")
     return dimension
 
 def printOutput(output, j, iEvent, histogram, dimension,  collisionType):
-
     output.write(collisionType)
     output.write(" %d" % dimension)
     for q in range(dimension):
         for r in range(dimension):
             output.write(" %f" % histogram.GetBinContent(q + 1, r + 1))
-            # pIndexx[q,r] = (int(histogram.GetBinContent(q+1, r+1)*256),0,0)
     output.write(" %d %d \n" % (j, iEvent))
-
     # print(histogram[0])
     # print('histogram at 1,1')
     # print(histogram.GetBinContent(1,1))
@@ -50,12 +45,12 @@ def fCentre(jEvent, j, phi, eta):
 
 
     # print('phi before centre: %f' % phi)
-    phijet = jEvent.phi[j]
-    etajet = jEvent.eta[j]
-    # print('phijet: %f' % phijet)
-#translation 1: centering 
-    phi = phi-phijet
-    eta = eta-etajet
+#     phijet = jEvent.phi[j]
+#     etajet = jEvent.eta[j]
+#     # print('phijet: %f' % phijet)
+# #translation 1: centering 
+#     phi = phi-phijet
+#     eta = eta-etajet
     # print('phi after centre: %f' % phi)
 
     return phi, eta
@@ -95,15 +90,15 @@ def findMaxSubmax(jEvent, pEvent, j):
     return phi_maxm, eta_maxm, phi_submax, eta_submax
 
 def fRotate(jEvent, j, phi, eta, phi_maxm, eta_maxm, phi_submax, eta_submax):
-    if(len(jEvent.pIndex[j])>1):
-        # print("phi before rotate: %f" % phi)
-        # print("phi_maxm to be rotated around: %f" % phi_maxm)
-        star = math.atan2((eta_maxm-eta_submax), (phi_maxm-phi_submax))
+    # if(len(jEvent.pIndex[j])>1):
+    #     # print("phi before rotate: %f" % phi)
+    #     # print("phi_maxm to be rotated around: %f" % phi_maxm)
+    #     star = math.atan2((eta_maxm-eta_submax), (phi_maxm-phi_submax))
 
-        alpha = math.atan2(eta,phi) #fill in numbers
-        r = math.sqrt(math.pow(phi, 2) + math.pow(eta, 2))
-        phi = r * math.cos(alpha-star)
-        eta = r * math.sin(alpha-star)
+    #     alpha = math.atan2(eta,phi) #fill in numbers
+    #     r = math.sqrt(math.pow(phi, 2) + math.pow(eta, 2))
+    #     phi = r * math.cos(alpha-star)
+    #     eta = r * math.sin(alpha-star)
 
         # print('phi after rotate %f' % phi)
 
@@ -118,35 +113,35 @@ def fTranslate(phi, eta, phi_maxm, eta_maxm):
     # print("phi before translate = %f" % phi)
     # print("eta before translate = %f" % eta)
 
-    phi = phi - phi_maxm
-    eta = eta - eta_maxm
-    # print("phi after translate = %f" % phi)
+    # phi = phi - phi_maxm
+    # eta = eta - eta_maxm
+    # # print("phi after translate = %f" % phi)
     # print("eta after translate = %f\n" % eta)
 
     return phi, eta
 
 def fReflect_Fill_Print(output, iEvent, jEvent, j, phiTempV, etaTempV, energyTempV, sumEtaPos, sumEtaNeg, histReflect, histJetTemp, collisionType):
-    if(len(jEvent.pIndex[j])>1):
- # if(len(jEvent.pIndex[j])>1):
-        for i, a in enumerate(etaTempV):
-            if(sumEtaPos < sumEtaNeg):
-                a = -1*a
-        #fill the histogram for reflection
-            histReflect.Fill(phiTempV[i], a, energyTempV[i])
-        #fill a temporary histogram with data from one jet
-            histJetTemp.Fill(phiTempV[i], a, energyTempV[i])
+ #    if(len(jEvent.pIndex[j])>1):
+ # # if(len(jEvent.pIndex[j])>1):
+ #        for i, a in enumerate(etaTempV):
+ #            if(sumEtaPos < sumEtaNeg):
+ #                a = -1*a
+ #        #fill the histogram for reflection
+ #            histReflect.Fill(phiTempV[i], a, energyTempV[i])
+ #        #fill a temporary histogram with data from one jet
+ #            histJetTemp.Fill(phiTempV[i], a, energyTempV[i])
 
-    printOutput(output, j, iEvent, histJetTemp, dimension, collisionType)
+ #    printOutput(output, j, iEvent, histJetTemp, dimension, collisionType)
 
     return etaTempV
 
 def fNormalize(energyTempV):
-    outVector = []
-    eSum = np.sum(energyTempV)
-    for i in energyTempV:
-        outVector.append(i/eSum)
-    return outVector
-
+    # outVector = []
+    # eSum = np.sum(energyTempV)
+    # for i in energyTempV:
+    #     outVector.append(i/eSum)
+    # return outVector
+    return energyTempV
     # for i, a in enumerate(etaTempV):
     #     histNormalize.Fill(phiTempV[i], a, (energyTempV[i]/eTot))
     # return histNormalize
@@ -156,7 +151,7 @@ def fNormalize(energyTempV):
         # else:
             # print 'wut'
 
-def readTree(filename1, filename2, fileOut, dimension, collisionType, folder):
+def readTree(filename1, filename2, fileOut, dimension, collisionType):
 
     fIn = ROOT.TFile(filename1, "READ")
     tree = fIn.Get("tree")
@@ -196,40 +191,37 @@ def readTree(filename1, filename2, fileOut, dimension, collisionType, folder):
     histJetTemp.GetYaxis().SetTitle("eta");
     histJetTemp.GetZaxis().SetTitle("counts weighted by energy");
 
-    # histNormalize = ROOT.TH2F("histNormalize", "histNormalize", dimension, -HIST_BOUND, HIST_BOUND, dimension, -HIST_BOUND, HIST_BOUND) # numBins bound bound bin bound bound
-    # histNormalize.GetXaxis().SetTitle("phi");
-    # histNormalize.GetYaxis().SetTitle("eta");
-    # histNormalize.GetZaxis().SetTitle("counts weighted by energy");
+    histNormalize = ROOT.TH2F("histNormalize", "histNormalize", dimension, -HIST_BOUND, HIST_BOUND, dimension, -HIST_BOUND, HIST_BOUND) # numBins bound bound bin bound bound
+    histNormalize.GetXaxis().SetTitle("phi");
+    histNormalize.GetYaxis().SetTitle("eta");
+    histNormalize.GetZaxis().SetTitle("counts weighted by energy");
 
     canvasBefore = ROOT.TCanvas("canvasBefore", "canvasBefore")
     canvasCentre = ROOT.TCanvas("canvasCentre", "canvasCentre")
     canvasRotate = ROOT.TCanvas("canvasRotate", "canvasRotate")
     canvasTranslate = ROOT.TCanvas("canvasTranslate", "canvasTranslate")
     canvasReflect = ROOT.TCanvas("canvasReflect", "canvasReflect")
-    # canvasNormalize = ROOT.TCanvas("canvasNormalize", "canvasNormalize")
+    canvasNormalize = ROOT.TCanvas("canvasNormalize", "canvasNormalize")
 
-    iEvent = 0
+    iEvent = 0;
 
-    # open('outputC.txt', 'w').close()
-    # outputC = open("outputC.txt" , "w" )
+    open('outputC.txt', 'w').close()
+    outputC = open("outputC.txt" , "w" )
 
-    # open('outputR.txt', 'w').close()
-    # outputR = open("outputR.txt" , "w" )
+    open('outputR.txt', 'w').close()
+    outputR = open("outputR.txt" , "w" )
 
-    # open('outputT.txt', 'w').close()
-    # outputT = open("outputT.txt" , "w" )
+    open('outputT.txt', 'w').close()
+    outputT = open("outputT.txt" , "w" )
 
-    # open('outputF.txt', 'w').close()
-    # outputF = open("outputF.txt" , "w" )
+    open('outputF.txt', 'w').close()
+    outputF = open("outputF.txt" , "w" )
 
     open(fileOut, 'w').close()
     outputN = open(fileOut , "w" )
 
-
 #LOOP: through each event in tree
     for pEvent, jEvent in  izip(tree, jetTree): #zip
-        # if (iEvent==2):
-        #     break
         if (iEvent % 100 == 0):
             print("Event %d:" % iEvent)
     #for event in jetTree:
@@ -291,16 +283,11 @@ def readTree(filename1, filename2, fileOut, dimension, collisionType, folder):
             # print ('sum eta pn: %f' % (sumEtaPos + sumEtaNeg))
 
             energyTempV = fNormalize(energyTempV)
-            # print 'len energy'
-            # print len(energyTempV)
-            # print energyTempV[21]
             etaTempV = fReflect_Fill_Print(outputN, iEvent, jEvent, j, phiTempV, etaTempV, energyTempV, sumEtaPos, sumEtaNeg, histReflect, histJetTemp, collisionType)
             # print ('sum eta pn: %f' % (sumEtaPos + sumEtaNeg))
 
             # eTot = sumEtaPos + sumEtaNeg + sumEtaZero
             # histNormalize = fNormalize(jEvent, phiTempV, etaTempV, energyTempV, eTot, histNormalize, dimension, collisionType)
-
-          
 
             etaTempV = []
             phiTempV = []
@@ -309,10 +296,10 @@ def readTree(filename1, filename2, fileOut, dimension, collisionType, folder):
 
 
             
-            # printOutput(outputC, j, iEvent, histCentre, dimension, collisionType)
-            # printOutput(outputR, j, iEvent, histRotate, dimension, collisionType)
-            # printOutput(outputT, j, iEvent, histTranslate, dimension, collisionType)
-            # printOutput(outputN, j, iEvent, histNormalize, dimension, collisionType)
+            printOutput(outputC, j, iEvent, histCentre, dimension, collisionType)
+            printOutput(outputR, j, iEvent, histRotate, dimension, collisionType)
+            printOutput(outputT, j, iEvent, histTranslate, dimension, collisionType)
+            printOutput(outputN, j, iEvent, histNormalize, dimension, collisionType)
             printOutput(outputN, j, iEvent, histReflect, dimension, collisionType)
 # 
                 
@@ -320,26 +307,26 @@ def readTree(filename1, filename2, fileOut, dimension, collisionType, folder):
 
 
     #see others for examples of iterating through
-    canvasBefore.cd()
-    histBefore.Draw("lego")
-    canvasBefore.SaveAs(folder + "/" + filename1.split('.')[0] + "_before.pdf")
+    # canvasBefore.cd()
+    # histBefore.Draw("lego")
+    # canvasBefore.SaveAs("before.pdf")
 
-    canvasCentre.cd()
-    histCentre.Draw("lego")
-    #https://root.cern.ch/root/html534/guides/users-guide/Histograms.html
-    canvasCentre.SaveAs(folder + "/" + filename1.split('.')[0] + "_centre.pdf")
+    # canvasCentre.cd()
+    # histCentre.Draw("lego")
+    # #https://root.cern.ch/root/html534/guides/users-guide/Histograms.html
+    # canvasCentre.SaveAs("centre.pdf")
 
-    canvasRotate.cd()
-    histRotate.Draw("lego")
-    canvasRotate.SaveAs(folder + "/" + filename1.split('.')[0] + "_rotate.pdf")
+    # canvasRotate.cd()
+    # histRotate.Draw("lego")
+    # canvasRotate.SaveAs("rotate.pdf")
 
-    canvasTranslate.cd()
-    histTranslate.Draw("lego")
-    canvasTranslate.SaveAs(folder + "/" + filename1.split('.')[0] + "_translate.pdf")
+    # canvasTranslate.cd()
+    # histTranslate.Draw("lego")
+    # canvasTranslate.SaveAs("translate.pdf")
 
     canvasReflect.cd()
     histReflect.Draw("lego")
-    canvasReflect.SaveAs(folder + "/" + filename1.split('.')[0] + "_reflect.pdf")
+    canvasReflect.SaveAs("reflectUnPros.pdf")
     
     # canvasNormalize.cd()
     # histNormalize.Draw("lego")
@@ -347,56 +334,16 @@ def readTree(filename1, filename2, fileOut, dimension, collisionType, folder):
     
 if __name__ == "__main__":
 
-    # filename1 = raw_input("Please provide filename 1 (a .root file from original tree): ")
-    # filename2 = raw_input("Please provide filename 2 (a .root file after original tree goes through jet finder): ")
+    filename1 = raw_input("Please provide filename 1 (a .root file from original tree): ")
+    filename2 = raw_input("Please provide filename 2 (a .root file after original tree goes through jet finder): ")
 
-    # fileOut = raw_input("Please provide an output filename (a .txt file):")
-    # collisionType = raw_input("Enter the collision type: ")
-    # filename1 = 'eventRoot/sampleA.root'
-    # filename2 = 'jetRoot/sampleAJet.root'
-    # fileOut = 'ignore.txt'
-    # collisionType = 'A'
-    # dimension = 5
-    # dimension = getDimension()
-
+    fileOut = raw_input("Please provide an output filename (a .txt file):")
+    collisionType = raw_input("Enter the collision type: ")
+    dimension = getDimension()
     #filename1 = "ppfileHard.root"
     #filename2 = "jetFile.root"
-    cmdargs = str(sys.argv)
 
-    for a in range(len(sys.argv)):
-        if ('.root' in sys.argv[a]):
-            if('Jet' in sys.argv[a]):
-                filename2 = sys.argv[a]
-            else:
-                filename1 = sys.argv[a]
-        if ('collisionType' in sys.argv[a]):
-            collisionType = sys.argv[a].split('=')[1]
-        if ('dimension' in sys.argv[a]):
-            dimension = int(sys.argv[a].split('=')[1])
-        if ('folder' in sys.argv[a]):
-            folder = sys.argv[a].split('=')[1]
-
-    if(filename1 == ""):
-        filename1 = raw_input("Please provide filename 1 (a .root file from original tree): ")
-    if(filename2 == ""):
-        filename2 = raw_input("Please provide filename 2 (a .root file after original tree goes through jet finder): ")
-    if(collisionType == ""):
-        collisionType = raw_input("Enter the collision type: ")
-    if (dimension == 0):
-        dimension = getDimension()
-    if(folder == ""):
-        folder = raw_input("Please provide folder where you would like everything to go: ")
-
-#give tree, jettree, output txt, collisiontype= , dimension=         
-
-    fileOut = folder + "/" + filename2.split('/')[1].split('.')[0] + "Pre" + str(dimension) + ".txt"
-    print("fileOut: %s" % fileOut)
-    print("filename2: %s" % filename2)
-
-
-    print("folder: %s" % folder)
-
-    readTree(filename1 = filename1, filename2 = filename2, fileOut = fileOut, dimension = dimension, collisionType = collisionType, folder = folder)
+    readTree(filename1 = filename1, filename2 = filename2, fileOut = fileOut, dimension = dimension, collisionType = collisionType)
     
 
 
