@@ -16,12 +16,11 @@ git clone https://github.com/brosand/JetStuff.git
 ```
 ## Running the code
 The jet analysis process contains five steps:
-1. [Create event root files](#step-1-create-event-root-files)
-2. [Run fastjet to extract the jets](#step-2-run-fastjet-to-extract-the-jets)
-3. [Preprocess the jets for training](#step-3-preprocess-the-jets-for-training)
-4. [Train the model](#step-4-train-the-model)
-5. [Extract the learning from the model](#step-5-extract-the-learning-from-the-model)
-For argument help, ```python <prog.py> -h```
+1. [Create event root files](#Step-1:-Create-event-root-files)
+2. [Run fastjet to extract the jets](#Step-2:-Run-fastjet-to-extract-the-jets)
+3. [Preprocess the jets for training](#Step-3:-Preprocess-the-jets-for-training)
+4. [Train the model](#Step-4:-Train-the-model)
+5. [Extract the learning from the model](#Step-5:-Extract-the-learning-from-the-model)
 
 ### Step 1: Create event root files
 We have employed six different methods for creating the initial root files, based on the two formats of data we received, as well as our four different types of simulations.
@@ -141,7 +140,7 @@ Folder = "folder"
 Dimension = 10
 Preprocessing = e
 Output file = folder/jetFilePre10_e.txt
-```
+
 To run:
 ```
 python pre<pt or energy>.py --data=<original root event file> --jets=<jet root file> --type=<collision type> --dim=<dimension of jet image> --folder=<folder to place preprocessed jets>
@@ -162,25 +161,8 @@ There are other options, such as epochs, layers, for a full list, type ```python
 All data from the neural networks, such as accuracy and architecture, is stored in NNData.csv, in addition all networks are saved with a name based on their time of completion and their type. This data can be used to compare with NNData.csv, and rerun the networks for rule extraction. Ideally I would retire this naming convention  as soon as possible, but I don't know if I will have time, so it will probably stick, so far there has been no overlap.
 
 ### Step 5: Extract the learning from the model
-The principle method that I utilized to extract the neural network's learning was a pearson correlation coefficient, a number calculated based on a dataset and the output for each member of that set. For validation, I also set up a visualization of pixel intensity for different samples, so we could see if the net would learn to look at pixels where we know a difference exists.
-#### Pixel weights:
-```histI.py``` Is right now set up so that it will take an input --data of a sample, then print two histograms, one on a log scale, both of the pixel intensities. The other important inputs are --validation_size and --draw. Draw determines whether a probability distribution will be drawn, or just a histogram of intensity, validation size is the quantity of jets which will be used for the histogram. Classes must also be input, just for the naming of the output file. Finally, the range is the range of the histogram, to help deal with scaling issues, note that bins outside of the range will be treated as if they are at the end of the range. Note that the output folders must be created ahead of time.
 
-```
->>python histI.py --data=<"data.txt">
-<<Using TensorFlow backend.
-<<Enter classes: <class>
->>Info in <TCanvas::Print>: pdf file coeffs<validation_size>/r<range>/<class>_<dimension>.pdf has been created
-```
-#### Pearson correlation coefficient:
-More details about the math can be found in https://en.wikipedia.org/wiki/Pearson_correlation_coefficient.
-```pearsonCalc.py``` also takes a validation size, and runs on a specific NN model, and both the model weights and architecture need to be specified.
-Pearson histogram pdf created in ```pearson/<validation_size>/<classes>_<dimension>_NNPearsonCoeff.pdf```
-Warning: to run on CNN, change the name so pdfs not overwritten.
-This pdf is a map of how correlated the intensity of each pixel is with the output. Positive values signify a correlation with the the first sample in the neural network, negative values signify a correlation with the second sample. This program is not designed for more than two classes.
 
-## Notes
-Anything in the old folder may not be accurate, particularly the NNData.csv.
 
 
 

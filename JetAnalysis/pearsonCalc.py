@@ -8,7 +8,6 @@ import json
 import ROOT
 import sys
 
-# from tc import TerminalController
 from PIL import Image
 from scipy.misc import imsave
 import numpy as np
@@ -25,23 +24,21 @@ HIST_BOUND_CONE = 1.0
 NUM_CLASSES = 2
 # from keras.model import predict
 parser = argparse.ArgumentParser()
-parser.add_argument('--data', default='r1.0/Amini21.txt', help="dataset to be tested on")
+parser.add_argument('--data', default='r1.0/A21.txt', help="dataset to be tested on")
 parser.add_argument('--weights', default='waNNModels/ABweights.h5' , help="weights of model")
 parser.add_argument('--architecture', default='waNNModels/ABmodel.json' , help="architecture of model")
 parser.add_argument('--validation_size', default=500, help="number of jets", type=int)
-parser.add_argument('--classes', default='AB', help="classes of data")
+parser.add_argument('--classes', default='', help="classes of data")
 parser.add_argument('--notes', default='', help="notes")
 
 args = parser.parse_args()
 #change 35 and 36, not comprehensive enough
-if (args.classes=='AB' and 'AB' not in args.weights and 'AB' not in args.architecture):
+if (args.classes==''):
     args.classes=raw_input('Enter classes: ')
 
 dataset = pandas.read_csv(args.data ,sep=" ",header=None)
 array = dataset.values
 dimension = (array[0, 1])
-#remove 42 after testing (it's only needed for Amini.txt)
-dimension = int(dimension)
 
 histPearson = ROOT.TH2F("histPearson", "Pearson Coefficient Histogram", dimension, -HIST_BOUND_CONE, HIST_BOUND_CONE, dimension, -HIST_BOUND_CONE, HIST_BOUND_CONE)
 
