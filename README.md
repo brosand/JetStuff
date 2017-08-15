@@ -140,7 +140,7 @@ Folder = "folder"
 Dimension = 10
 Preprocessing = e
 Output file = folder/jetFilePre10_e.txt
-
+```
 To run:
 ```
 python pre<pt or energy>.py --data=<original root event file> --jets=<jet root file> --type=<collision type> --dim=<dimension of jet image> --folder=<folder to place preprocessed jets>
