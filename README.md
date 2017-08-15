@@ -19,7 +19,7 @@ The jet analysis process contains five steps:
 1. [Create event root files](#step-1-create-event-root-files)
 2. [Run fastjet to extract the jets](#step-2-run-fastjet-to-extract-the-jets)
 3. [Preprocess the jets for training](#step-3-preprocess-the-jets-for-training)
-4. [Train the model](#step-4:-train-the-model)
+4. [Train the model](#step-4-train-the-model)
 5. [Extract the learning from the model](#step-5-extract-the-learning-from-the-model)
 
 ### Step 1: Create event root files
