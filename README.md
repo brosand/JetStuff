@@ -16,11 +16,11 @@ git clone https://github.com/brosand/JetStuff.git
 ```
 ## Running the code
 The jet analysis process contains five steps:
-1. [Create event root files](#Step-1-Create-event-root-files)
-2. [Run fastjet to extract the jets](#Step-2-Run-fastjet-to-extract-the-jets)
-3. [Preprocess the jets for training](#Step-3-Preprocess-the-jets-for-training)
-4. [Train the model](#Step-4:-Train-the-model)
-5. [Extract the learning from the model](#Step-5-Extract-the-learning-from-the-model)
+1. [Create event root files](#step-1-create-event-root-files)
+2. [Run fastjet to extract the jets](#step-2-run-fastjet-to-extract-the-jets)
+3. [Preprocess the jets for training](#step-3-preprocess-the-jets-for-training)
+4. [Train the model](#step-4:-train-the-model)
+5. [Extract the learning from the model](#step-5-extract-the-learning-from-the-model)
 
 ### Step 1: Create event root files
 We have employed six different methods for creating the initial root files, based on the two formats of data we received, as well as our four different types of simulations.
