@@ -22,13 +22,11 @@ The jet analysis process contains five steps:
 4. [Train the model](#step-4-train-the-model)
 5. [Extract the learning from the model](#step-5-extract-the-learning-from-the-model)
 
-For argument help, ```python <prog.py> -h```
+For argument help: ```python <prog.py> -h```
 
 ### Step 1: Create event root files
 We have employed six different methods for creating the initial root files, based on the two formats of data we received, as well as our four different types of simulations.
-#### Proton pythia generation:
-```ppPythia.cpp```
-Runs pp collisions using Pythia with a set collision pt minimum of 150 GeV, and stores a tree in the file ```pp.root``` named "tree" of the format:
+All of these root trees are of the same format with the name "tree", although some do not have charge and/or mass:
 ```
 tree
 ├──iEvents
@@ -41,6 +39,9 @@ tree
 ├──mass[]
 ```
 
+#### Proton pythia generation:
+```ppPythia.cpp```
+Runs pp collisions using Pythia with a set collision pt minimum of 150 GeV, and stores a tree in the file ```pp.root```
 To run:
 ```
 make ppPythiaMake
@@ -48,7 +49,7 @@ make ppPythiaMake
 ```
 #### W-boson pythia generation:
 ```wPythia.cpp```
-Runs pp collisions in which every event is required to generate a w-boson. It uses Pythia with a set collision pt minimum of 150 GeV, and stores a tree in the file ```w.root``` also named "tree" of same format as the pp tree.
+Runs pp collisions in which every event is required to generate a w-boson. It uses Pythia with a set collision pt minimum of 150 GeV, and stores a tree in the file ```w.root```.
 To run:
 ```
 make wPythiaMake
@@ -56,7 +57,7 @@ make wPythiaMake
 ```
 #### Fake lead collision generation:
 ```leadFake.cpp```
-Simulates a lead-lead collision by hand. Tree of the same format as the previous two trees stored in ```leadFake.root```
+Simulates a lead-lead collision by hand. Tree stored in ```leadFake.root```
 To run:
 ```
 make leadFakeMake
@@ -64,13 +65,21 @@ make leadFakeMake
 ```
 #### Kirill data conversion:
 ```kirillConvert.cpp```
-Converts data from Kirill's four different dat files into the format of our previous trees, without the charge, which we did not need for our work-- maybe take out. The output root file is stored in sampleA.root, where A is whichever sample is being converted.
+Converts data from Kirill's four different .dat files into the format of our previous trees, without the charge, which we did not need for our work-- maybe take out. The output root file is stored in ```sampleA.root```, where A is whichever sample is being converted.
 To run on sample A:
 ```
 make kirillConvert.cpp
 >> ./kirillConvert.cpp
 << Enter the name of the file to read from (probs a .dat):
 >> sampleA.dat
+```
+
+Kirill's four .dat files:
+```
+Sample A: Radiative losses (soft gluons at large angles)
+Sample B: Drag force (these should look very much like vacuum jets except for the energy loss)
+Sample C: Modified splitting function
+Sampe D: Vacuum pythia6 jets
 ```
 #### Li data conversion:
 ```liConvert.cpp```
@@ -122,7 +131,7 @@ make jetFinderMake
 
 ### Step 3: Preprocess the jets for training
 We preprocess the jets so that they all have the same general shape, similar to moving the face for image recognition so that the eyes are always in the same place.
-For a detailed visualization, see https://docs.google.com/a/yale.edu/presentation/d/1rPWveWBJq7X5Th82QrCt-T69XvCLkd9KctUnCzlCJgg/edit?usp=sharing
+For a detailed visualization, see https://docs.google.com/presentation/d/1rPWveWBJq7X5Th82QrCt-T69XvCLkd9KctUnCzlCJgg/edit#slide=id.g249b9a98aa_0_208 (slide 7)
 To preprocess the jets, we go through five steps:
 1. Center the jets
 	-For each jet, move the jet so the center of the jet is at 0,0.
