@@ -134,14 +134,19 @@ We preprocess the jets so that they all have the same general shape, similar to 
 For a detailed visualization, see https://docs.google.com/presentation/d/1rPWveWBJq7X5Th82QrCt-T69XvCLkd9KctUnCzlCJgg/edit#slide=id.g249b9a98aa_0_208 (slide 7)
 To preprocess the jets, we go through five steps:
 1. Center the jets
+
 	-For each jet, move the jet so the center of the jet is at 0,0.
 2. Rotate the jets
+
 	-For each jet, rotate the jet so that the first and second highest energy(or pt) particle constituents are parallel to the phi axis with the second highest particle on the negative side of the highest particle.
 3. Translate the jets
+
 	-Move the whole jet so that the highest particle is at 0,0.
 4. Normalize the jets
+
 	-Divide the energy(or pt) of each particle in the jet by the total energy(or pt) of each jet.
 5. Reflect the jets
+
 	-If the jet has a higher concentration of energy(or pt) on the negative eta portion of the graph, flip the jet so the the higher concentration is in positive eta space.
 These steps are all run in the python program ```prept.py```(for preprocessing based on pt) or ```preEnergy.py```(for preprocessing based on energy). They both take the same several cmd line arguments. The argument parsing is different more my versions instead of Sofia's (Just depending on which file you look at, if you are looking on git, and the file was modified after 8/5/17, it is my version. I didn't want to change hers because her readme is already written and I'm not sure which one you will look at, I just wanted to clean up the arg parsing a bit).
 The preprocessing outputs a file as such:
@@ -149,8 +154,8 @@ The preprocessing outputs a file as such:
 Jetfile = "jetFile.root"
 Folder = "folder"
 Dimension = 10
-Preprocessing = e
-Output file = folder/jetFilePre10_e.txt
+Preprocessing = 'e'
+Output file = Folder/jetFilePre10_e.txt
 ```
 To run:
 ```
