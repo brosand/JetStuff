@@ -5,7 +5,6 @@ import math
 import csv
 import os
 import time
-import json
 
 import argparse
 from keras.models import Sequential
@@ -14,17 +13,24 @@ from keras.wrappers.scikit_learn import KerasClassifier
 from keras.utils import np_utils
 # from sklearn.model_selection import cross_val_score
 # from sklearn.model_selection import KFold
-from sklearn.cross_validation import train_test_split
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn.pipeline import Pipeline
 
 # from quiver_engine import 
 from timeit import default_timer as timer
-# from keras.backend import manual_variable_initialization
-# manual_variable_initialization(True)
 
+N_NODES = 1000
+inputDim = 100
 import sys
 
+nNodes = 1000
+dimension = 5
+numClasses = 0
+nEpochs = 5
+BATCH_SIZE = 5
+nLayers = 1
+verboseL = 1
 networkType = 'DNN'
 # define baseline model
 #creates a simple fully connected network with one hidden layer that contains 8 neurons.
@@ -32,52 +38,68 @@ networkType = 'DNN'
 
 #The network topology of this simple one-layer neural network can be summarized as:
 
-# Note that we use a "softmax" activation function in the output layer. This is to ensure the output values are in the range of 0 and 1 and may be used as predicted probabilities.
+# 8 inputs --> [ 8 hidden nodes ] --> 3 outputs
+# Note that we use a "softmax" activation function in tohe output layer. This is to ensure the output values are in the range of 0 and 1 and may be used as predicted probabilities.
 
 # Finally, the network uses the efficient Adam gradient descent optimization algorithm with a logarithmic loss function, which is called "categorical_crossentropy" in Keras.
 
 
 #make neural net
 
-#def saveInfo(inputFiles, nEpochs, mean, std, nOutputNodes):
-#    output=open('NeuralNetData.txt \n', 'a')
-#    
-#    for i, file in enumerate(inputFiles):
-#        output.write('File %i: %s ' % (i, file))
-#
-#    output.write('Number of epochs: %i \n' % nEpochs)
-#    output.write('Number of Nodes: %s \n' % N_NODES)
-#    output.write('Number of Output Nodes: %s \n' % nOutputNodes)
-#    output.write("Baseline: %.2f%% (%.2f%%) \n" % (mean, std))
-#
-parser = argparse.ArgumentParser()
-parser.add_argument('--data', action='append', nargs='+',  help="datasets to be tested on")
-parser.add_argument('--validation_size', default=.2, help="fraction of sample to be saved for evaluation", type=float)
-parser.add_argument('--epochs', default=3, help="number of jets", type=int)
-parser.add_argument('--layers', default=2, help="number of jets", type=int)
-parser.add_argument('--nodes', default=100, help="number of jets", type=int)
-parser.add_argument('--batch_size', default=5, help="number of jets", type=int)
-parser.add_argument('--verbose', dest='verbose', action="store_true")
-parser.add_argument('--classes', default='', help="classes to compare")
-parser.set_defaults(verbose='false')
-args = parser.parse_args()
+# def saveInfo(inputFiles, nEpochs, mean, std, nOutputNodes):
+#     output=open('NeuralNetData.txt \n', 'a')
+    
+#     for i, file in enumerate(inputFiles):
+#         output.write('File %i: %s ' % (i, file))
 
-verbose=0
-if args.verbose:
-    verbose=1
-validation_size=args.validation_size
-nEpochs=args.epochs
-nLayers=args.layers
-nNodes=args.nodes
-validation_size = args.validation_size
+#     output.write('Number of epochs: %i \n' % nEpochs)
+#     output.write('Number of Nodes: %s \n' % N_NODES)
+#     output.write('Number of Output Nodes: %s \n' % nOutputNodes)
+#     output.write("Baseline: %.2f%% (%.2f%%) \n" % (mean, std))
 
+def baseline_model():
+    # create model
+    model = Sequential()
+    model.add(Dense(N_NODES, input_dim=inputDim, activation='relu'))
+    model.add(Dense(N_NODES))
+    model.add(Dense(N_NODES))
+    model.add(Dense(nOutputNodes, activation='softmax')) #these are the two possible outputs
+
+    # Compile model
+    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+    return model
 inputFiles = []
-for i in args.data:
-    inputFiles.append(i[0])
-classes=args.classes
-numClasses=len(inputFiles)
-if (numClasses < 2):
-    raise Exception('Not enough classes to train on')
+cmdargs = str(sys.argv)
+if len(sys.argv) == 1:
+    numFiles = int(raw_input("Enter the number of files: "))
+
+    for i in range(numFiles):
+        inputFiles.append('preTxt/' + raw_input("Enter file %i: " % (i+1)))
+    nEpochs = int(raw_input("Enter the number of epochs: "))
+    numClasses = int(raw_input("Enter the number of outputs: "))
+    nLayers = int(raw_input("Enter the number of layers: "))
+    nNodes = int(raw_input("Enter the number of nodes: "))
+    # inputDim = int((math.pow(float(raw_input("Enter the dimension (temporary): ")),2)))
+else:
+    
+
+    for a in range(len(sys.argv)):
+        if (sys.argv[a] == 'nEpochs'):
+            nEpochs = int(sys.argv[a+1])
+        # if (sys.argv[a] == 'inputDim'):
+            # inputDim = int(math.pow(float(sys.argv[a+1]),2))
+        if (sys.argv[a] == 'numClasses'):
+            numClasses = int(sys.argv[a+1])
+        if (sys.argv[a] == 'nNodes'):
+            nNodes = int(sys.argv[a+1])
+        if (sys.argv[a] == 'nLayers'):
+            nLayers = int(sys.argv[a+1])
+        if (sys.argv[a] == 'verbose'):
+            verboseL = int(sys.argv[a+1])
+        if (sys.argv[a].endswith('.txt')):
+            inputFiles.append(sys.argv[a])
+    if (numClasses == 0):
+        numClasses = len(inputFiles)
 
 def saveInfo(dimension, inputFiles, nEpochs, sTest, numClasses):
     fieldnames = ['Date','Time','Network Type','inputFile1','inputFile2','inputFile3', 'inputFile4', 'Epochs', 'Image Dimension', 'Accuracy', 'Layers', 'Nodes', 'Kernal size']
@@ -93,8 +115,9 @@ def saveInfo(dimension, inputFiles, nEpochs, sTest, numClasses):
         'inputFile3':inputFiles[2], 'inputFile4': inputFiles[3], 'Epochs': nEpochs,
          'Image Dimension': dimension, 'Accuracy': sTest, 'Layers': nLayers, 'Nodes': nNodes, 'Kernal size': ''})
 
-
-
+# def baseline_model():
+    # create model
+    # return model
 
 
 # Compile model
@@ -111,6 +134,7 @@ dimension = int(math.pow(array[0, 1], 2))
 
 
 print("Dimension: %d" % dimension)
+
 X = array[: , 2:dimension + 2]  
 Y = array[: , 0]
 Z = array[: , dimension + 2:dimension + 4]
@@ -140,16 +164,13 @@ dummy_y = np_utils.to_categorical(encoded_Y)
 # estimator = KerasClassifier(build_fn=model, epochs=nEpochs, batch_size=5, verbose=1)
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
    
-# split data into a training and test sample
-X_train, X_test, Y_train, Y_test = train_test_split(X, dummy_y, test_size=validation_size, random_state=seed)
-#print X_train.shape
-# #print X_train.shape
-print(X_train.shape)
-print(Y_train.shape)
-print(X_test.shape)
-print(Y_test.shape)
 
-model.fit(X_train, Y_train, validation_data=(X_test, Y_test), epochs=nEpochs, batch_size=args.batch_size, verbose=verbose)
+# split data into a training and test sample
+validation_size = 0.99
+X_train, X_test, Y_train, Y_test = train_test_split(X, dummy_y, test_size=validation_size, random_state=seed)
+print X_train.shape
+# print X_train.shape
+model.fit(X_train, Y_train, validation_data=(X_test, Y_test), epochs=nEpochs, batch_size=BATCH_SIZE, verbose=verboseL)
 
 # train our NN
 # estimator.fit(X_train, Y_train)
@@ -170,6 +191,8 @@ model.fit(X_train, Y_train, validation_data=(X_test, Y_test), epochs=nEpochs, ba
 scores = model.evaluate(X_test, Y_test, verbose=1)
 print("\nAccuracy on test set %s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
 
+model.save('%sNNModel%s.h5' % ((time.strftime("%d.%m.%Y")),(time.strftime("%H:%M:%S"))))
+
 # scores1 = model.evaluate(X, Y, verbose=1)
 # print("(FOR WHOLE DATA SET) %s: %.2f%%" % (model.metrics_names[1], scores1[1]*100))
 
@@ -181,19 +204,8 @@ print("\nAccuracy on test set %s: %.2f%%" % (model.metrics_names[1], scores[1]*1
 # end = timer()
 # print(end-start)
 
-#saveInfo(inputFiles, nEpochs, results.mean()*100, results.std()*100, nOutputNodes)
-#print("Baseline: %.2f%% (%.2f%%)" % (results.mean()*100, results.std()*100))
-saveInfo(dimension, inputFiles, nEpochs, scores[1]*100, numClasses)
-# if (classout == 'no'):
-    # model.save('NNModel%s.h5' % (time.strftime("%H:%M:%S")))
-# else:
-#     model.save('NNModels/NNModel%s' % classout)
-if (args.classes == ''):
-    save_string=(time.strftime("%H:%M:%S"))
-else:
-    save_string=args.classes
-model.save_weights('waNNModels/' + save_string + 'weights.h5')
-model_json = model.to_json()
-with open('waNNModels/' + save_string + "model.json", "w") as json_file:
-   json_file.write(model_json)
+# saveInfo(inputFiles, nEpochs, results.mean()*100, results.std()*100, nOutputNodes)
 # print("Baseline: %.2f%% (%.2f%%)" % (results.mean()*100, results.std()*100))
+saveInfo(dimension, inputFiles, nEpochs, scores[1]*100, numClasses)
+# print("Baseline: %.2f%% (%.2f%%)" % (results.mean()*100, results.std()*100))
+ 

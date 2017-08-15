@@ -65,6 +65,12 @@ wPythiaMake:
 kirillConvertMake:
 	g++ -o kirillConvert kirillConvert.cpp $(PYTHIAFLAGS) $(PYTHIALIBS) $(FASTJETINC) $(FASTJETLIB) $(LHAPDFARGS) $(ROOTFLAGS) $(ROOTLIBS) -lTreePlayer loader_C.so
 
+liConvertMake:
+	        g++ -o  liConvert liConvert.cpp $(PYTHIAFLAGS) $(PYTHIALIBS) $(FASTJETINC) $(FASTJETLIB) $(LHAPDFARGS) $(ROOTFLAGS) $(ROOTLIBS) -I/usr/local/boost_1_61_0 -lTreePlayer loader_C.so
+
+liCombineMake:
+	        g++ -o  liCombine liCombine.cpp $(PYTHIAFLAGS) $(PYTHIALIBS) $(FASTJETINC) $(FASTJETLIB) $(LHAPDFARGS) $(ROOTFLAGS) $(ROOTLIBS) -I/usr/local/boost_1_61_0 -lTreePlayer loader_C.so
+
 
 jetFinderMake:
 	g++ -o jetFinder jetFinder.cpp $(PYTHIAFLAGS) $(PYTHIALIBS) $(FASTJETINC) $(FASTJETLIB) $(LHAPDFARGS) $(ROOTFLAGS) $(ROOTLIBS) -lTreePlayer loader_C.so

@@ -12,6 +12,7 @@ jetFinder
 *.root
 *.jpg
 *.jpeg
+*.png
 *.txt
 *.pdf
 *.m4
@@ -21,6 +22,7 @@ jetFinder
 *.o
 *.so
 *.d
+*.json
 *.h5
 G__*.h
 G__*.cxx

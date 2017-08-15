@@ -25,18 +25,18 @@
 using namespace fastjet;
 using namespace std;
 
-int JET_ENERGY_LOWER_LIMIT=120;
+int JET_ENERGY_LOWER_LIMIT=20;
+int JET_ENERGY_UPPER_LIMIT=50;
   // choose a jet definition
-double R = 1.0;
+double R = 0.2;
 
 int main (int argc, char * argv[]){
-
     //cout << argc << endl;
     string iPath, outputFolder;
     
-    if (argc > 3){
+    if (argc < 3){
 
-        cout << "Error. Please enter only two command-line arguments. Aborting." << endl;
+        cout << "Error. Please enter only three command-line arguments. Aborting." << endl;
         exit;
     }
 
@@ -49,6 +49,9 @@ int main (int argc, char * argv[]){
 
     iPath = argv[1];
     outputFolder = argv[2];
+    R = atof(argv[3]);
+    JET_ENERGY_LOWER_LIMIT = atof(argv[4]);
+
 
 //this doesn't work yet
     // string iPath = "";
@@ -79,7 +82,6 @@ int main (int argc, char * argv[]){
     //     cout << "Input folder where you would like this jet tree to go: ";
     //     cin >> outputFolder;
     // }
-
     string oPath;
     size_t pos = iPath.find(".");
     oPath = outputFolder +  "/" + iPath.substr(0, pos) + "Jet.root";
@@ -109,7 +111,6 @@ int main (int argc, char * argv[]){
     int eventN = 0;
     int nJets = 0;
     vector<double> eta, phi, e;
-
     //create output TTree
     TTree jetTree("jetTree", "ttree with jet data");
     jetTree.Branch("eventN", &eventN, "eventN/I");
@@ -126,7 +127,6 @@ int main (int argc, char * argv[]){
         // int iEvent = 0;
     while(myReader.Next()) {
     //Note For Understanding: myReader.Next() --> iterates through the first level of the reader, or the only level for the value reader, the array reader needs to levels (understanding as of 6/20/17)
-        // cout << "num particles in this event is " << *myNFinalParticles << endl;
         vector<PseudoJet> particles;            
         for (int i = 0; i < *myNFinalParticles; i++) //why pointer?
         {
@@ -157,7 +157,8 @@ int main (int argc, char * argv[]){
         //jets.size is the number of jets
         for (int a = 0; a < jets.size(); a++) {
             // cout << jets[a].e() << endl;
-            if (jets[a].e() < JET_ENERGY_LOWER_LIMIT) {
+//|| (jets[a].e() < JET_ENERGY_UPPER_LIMIT)
+            if ((jets[a].e() < JET_ENERGY_LOWER_LIMIT)|| (jets[a].e() <  JET_ENERGY_UPPER_LIMIT)){
                 jets.erase(jets.begin()+a);
                 a--; //because it will a++ but we just moved the whole thing back, so we end up staying in same spot
             }

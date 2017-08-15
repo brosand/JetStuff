@@ -4,7 +4,7 @@ from rootpy.io import root_open
 from ROOT import TFile
 from itertools import izip
 
-ARRAY_LENGTH = 1200
+ARRAY_LENGTH = 2100
 
 class Event(TreeModel):
     # def __init__(self):
@@ -35,15 +35,18 @@ def rootCombine(file1, file2, fileOut):
     tree = Tree('tree', model = Event)
     # tree.num_vals = 120
     # print tree.num_vals
+    ctr = 0
     for aEvent, bEvent in izip(tree1, tree2):
+        ctr += 1
+        if (ctr % 100 == 0):
+            print('Event: %d' %ctr)
         tree.iEvents = aEvent.iEvents
         tree.nFinalParticles = (aEvent.nFinalParticles + bEvent.nFinalParticles)
         if (tree.nFinalParticles > ARRAY_LENGTH):
-            print ('event: %I contains too many particles: %I' %aEvent.iEvents %tree.nFinalParticles)
+            print ('event: %d contains too many particles: %d' %(aEvent.iEvents, tree.nFinalParticles))
             break
         for i in range(aEvent.nFinalParticles):
             # print aEvent.px[i]
-            # print i
             tree.px[i] = aEvent.px[i]
             tree.py[i] = aEvent.py[i]
             tree.pz[i] = aEvent.pz[i]
@@ -67,7 +70,7 @@ def rootCombine(file1, file2, fileOut):
     tree.energy.reset()
     # tree.csv()
     fOut.close()
-    print 'combination successful'
+    print 'Done'
 
 
         # tree.px.extend(bEvent.px)

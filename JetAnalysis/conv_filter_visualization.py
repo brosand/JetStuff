@@ -12,12 +12,12 @@ from keras import backend as K
 from keras.models import load_model
 
 # dimensions of the generated pictures for each filter.
-img_width = 50
-img_height = 50
+img_width = 20
+img_height = 20
 
 # the name of the layer we want to visualize
 # (see model definition at keras/applications/vgg16.py)
-layer_name = 'conv2d_3'
+layer_name = 'conv2d_4'
 
 # util function to convert a tensor into a valid image
 
@@ -40,7 +40,7 @@ def deprocess_image(x):
     return x
 
 # build the VGG16 network with ImageNet weights
-model = load_model('CNNModel17:22:32.h5')
+model = load_model('CNNModel12:49:12.h5')
 print('Model loaded.')
 
 model.summary()
@@ -115,6 +115,9 @@ n = 4
 # we will only keep the top 64 filters.
 kept_filters.sort(key=lambda x: x[1], reverse=True)
 kept_filters = kept_filters[:n * n]
+print('kept filters')
+print (len(kept_filters))
+print (len(kept_filters[1]))
 
 # build a black picture with enough space for
 # our 8 x 8 filters of size 128 x 128, with a 5px margin in between
