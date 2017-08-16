@@ -1,10 +1,10 @@
+This readme may be a little in depth compared to most readmes, its length is mostly due to it also sort of functioning as a research writeup, recording how each single piece of the analysis is run.
 # Quenched Jet Image Analysis Using Machine Learning
 Using computer image recognition techniques to differentiate between samples of jets.
 ## Getting Started
 These instructions will help you set up two machine learning models (LDA and NN) train them on jet images, and extract their discrimination methods. 
 ### Dependencies
-Except for Tensorflow and Keras, all items are required to run the whole analysis process from start to finish.
-For installation instructions, select the item
+<!-- For installation instructions, select the item -->
 - ROOT
 - Fastjet
 - Tensorflow
@@ -199,4 +199,5 @@ Anything in the old folder may not be accurate, particularly the NNData.csv.
 
 
 
-M. Cacciari, G.P. Salam and G. Soyez, Eur.Phys.J. C72 (2012) 1896 [arXiv:1111.6097]
+Fastjet: M. Cacciari, G.P. Salam and G. Soyez, Eur.Phys.J. C72 (2012) 1896 [arXiv:1111.6097]
+Jet Image machine learning analysis inspired by: Luke de Oliveira, Michael Kagan, Lester Mackey, Benjamin Nachman, Ariel Schwartzman; arXiv:1511.05190 [hep-ph]

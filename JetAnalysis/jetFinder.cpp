@@ -26,7 +26,7 @@ using namespace fastjet;
 using namespace std;
 
 int JET_ENERGY_LOWER_LIMIT=20;
-int JET_ENERGY_UPPER_LIMIT=50;
+// int JET_ENERGY_UPPER_LIMIT=50;
   // choose a jet definition
 double R = 0.2;
 
@@ -53,43 +53,12 @@ int main (int argc, char * argv[]){
     JET_ENERGY_LOWER_LIMIT = atof(argv[4]);
 
 
-//this doesn't work yet
-    // string iPath = "";
-    // string outputFolder = "";
-    // for (int i = 1; i < argc; i ++){
-    //     cout << argv[i] << endl;
-    //     cout << strstr(*argv[1], "/.root/") << endl;
-    //     if(strstr(*argv[i], "/.root/")!=NULL){
-
-    //         iPath =  argv[i];
-
-    //     } else {
-
-    //         outputFolder = argv[i]; //not foolproof, but whatever
-    //     }
-
-
-    // }
-
-    // if(iPath == ""){
-    //     cout << "Input file path: ";
-    //     cin >> iPath;
-    // }
-
-    // cout << "Using input file: " << iPath << endl;
-
-    // if(outputFolder == ""){
-    //     cout << "Input folder where you would like this jet tree to go: ";
-    //     cin >> outputFolder;
-    // }
     string oPath;
     size_t pos = iPath.find(".");
     oPath = outputFolder +  "/" + iPath.substr(0, pos) + "Jet.root";
 
-  // cout << "test1";
   //create a reader to interpret the TTree
     TFile *f = TFile::Open(iPath.c_str());
-    // cout << "hi" <<iPath.c_str();   
     TFile a(oPath.c_str(), "recreate");
     if (f == 0) {
         cout << "Error. Could not open file." << endl;
@@ -151,14 +120,14 @@ int main (int argc, char * argv[]){
         // cout << "Event number: " << iEvent << endl;
         // iEvent++;
 //add the jet data to the final TTree
-        // cout << "79";
 
         //for each jet, loop through a single jet, adding each userindex to the array
         //jets.size is the number of jets
         for (int a = 0; a < jets.size(); a++) {
             // cout << jets[a].e() << endl;
-//|| (jets[a].e() < JET_ENERGY_UPPER_LIMIT)
-            if ((jets[a].e() < JET_ENERGY_LOWER_LIMIT)|| (jets[a].e() <  JET_ENERGY_UPPER_LIMIT)){
+            // if ((jets[a].e() < JET_ENERGY_LOWER_LIMIT)|| (jets[a].e() <  JET_ENERGY_UPPER_LIMIT)){
+            if (jets[a].e() < JET_ENERGY_LOWER_LIMIT){
+
                 jets.erase(jets.begin()+a);
                 a--; //because it will a++ but we just moved the whole thing back, so we end up staying in same spot
             }
@@ -191,18 +160,7 @@ int main (int argc, char * argv[]){
             e.push_back(jets[i].e());
 
 //pIndex needs to increment outside, need to use pushback on it because pIndex at some i doesn't exist yet
-            // pt.push_back(jets[i].pt());
-            // area.push_back(jets[i].area());
-
-            // ptP.push_back(jets[i].constituents().pt())
-            // phiP.push_back(jets[i].constituents().phi())
-            // yP.push_back(jets[i].constituents().eta())
-
-            // cout << "jet " << i << ": "<< jets[i].pt() << " " 
-            // << jets[i].rap() << " " << jets[i].phi() << endl;
-            // vector<PseudoJet> constituents = jets[i].constituents();
-            // for (unsigned j = 0; j < constituents.size(); j++) {
-            //  cout << "    constituent " << j << "s pt: " << constituents[j].pt()      << endl;
+          
         }
         nJets = jets.size();
         jetTree.Fill();
@@ -231,11 +189,8 @@ int main (int argc, char * argv[]){
     a.Close();
 
     return 0;
-        // particlesVector.push_back(particles);
 } 
 
-    // return 1;
 
 
-    //resolution/code radius --.6
 
