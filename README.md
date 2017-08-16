@@ -1,12 +1,12 @@
 This readme may be a little in depth compared to most readmes, its length is mostly due to it also sort of functioning as a research writeup, recording how each single piece of the analysis is run.
 # Quenched Jet Image Analysis Using Machine Learning
-Using computer image recognition techniques to differentiate between samples of jets.
+Using computer image recognition techniques to differentiate between samples of jets.[1]
 ## Getting Started
 These instructions will help you set up two machine learning models (LDA and NN) train them on jet images, and extract their discrimination methods. 
 ### Dependencies
 <!-- For installation instructions, select the item -->
 - ROOT
-- Fastjet
+- Fastjet[2]
 - Tensorflow
 - Keras
 ### Installation
@@ -72,7 +72,7 @@ Converts data from Kirill's four different .dat files into the format of our pre
 
 To run:
 ```
-make kirillConvert.cpp
+>> make kirillConvert.cpp
 >> ./kirillConvert.cpp
 << Enter the name of the file to read from (probs a .dat):
 >> <path to whichever .dat file>
@@ -96,8 +96,8 @@ To run:
 The argument parsing is set up so that both an input file and an output folder must always be inputed.
 
 ```
->>make liConvertMake
->>./liConvert <liRootForConversion> <output folder>
+>> make liConvertMake
+>> ./liConvert <liRootForConversion> <output folder>
 ```
 
 In order to move Li's data into a more usable format, all the particle details needed to be moved from the samples into one root file. ```liCombiner.py``` is used for the combination, but all files are hardcoded in. I ran this combiner after converting all the original data. It currently looks in the "Au/AuAu11NPE25" folder for the root files. 
@@ -131,14 +131,16 @@ To run:
 The argument parsing is set up so that all possible arguments must be passed.
 
 ```
-make jetFinderMake
-./jetFinder <inputFile> <outputFolder> <Jet radius (r)> <pt to cut on>
+>> make jetFinderMake
+// ./jetFinder <inputFile> <outputFolder> <Jet radius (r)> <pt to cut on(GeV)>
+>> ./jetFinder sampleEvents.root folder 1.0 120
 ```
 
 ## Step 3: Preprocess the jets for training
 We preprocess the jets so that they all have the same general shape, similar to moving the face for image recognition so that the eyes are always in the same place.
 For a detailed visualization, see https://docs.google.com/presentation/d/1rPWveWBJq7X5Th82QrCt-T69XvCLkd9KctUnCzlCJgg/edit#slide=id.g249b9a98aa_0_208 (slide 7)
 To preprocess the jets, we go through five steps:
+```
 1. Center the jets
 
 	-For each jet, move the jet so the center of the jet is at 0,0.
@@ -154,6 +156,7 @@ To preprocess the jets, we go through five steps:
 5. Reflect the jets
 
 	-If the jet has a higher concentration of energy(or pt) on the negative eta portion of the graph, flip the jet so the the higher concentration is in positive eta space.
+```
 These steps are all run in the python program ```prept.py```(for preprocessing based on pt) or ```preEnergy.py```(for preprocessing based on energy). They both take the same several cmd line arguments. The argument parsing is different more my versions instead of Sofia's (Just depending on which file you look at, if you are looking on git, and the file was modified after 8/5/17, it is my version. I didn't want to change hers because her readme is already written and I'm not sure which one you will look at, I just wanted to clean up the arg parsing a bit).
 The preprocessing outputs a file as such:
 ```
@@ -165,7 +168,8 @@ Output file = Folder/jetFilePre10_e.txt
 ```
 To run:
 ```
-python pre<pt or Energy>.py --data=<original root event file> --jets=<jet root file> --type=<collision type> --dim=<dimension of jet image> --folder=<folder to place preprocessed jets>
+// python pre<pt or Energy>.py --data=<original root event file> --jets=<jet root file> --type=<collision type> --dim=<dimension of jet image> --folder=<folder to place preprocessed jets>
+>> python prept.py --data=sampleAEvent.root --jets=sampleAJets.root --type=A --dim=11 --folder=folder
 ```
 We have created several preprocessing scripts, which run on all of Kirill's samples and all our own simulated data. The most updated script is: ```prescriptBen.sh```
 
@@ -177,7 +181,8 @@ To train the network, we need two or more datasets, directly produced by our pre
 
 To run:
 ```
-python <NNJet or CNNJet>.py --data=<datafile1> --data=<datafile2>
+// python <NNJet or CNNJet>.py --data=<datafile1> --data=<datafile2>
+>> python NNJet.py --data=sampleAPreprocessed.txt --data=sampleBPreprocessed.txt
 ```
 There are other options, such as epochs, layers, for a full list, type ```python NNJet.py -h```
 
@@ -189,10 +194,12 @@ The principle method that I utilized to extract the neural network's learning wa
 ```histI.py``` Is right now set up so that it will take an input --data of a sample, then print two histograms, one on a log scale, both of the pixel intensities. The other important inputs are --validation_size and --draw. Draw determines whether a probability distribution will be drawn, or just a histogram of intensity, validation size is the quantity of jets which will be used for the histogram. Classes must also be input, just for the naming of the output file. Finally, the range is the range of the histogram, to help deal with scaling issues, note that bins outside of the range will be treated as if they are at the end of the range. Note that the output folders must be created ahead of time.
 
 ```
->> python histI.py --data=<"data.txt">
+// python histI.py --data=<"data.txt"> --type=<type>
+// Using TensorFlow backend.
+// Info in <TCanvas::Print>: pdf file coeffs<validation_size>/r<range>/<type>_<dimension>.pdf has been created
+>> python histI.py --data="sampleA21.txt" --type=A
 << Using TensorFlow backend.
-<< Enter classes: <class>
->> Info in <TCanvas::Print>: pdf file coeffs<validation_size>/r<range>/<class>_<dimension>.pdf has been created
+>> Info in <TCanvas::Print>: pdf file coeffs1000/r1.0/A_11.pdf has been created
 ```
 ### Pearson correlation coefficient:
 More details about the math can be found in https://en.wikipedia.org/wiki/Pearson_correlation_coefficient.
@@ -203,14 +210,14 @@ This pdf is a map of how correlated the intensity of each pixel is with the outp
 
 To run:
 ```
-python pearsonCalc.py --data=<PreprocessedJets.txt> --classes=<neural net classes> --weights=<net weights> --architecture=<model architecture>
+// python pearsonCalc.py --data=<PreprocessedJets.txt> --classes=<neural net classes> --weights=<net weights> --architecture=<model architecture>
+>> python pearsonCalc.py --data=sampleA.txt --classes=AB --weights=ABNeuralNetWeights.h5 --architecture=ABNeuralNetModel.json
 ```
 
 ## Notes
 Anything in the folder ```old``` may not be accurate, particularly the NNData.csv.
 
 
+[1] Jet Image machine learning analysis inspired by: Luke de Oliveira, Michael Kagan, Lester Mackey, Benjamin Nachman, Ariel Schwartzman; arXiv:1511.05190 [hep-ph]
 
-Fastjet: M. Cacciari, G.P. Salam and G. Soyez, Eur.Phys.J. C72 (2012) 1896 [arXiv:1111.6097]
-
-Jet Image machine learning analysis inspired by: Luke de Oliveira, Michael Kagan, Lester Mackey, Benjamin Nachman, Ariel Schwartzman; arXiv:1511.05190 [hep-ph]
+[2] Fastjet: M. Cacciari, G.P. Salam and G. Soyez, Eur.Phys.J. C72 (2012) 1896 [arXiv:1111.6097]
