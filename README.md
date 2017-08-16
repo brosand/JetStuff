@@ -42,6 +42,7 @@ tree
 ### Proton pythia generation:
 ```ppPythia.cpp```
 Runs pp collisions using Pythia with a set collision pt minimum of 150 GeV, and stores a tree in the file ```pp.root```
+
 To run:
 ```
 make ppPythiaMake
@@ -50,6 +51,7 @@ make ppPythiaMake
 ### W-boson pythia generation:
 ```wPythia.cpp```
 Runs pp collisions in which every event is required to generate a w-boson. It uses Pythia with a set collision pt minimum of 150 GeV, and stores a tree in the file ```w.root```.
+
 To run:
 ```
 make wPythiaMake
@@ -58,6 +60,7 @@ make wPythiaMake
 ### Fake lead collision generation:
 ```leadFake.cpp```
 Simulates a lead-lead collision by hand. Tree stored in ```leadFake.root```
+
 To run:
 ```
 make leadFakeMake
@@ -66,12 +69,13 @@ make leadFakeMake
 ### Kirill data conversion:
 ```kirillConvert.cpp```
 Converts data from Kirill's four different .dat files into the format of our previous trees, without the charge, which we did not need for our work-- maybe take out. The output root file is stored in ```sampleA.root```, where A is whichever sample is being converted.
-To run on sample A:
+
+To run:
 ```
 make kirillConvert.cpp
 >> ./kirillConvert.cpp
 << Enter the name of the file to read from (probs a .dat):
->> sampleA.dat
+>> <path to whichever .dat file>
 ```
 
 Kirill's four .dat files:
@@ -97,6 +101,7 @@ The argument parsing is set up so that both an input file and an output folder m
 ```
 
 In order to move Li's data into a more usable format, all the particle details needed to be moved from the samples into one root file. ```liCombiner.py``` is used for the combination, but all files are hardcoded in. I ran this combiner after converting all the original data. It currently looks in the "Au/AuAu11NPE25" folder for the root files. 
+
 To run:
 ```
 python liCombine.py
@@ -104,6 +109,7 @@ python liCombine.py
 
 ### PP with noise generation
 In order to challenge our models more, we generated pythia pp data with background noise. This program combines the files ```pp.root``` and ```lead.root``` and creates a ```pNoise.root```. The combination is done event by event, so event 1 of ```pp.root``` is added to event 1 of ```lead.root```. The two files are hard coded into the program, but can be changed and re-purposed for combining any two root trees in a similar manner.
+
 To run:
 ```
 python eventCombine.py
@@ -159,7 +165,7 @@ Output file = Folder/jetFilePre10_e.txt
 ```
 To run:
 ```
-python pre<pt or energy>.py --data=<original root event file> --jets=<jet root file> --type=<collision type> --dim=<dimension of jet image> --folder=<folder to place preprocessed jets>
+python pre<pt or Energy>.py --data=<original root event file> --jets=<jet root file> --type=<collision type> --dim=<dimension of jet image> --folder=<folder to place preprocessed jets>
 ```
 We have created several preprocessing scripts, which run on all of Kirill's samples and all our own simulated data. The most updated script is: ```prescriptBen.sh```
 
@@ -168,6 +174,7 @@ I will only discuss the neural network here, as Sofia has written up training th
 The two neural networks are a simple fully connected network, and a convolutional network. For a simple diagram explaining the difference, see https://stats.stackexchange.com/questions/114385/what-is-the-difference-between-convolutional-neural-networks-restricted-boltzma
 The fully connected network is run with a Relu activation function, and the final layer is a softmax function. The specific architecture of the CNN can be found in the CNNModel.png file.
 To train the network, we need two or more datasets, directly produced by our preprocessing. Any number of data files can be used, but they must each be from a separate class.
+
 To run:
 ```
 python <NNJet or CNNJet>.py --data=<datafile1> --data=<datafile2>
@@ -182,22 +189,28 @@ The principle method that I utilized to extract the neural network's learning wa
 ```histI.py``` Is right now set up so that it will take an input --data of a sample, then print two histograms, one on a log scale, both of the pixel intensities. The other important inputs are --validation_size and --draw. Draw determines whether a probability distribution will be drawn, or just a histogram of intensity, validation size is the quantity of jets which will be used for the histogram. Classes must also be input, just for the naming of the output file. Finally, the range is the range of the histogram, to help deal with scaling issues, note that bins outside of the range will be treated as if they are at the end of the range. Note that the output folders must be created ahead of time.
 
 ```
->>python histI.py --data=<"data.txt">
-<<Using TensorFlow backend.
-<<Enter classes: <class>
->>Info in <TCanvas::Print>: pdf file coeffs<validation_size>/r<range>/<class>_<dimension>.pdf has been created
+>> python histI.py --data=<"data.txt">
+<< Using TensorFlow backend.
+<< Enter classes: <class>
+>> Info in <TCanvas::Print>: pdf file coeffs<validation_size>/r<range>/<class>_<dimension>.pdf has been created
 ```
 ### Pearson correlation coefficient:
 More details about the math can be found in https://en.wikipedia.org/wiki/Pearson_correlation_coefficient.
 ```pearsonCalc.py``` also takes a validation size, and runs on a specific NN model, and both the model weights and architecture need to be specified.
 Pearson histogram pdf created in ```pearson/<validation_size>/<classes>_<dimension>_NNPearsonCoeff.pdf```
 Warning: to run on CNN, change the name so pdfs not overwritten.
-This pdf is a map of how correlated the intensity of each pixel is with the output. Positive values signify a correlation with the the first sample in the neural network, negative values signify a correlation with the second sample. This program is not designed for more than two classes.
+This pdf is a map of how correlated the intensity of each pixel is with the output. Positive values signify a correlation with the the first sample in the neural network, negative values signify a correlation with the second sample. Default validation size is 10,000; I reccomend you change it to however many data samples you are working with, the more samples the more effective the program becomes. Note: This program is not designed for more than two classes.
+
+To run:
+```
+python pearsonCalc.py --data=<PreprocessedJets.txt> --classes=<neural net classes> --weights=<net weights> --architecture=<model architecture>
+```
 
 ## Notes
-Anything in the old folder may not be accurate, particularly the NNData.csv.
+Anything in the folder ```old``` may not be accurate, particularly the NNData.csv.
 
 
 
 Fastjet: M. Cacciari, G.P. Salam and G. Soyez, Eur.Phys.J. C72 (2012) 1896 [arXiv:1111.6097]
+
 Jet Image machine learning analysis inspired by: Luke de Oliveira, Michael Kagan, Lester Mackey, Benjamin Nachman, Ariel Schwartzman; arXiv:1511.05190 [hep-ph]

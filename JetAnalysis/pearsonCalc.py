@@ -27,12 +27,11 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--data', default='r1.0/A21.txt', help="dataset to be tested on")
 parser.add_argument('--weights', default='waNNModels/ABweights.h5' , help="weights of model")
 parser.add_argument('--architecture', default='waNNModels/ABmodel.json' , help="architecture of model")
-parser.add_argument('--validation_size', default=500, help="number of jets", type=int)
+parser.add_argument('--validation_size', default=10000, help="number of jets", type=int)
 parser.add_argument('--classes', default='', help="classes of data")
 parser.add_argument('--notes', default='', help="notes")
 
 args = parser.parse_args()
-#change 35 and 36, not comprehensive enough
 if (args.classes==''):
     args.classes=raw_input('Enter classes: ')
 
