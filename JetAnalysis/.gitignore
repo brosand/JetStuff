@@ -3,6 +3,7 @@ bak/
 test/
 log/
 .deps/
+netModels/
 # Used by pytest
 .cache/
 .eggs/

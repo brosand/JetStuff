@@ -75,7 +75,8 @@ To run:
 >> make kirillConvert.cpp
 >> ./kirillConvert.cpp
 << Enter the name of the file to read from (probs a .dat):
->> <path to whichever .dat file>
+// <path to whichever .dat file>
+>> folder/sampleA.dat
 ```
 
 Kirill's four .dat files:
@@ -97,7 +98,8 @@ The argument parsing is set up so that both an input file and an output folder m
 
 ```
 >> make liConvertMake
->> ./liConvert <liRootForConversion> <output folder>
+// ./liConvert <liRootForConversion> <output folder>
+>> ./liConvert datafile.root folder
 ```
 
 In order to move Li's data into a more usable format, all the particle details needed to be moved from the samples into one root file. ```liCombiner.py``` is used for the combination, but all files are hardcoded in. I ran this combiner after converting all the original data. It currently looks in the "Au/AuAu11NPE25" folder for the root files. 
@@ -140,7 +142,7 @@ The argument parsing is set up so that all possible arguments must be passed.
 We preprocess the jets so that they all have the same general shape, similar to moving the face for image recognition so that the eyes are always in the same place.
 For a detailed visualization, see https://docs.google.com/presentation/d/1rPWveWBJq7X5Th82QrCt-T69XvCLkd9KctUnCzlCJgg/edit#slide=id.g249b9a98aa_0_208 (slide 7)
 To preprocess the jets, we go through five steps:
-```
+
 1. Center the jets
 
 	-For each jet, move the jet so the center of the jet is at 0,0.
@@ -156,7 +158,7 @@ To preprocess the jets, we go through five steps:
 5. Reflect the jets
 
 	-If the jet has a higher concentration of energy(or pt) on the negative eta portion of the graph, flip the jet so the the higher concentration is in positive eta space.
-```
+
 These steps are all run in the python program ```prept.py```(for preprocessing based on pt) or ```preEnergy.py```(for preprocessing based on energy). They both take the same several cmd line arguments. The argument parsing is different more my versions instead of Sofia's (Just depending on which file you look at, if you are looking on git, and the file was modified after 8/5/17, it is my version. I didn't want to change hers because her readme is already written and I'm not sure which one you will look at, I just wanted to clean up the arg parsing a bit).
 The preprocessing outputs a file as such:
 ```
