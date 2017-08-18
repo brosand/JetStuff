@@ -140,7 +140,7 @@ The argument parsing is set up so that all possible arguments must be passed.
 
 ## Step 3: Preprocess the jets for training
 We preprocess the jets so that they all have the same general shape, similar to moving the face for image recognition so that the eyes are always in the same place.
-For a detailed visualization, see [our presentation.](https://docs.google.com/presentation/d/1rPWveWBJq7X5Th82QrCt-T69XvCLkd9KctUnCzlCJgg/edit#slide=id.g249b9a98aa_0_208) (slide 7)
+For a detailed visualization, see [our presentation.](https://docs.google.com/presentation/d/1rPWveWBJq7X5Th82QrCt-T69XvCLkd9KctUnCzlCJgg/edit#slide=id.g249b9a98aa_0_208) (slide 7)
 To preprocess the jets, we go through five steps:
 
 1. Center the jets
