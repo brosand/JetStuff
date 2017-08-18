@@ -140,7 +140,7 @@ The argument parsing is set up so that all possible arguments must be passed.
 
 ## Step 3: Preprocess the jets for training
 We preprocess the jets so that they all have the same general shape, similar to moving the face for image recognition so that the eyes are always in the same place.
-For a detailed visualization, see https://docs.google.com/presentation/d/1rPWveWBJq7X5Th82QrCt-T69XvCLkd9KctUnCzlCJgg/edit#slide=id.g249b9a98aa_0_208 (slide 7)
+For a detailed visualization, see [our presentation.](https://docs.google.com/presentation/d/1rPWveWBJq7X5Th82QrCt-T69XvCLkd9KctUnCzlCJgg/edit#slide=id.g249b9a98aa_0_208) (slide 7)
 To preprocess the jets, we go through five steps:
 
 1. Center the jets
@@ -177,7 +177,7 @@ We have created several preprocessing scripts, which run on all of Kirill's samp
 
 ## Step 4: Train the model
 I will only discuss the neural network here, as Sofia has written up training the LDA.
-The two neural networks are a simple fully connected network, and a convolutional network. For a simple diagram explaining the difference, see https://stats.stackexchange.com/questions/114385/what-is-the-difference-between-convolutional-neural-networks-restricted-boltzma
+The two neural networks are a simple fully connected network, and a convolutional network. For a simple diagram explaining the difference, see [this stackexchange post](https://stats.stackexchange.com/questions/114385/what-is-the-difference-between-convolutional-neural-networks-restricted-boltzma)
 The fully connected network is run with a Relu activation function, and the final layer is a softmax function. The specific architecture of the CNN can be found in the CNNModel.png file.
 To train the network, we need two or more datasets, directly produced by our preprocessing. Any number of data files can be used, but they must each be from a separate class.
 
@@ -204,7 +204,7 @@ The principle method that I utilized to extract the neural network's learning wa
 >> Info in <TCanvas::Print>: pdf file coeffs1000/r1.0/A_11.pdf has been created
 ```
 ### Pearson correlation coefficient:
-More details about the math can be found in https://en.wikipedia.org/wiki/Pearson_correlation_coefficient.
+More details about the math can be found in [the wikipedia article.](https://en.wikipedia.org/wiki/Pearson_correlation_coefficient)
 ```pearsonCalc.py``` also takes a validation size, and runs on a specific NN model, and both the model weights and architecture need to be specified.
 Pearson histogram pdf created in ```pearson/<validation_size>/<classes>_<dimension>_NNPearsonCoeff.pdf```
 Warning: to run on CNN, change the name so pdfs not overwritten.
