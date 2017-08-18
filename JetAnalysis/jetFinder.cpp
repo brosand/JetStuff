@@ -124,7 +124,7 @@ int main (int argc, char * argv[]){
         SoftDrop sd(beta,z_cut);
         for (int i = 0; i < jets.size(); i++){
             
-        // jets[i]=sd(jets[i]);
+        jets[i]=sd(jets[i]);
         }
 
         //for each jet, loop through a single jet, adding each userindex to the array

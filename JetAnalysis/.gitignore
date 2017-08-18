@@ -4,6 +4,7 @@ test/
 log/
 .deps/
 netModels/
+!pearson/40000/*
 # Used by pytest
 .cache/
 .eggs/

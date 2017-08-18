@@ -216,6 +216,7 @@ To run:
 >> python pearsonCalc.py --data=sampleA.txt --classes=AB --weights=ABNeuralNetWeights.h5 --architecture=ABNeuralNetModel.json
 ```
 
+Data from pearson correlation coefficient calculation can be found in ```pearson/```
 ## Notes
 Anything in the folder ```old``` may not be accurate, particularly the NNData.csv.
 
