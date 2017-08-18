@@ -30,7 +30,7 @@ parser.add_argument('--validation_size', default=1000, help="number of jets", ty
 parser.add_argument('--type', default='', help="type of data")
 parser.add_argument('--notes', default='', help="notes")
 parser.add_argument('--draw', default=0, type=int, help="0: draw coeffs, 1: draw probability, 2: draw both")
-parser.add_argument('--range', default=1, type=int, help="range of output histogram (0-->automatic)")
+parser.add_argument('--range', default=1, type=int, help="range of output histogram (0-->root automatic scale)")
 
 args = parser.parse_args()
 

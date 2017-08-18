@@ -7,6 +7,7 @@ import numpy as np
 import math
 from PIL import Image
 import sys
+import argparse
 
 HIST_BOUND = 1.0
 
@@ -338,7 +339,7 @@ def readTree(filename1, filename2, fileOut, dimension, collisionType, folder):
             # printOutput(outputR, j, iEvent, histRotate, dimension, collisionType)
             # printOutput(outputT, j, iEvent, histTranslate, dimension, collisionType)
             # printOutput(outputN, j, iEvent, histNormalize, dimension, collisionType)
-            printOutput(outputN, j, iEvent, histReflect, dimension, collisionType)
+            #printOutput(outputN, j, iEvent, histReflect, dimension, collisionType)
 # 
                 
         iEvent+=1

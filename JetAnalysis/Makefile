@@ -1,4 +1,4 @@
-# Linking pythia to fastjet ( Adapted form Vincia1024 makefile and Dr. Soyez's tutorial)
+# Linking pythia to fastjet (Adapted form Vincia1024 makefile and Dr. Soyez's tutorial)
 # test OS - Ubuntu 11.04 64bit;
 # Mushfiq, University of Dhaka , date : 06.11.2011 .
 #Now Checa edits
@@ -41,7 +41,6 @@ PYTHIALIBS  =  -L$(PYTHIADIR)/lib/ -lpythia8
 FASTJETDIR  = /home/yu.yale.edu/br384/fastjet-install
 FASTJETINC :=`$(FASTJETDIR)/bin/fastjet-config --cxxflags --plugins`
 FASTJETLIB :=`$(FASTJETDIR)/bin/fastjet-config --libs --plugins`
-
 # LHAPDF if you want to replace Pythia's dummy default
 LHAPDFARGS =
 #LHAPDFARGS = -L$(HOME)/local/lib -lLHAPDF -I$(HOME)/local/include
@@ -73,7 +72,7 @@ liCombineMake:
 
 
 jetFinderMake:
-	g++ -o jetFinder jetFinder.cpp $(PYTHIAFLAGS) $(PYTHIALIBS) $(FASTJETINC) $(FASTJETLIB) $(LHAPDFARGS) $(ROOTFLAGS) $(ROOTLIBS) -lTreePlayer loader_C.so
+	g++ -o jetFinder jetFinder.cpp $(PYTHIAFLAGS) $(PYTHIALIBS) $(FASTJETINC) $(FASTJETLIB) $(LHAPDFARGS) $(ROOTFLAGS) $(ROOTLIBS) -lRecursiveTools -lTreePlayer loader_C.so
 
 
 

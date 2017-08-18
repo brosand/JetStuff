@@ -1,5 +1,5 @@
 #include "fastjet/ClusterSequenceArea.hh"
-
+#include "fastjet/internal/base.hh"
 /*
 /home/yu.yale.edu/br384/fastjet-3.2.2/include/fastjet/ClusterSequenceArea.hh
 /home/yu.yale.edu/br384/fastjet-install/include/fastjet/ClusterSequenceArea.hh
@@ -16,17 +16,19 @@
 #include <TTreeReaderArray.h>
 #include <vector>
 #include <string.h>
+#include "fastjet/contrib/SoftDrop.hh"
 #ifdef __MAKECINT__
 #pragma link C++ class std::vector<int> +;
 #pragma link C++ class std::vector < std::vector<int> >+;   
 #endif 
 
 
-using namespace fastjet;
 using namespace std;
+using namespace fastjet;
+using namespace fastjet::contrib;
 
 int JET_ENERGY_LOWER_LIMIT=20;
-// int JET_ENERGY_UPPER_LIMIT=50;
+int JET_ENERGY_UPPER_LIMIT=50;
   // choose a jet definition
 double R = 0.2;
 
@@ -117,15 +119,19 @@ int main (int argc, char * argv[]){
         ClusterSequenceArea cs(particles, jet_def, area_def);
         vector<PseudoJet> jets = sorted_by_pt(cs.inclusive_jets());
         
-        // cout << "Event number: " << iEvent << endl;
-        // iEvent++;
-//add the jet data to the final TTree
+        double z_cut = 0.1;
+        double beta  = 0.0;
+        SoftDrop sd(beta,z_cut);
+        for (int i = 0; i < jets.size(); i++){
+            
+        // jets[i]=sd(jets[i]);
+        }
 
         //for each jet, loop through a single jet, adding each userindex to the array
         //jets.size is the number of jets
         for (int a = 0; a < jets.size(); a++) {
             // cout << jets[a].e() << endl;
-            // if ((jets[a].e() < JET_ENERGY_LOWER_LIMIT)|| (jets[a].e() <  JET_ENERGY_UPPER_LIMIT)){
+           // if ((jets[a].e() < JET_ENERGY_LOWER_LIMIT)|| (jets[a].e() <  JET_ENERGY_UPPER_LIMIT)){
             if (jets[a].e() < JET_ENERGY_LOWER_LIMIT){
 
                 jets.erase(jets.begin()+a);
@@ -164,9 +170,11 @@ int main (int argc, char * argv[]){
         }
         nJets = jets.size();
         jetTree.Fill();
-        if(eventN % 1000 == 0){
-        cout << eventN << endl;
-    }
+         // if(eventN % 100 == 0){
+        cout <<"Event: " << eventN << "\r";
+        // cout << string ()
+
+     // }
         //cout << "102";
         eventN = eventN + 1;
         pIndex.clear();

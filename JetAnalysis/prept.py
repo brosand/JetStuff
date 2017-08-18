@@ -7,6 +7,7 @@ import numpy as np
 import math
 from PIL import Image
 import sys
+import argparse
 
 HIST_BOUND = 1.0
 
