@@ -208,7 +208,7 @@ More details about the math can be found in [the wikipedia article.](https://en.
 ```pearsonCalc.py``` also takes a validation size, and runs on a specific NN model, and both the model weights and architecture need to be specified.
 Pearson histogram pdf created in ```pearson/<validation_size>/<classes>_<dimension>_NNPearsonCoeff.pdf```
 Warning: to run on CNN, change the name so pdfs not overwritten.
-This pdf is a map of how correlated the intensity of each pixel is with the output. Positive values signify a correlation with the the first sample in the neural network, negative values signify a correlation with the second sample. Default validation size is 10,000; I reccomend you change it to however many data samples you are working with, the more samples the more effective the program becomes. Note: This program is not designed for more than two classes.
+This pdf is a map of how correlated the intensity of each pixel is with the output. Positive values signify a correlation with the the first sample in the neural network, negative values signify a correlation with the second sample. Default validation size is 10,000; I reccomend you change it to however many data samples you have, the more samples the more effective the program becomes. Note: This program is not designed for more than two classes.
 
 To run:
 ```
@@ -216,7 +216,7 @@ To run:
 >> python pearsonCalc.py --data=sampleA.txt --classes=AB --weights=ABNeuralNetWeights.h5 --architecture=ABNeuralNetModel.json
 ```
 
-Data from pearson correlation coefficient calculation can be found in ```pearson/```
+Data from pearson correlation coefficient calculation can be found in ```pearson/40000```
 ## Notes
 Anything in the folder ```old``` may not be accurate, particularly the NNData.csv.
 
