@@ -213,10 +213,11 @@ This pdf is a map of how correlated the intensity of each pixel is with the outp
 To run:
 ```
 // python pearsonCalc.py --data=<PreprocessedJets.txt> --classes=<neural net classes> --weights=<net weights> --architecture=<model architecture>
->> python pearsonCalc.py --data=sampleA.txt --classes=AB --weights=ABNeuralNetWeights.h5 --architecture=ABNeuralNetModel.json
+>> python pearsonCalc.py --data=sampleA.txt --classes=AB --weights=ABNeuralNetWeights.h5 --architecture=ABNeuralNetModel.json
 ```
 
-Data from pearson correlation coefficient calculation can be found in ```pearson/40000```
+Data from pearson correlation coefficient calculation can be found in ```pearson/```
+
 ## Notes
 Anything in the folder ```old``` may not be accurate, particularly the NNData.csv.
 
